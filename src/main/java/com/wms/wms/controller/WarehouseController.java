@@ -2,6 +2,7 @@ package com.wms.wms.controller;
 
 import com.wms.wms.entity.Warehouse;
 import com.wms.wms.exception.ObjectNotFoundException;
+import com.wms.wms.response.ResponseSuccess;
 import com.wms.wms.service.warehouse.IWarehouseService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -23,34 +24,44 @@ public class WarehouseController {
 
     // Get list of all warehouses
     @GetMapping("/warehouses")
-    public ResponseEntity<List<Warehouse>> findAll() {
-        return ResponseEntity.ok(iWarehouseService.findAll());
-    }
-
-    // Get warehouse by id
-    @GetMapping("/warehouses/{warehouseId}")
-    public ResponseEntity<Warehouse> findById(@PathVariable int warehouseId) throws ObjectNotFoundException {
-        return  ResponseEntity.ok(iWarehouseService.findById(warehouseId));
+    public ResponseSuccess findAll() {
+        List<Warehouse> warehouses = iWarehouseService.findAll();
+        return new ResponseSuccess(HttpStatus.OK, "Get warehouses successfully", warehouses);
     }
 
     @PostMapping("/warehouses")
-    public ResponseEntity<Warehouse> addWarehouse(@RequestBody @Valid Warehouse warehouse) {
+    public ResponseSuccess addWarehouse(@RequestBody @Valid Warehouse warehouse) {
         warehouse.setId(0);
-
         Warehouse dbWarehouse = iWarehouseService.save(warehouse);
 
-        return new  ResponseEntity<>(dbWarehouse, HttpStatus.CREATED);
+        return new ResponseSuccess(HttpStatus.CREATED, "Warehouses added successfully", dbWarehouse);
     }
 
     @PutMapping("/warehouses")
-    public ResponseEntity<Warehouse> updateWarehouse(@RequestBody Warehouse theWarehouse) {
+    public ResponseSuccess updateWarehouse(@RequestBody @Valid Warehouse theWarehouse) {
         Warehouse dbWarehouse = iWarehouseService.save(theWarehouse);
-        return ResponseEntity.ok(theWarehouse);
+        return new ResponseSuccess(HttpStatus.ACCEPTED, "Warehouse updated successfully", dbWarehouse);
+    }
+
+
+    // Get warehouse by id
+    @GetMapping("/warehouses/{warehouseId}")
+    public ResponseSuccess findById(
+            @Min(value = 1, message = "Id must be greater than 0")
+            @PathVariable int warehouseId)
+            throws ObjectNotFoundException {
+
+        Warehouse warehouse = iWarehouseService.findById(warehouseId);
+        return new ResponseSuccess(HttpStatus.OK, "Get the warehouse id " + warehouseId + " successfully", warehouse);
     }
 
     @DeleteMapping("/warehouses/{warehouseId}")
-    public String deleteWarehouse(@PathVariable int warehouseId) throws ObjectNotFoundException{
+    public ResponseSuccess deleteWarehouse(
+            @Min(value = 1, message = "Id must be greater than 0")
+            @PathVariable int warehouseId)
+            throws ObjectNotFoundException{
+
         iWarehouseService.deleteById(warehouseId);
-        return "Deleted";
+        return new ResponseSuccess(HttpStatus.NO_CONTENT, "Successfully deleted warehouse id: " + warehouseId);
     }
 }

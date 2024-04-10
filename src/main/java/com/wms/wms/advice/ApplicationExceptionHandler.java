@@ -1,6 +1,7 @@
 package com.wms.wms.advice;
 
 import com.wms.wms.exception.ObjectNotFoundException;
+import com.wms.wms.response.ResponseError;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,31 +24,15 @@ public class ApplicationExceptionHandler {
      * @param exception The MethodArgumentNotValidException instance.
      * @return A map containing field names and their error messages.
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public  Map<String, String> handleInvalidArgument(MethodArgumentNotValidException exception){
+    public ResponseError handleInvalidArgument(MethodArgumentNotValidException exception){
         Map<String, String> errorMap = new HashMap<>();
 
         exception.getBindingResult().getFieldErrors().forEach(error -> {
             errorMap.put(error.getField(), error.getDefaultMessage());
         });
 
-        return  errorMap;
-    }
-
-    /**
-     * Exception handler for ObjectNotFoundException.
-     * Returns a map containing the exception message with key "message".
-     *
-     * @param exception The ObjectNotFoundException that was thrown
-     * @return A map containing the exception message
-     */
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(ObjectNotFoundException.class)
-    public Map<String, String> handleObjectNotFound(ObjectNotFoundException exception) {
-        Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("message", exception.getMessage());
-        return errorMap;
+        return  new ResponseError(HttpStatus.BAD_REQUEST.value(), "Data is not valid", errorMap);
     }
 
     /**
@@ -57,11 +42,23 @@ public class ApplicationExceptionHandler {
      * @param exception The MethodArgumentTypeMismatchException that was thrown.
      * @return A map containing the exception message.
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public Map<String, String> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException exception) {
-        Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("message", exception.getMessage());
-        return errorMap;
+    public ResponseError handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException exception) {
+        return new ResponseError(HttpStatus.BAD_REQUEST.value(), "Argument type mismatch");
     }
+
+
+    /**
+     * Exception handler for ObjectNotFoundException.
+     * Returns a map containing the exception message with key "message".
+     *
+     * @param exception The ObjectNotFoundException that was thrown
+     * @return A map containing the exception message
+     */
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseError handleObjectNotFound(ObjectNotFoundException exception) {
+
+        return new ResponseError(HttpStatus.NOT_FOUND.value(), exception.getMessage());
+    }
+
 }
