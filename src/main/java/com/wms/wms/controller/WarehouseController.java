@@ -4,6 +4,7 @@ import com.wms.wms.entity.Warehouse;
 import com.wms.wms.exception.ObjectNotFoundException;
 import com.wms.wms.service.warehouse.IWarehouseService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
