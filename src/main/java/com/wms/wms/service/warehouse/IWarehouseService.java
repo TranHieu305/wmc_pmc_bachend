@@ -1,6 +1,7 @@
 package com.wms.wms.service.warehouse;
 
 import com.wms.wms.entity.Warehouse;
+import com.wms.wms.exception.ObjectNotFoundException;
 
 import java.util.List;
 
@@ -10,11 +11,11 @@ public interface IWarehouseService {
     List <Warehouse> findAll();
 
     // Get warehouse by id
-    Warehouse findById(int id);
+    Warehouse findById(int id) throws ObjectNotFoundException;
 
     // Save warehouse
     Warehouse save(Warehouse warehouse);
 
     // Delete warehouse by Id
-    void deleteById(int id);
+    void deleteById(int id) throws ObjectNotFoundException;
 }

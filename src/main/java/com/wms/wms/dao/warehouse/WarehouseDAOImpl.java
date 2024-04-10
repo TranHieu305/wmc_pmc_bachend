@@ -1,6 +1,7 @@
 package com.wms.wms.dao.warehouse;
 
 import com.wms.wms.entity.Warehouse;
+import com.wms.wms.exception.ObjectNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,6 @@ public class WarehouseDAOImpl implements IWarehouseDAO{
     @Override
     public void deleteById(int id) {
         Warehouse theWarehouse = entityManager.find(Warehouse.class, id);
-        if (theWarehouse != null) {
-            entityManager.remove(theWarehouse);
-        }
-        return;
+        entityManager.remove(theWarehouse);
     }
 }

@@ -1,6 +1,10 @@
 package com.wms.wms.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -10,6 +14,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name="warehouse")
 public class Warehouse {
+    // Define constants
+    public static String STATUS_ACTIVE = "active";
+    public static String STATUS_INACTIVE = "inactive";
 
     // Define fields
     @Id
@@ -18,19 +25,32 @@ public class Warehouse {
     private  int id;
 
     @Column(name = "name")
+    @NotBlank(message = "Warehouse name cannot be blank")
+    @Size(min = 1, max = 255, message = "Warehouse name must be between 1 and 255 characters")
     private String name;
+
     @Column(name = "description")
+    @Size(min = 1, max = 255, message = "Warehouse description must be between 1 and 255 characters")
     private  String description;
+
     @Column(name = "address")
+    @Size(min = 1, max = 255, message = "Warehouse address must be between 1 and 255 characters")
     private String address;
+
     @Column(name = "longitude")
-    private BigDecimal longitude;
+    @Digits(integer = 10, fraction = 6, message = "Warehouse longitude must be decimal")
+    private BigDecimal longitude = BigDecimal.ZERO;
+
     @Column(name = "latitude")
-    private BigDecimal latitude;
+    @Digits(integer = 10, fraction = 6, message = "Warehouse latitude must be decimal")
+    private BigDecimal latitude = BigDecimal.ZERO;
+
     @Column(name = "supervisor")
     private  String supervisor;
+
     @Column(name = "status")
-    private  String status;
+    private  String status = STATUS_ACTIVE;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -39,13 +59,10 @@ public class Warehouse {
     @Column(name = "modified_at")
     private  LocalDateTime modifiedAt;
 
-    // Define constants
-    public static String STATUS_ACTIVE = "active";
-    public static String STATUS_INACTIVE = "inactive";
-
     // Define constructors
     public Warehouse() {}
 
+    // All args constructor
     public Warehouse(int id, String name, String description, String address, BigDecimal longitude,
                      BigDecimal latitude, String supervisor, String status) {
         this.id = id;

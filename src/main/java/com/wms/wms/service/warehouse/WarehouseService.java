@@ -2,6 +2,7 @@ package com.wms.wms.service.warehouse;
 
 import com.wms.wms.dao.warehouse.IWarehouseDAO;
 import com.wms.wms.entity.Warehouse;
+import com.wms.wms.exception.ObjectNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,12 @@ public class WarehouseService implements  IWarehouseService{
     }
 
     @Override
-    public Warehouse findById(int id) {
+    public Warehouse findById(int id) throws ObjectNotFoundException {
+        Warehouse warehouse = iWarehouseDAO.findById(id);
+
+        if (warehouse == null) {
+            throw new ObjectNotFoundException("Warehouse not found with id : " + id);
+        }
         return iWarehouseDAO.findById(id);
     }
 
@@ -33,7 +39,12 @@ public class WarehouseService implements  IWarehouseService{
 
     @Transactional
     @Override
-    public void deleteById(int id) {
+    public void deleteById(int id) throws ObjectNotFoundException{
+        Warehouse warehouse = iWarehouseDAO.findById(id);
+        if (warehouse == null) {
+            throw new ObjectNotFoundException("Warehouse not found with id : " + id);
+        }
+
         iWarehouseDAO.deleteById(id);
     }
 }

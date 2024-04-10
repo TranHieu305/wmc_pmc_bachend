@@ -1,6 +1,8 @@
 package com.wms.wms.dao.warehouse;
 
 import com.wms.wms.entity.Warehouse;
+import com.wms.wms.exception.ObjectNotFoundException;
+
 import java.util.List;
 
 
