@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="Warehouse")
+@Table(name="warehouse")
 public class Warehouse {
     // Define constants
     public static String STATUS_ACTIVE = "active";
