@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -53,11 +54,11 @@ public class Warehouse {
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+    private Timestamp createdAt;
 
     @LastModifiedDate
     @Column(name = "modified_at")
-    private  LocalDateTime modifiedAt;
+    private  Timestamp modifiedAt;
 
     // Define constructors
     public Warehouse() {}
