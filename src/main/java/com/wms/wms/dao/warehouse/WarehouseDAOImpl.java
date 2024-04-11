@@ -21,7 +21,7 @@ public class WarehouseDAOImpl implements IWarehouseDAO{
 
     @Override
     public List<Warehouse> findAll() {
-        TypedQuery<Warehouse> query = entityManager.createQuery("FROM Warehouse", Warehouse.class);
+        TypedQuery<Warehouse> query = entityManager.createQuery("FROM warehouse", Warehouse.class);
         List<Warehouse> warehouses = query.getResultList();
         return warehouses;
     }
