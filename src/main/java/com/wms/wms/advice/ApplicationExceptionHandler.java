@@ -32,7 +32,7 @@ public class ApplicationExceptionHandler {
             errorMap.put(error.getField(), error.getDefaultMessage());
         });
 
-        return  new ResponseError(HttpStatus.BAD_REQUEST.value(), "Data is not valid", errorMap);
+        return  new ResponseError(HttpStatus.BAD_REQUEST, "Data is not valid", errorMap);
     }
 
     /**
@@ -44,7 +44,7 @@ public class ApplicationExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseError handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException exception) {
-        return new ResponseError(HttpStatus.BAD_REQUEST.value(), "Argument type mismatch");
+        return new ResponseError(HttpStatus.BAD_REQUEST, "Argument type mismatch");
     }
 
 
@@ -58,7 +58,7 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(ObjectNotFoundException.class)
     public ResponseError handleObjectNotFound(ObjectNotFoundException exception) {
 
-        return new ResponseError(HttpStatus.NOT_FOUND.value(), exception.getMessage());
+        return new ResponseError(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
 }
