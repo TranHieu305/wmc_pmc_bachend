@@ -1,17 +1,15 @@
 package com.wms.wms.dao.warehouse;
 
 import com.wms.wms.entity.Warehouse;
-import com.wms.wms.exception.ObjectNotFoundException;
 
 import java.util.List;
-
 
 public interface IWarehouseDAO {
 
     // Get list of all warehouses
     List<Warehouse> findAll();
 
-   // Get warehouse by id
+    // Get warehouse by id
     Warehouse findById(int id);
 
     // Save warehouse

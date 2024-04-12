@@ -7,13 +7,12 @@ import com.wms.wms.service.warehouse.IWarehouseService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "https://phucthanhwms.netlify.app"})
+@CrossOrigin(origins = { "http://localhost:3000", "https://phucthanhwms.netlify.app" })
 @RequestMapping("/api")
 public class WarehouseController {
 
@@ -35,7 +34,7 @@ public class WarehouseController {
         warehouse.setId(0);
         Warehouse dbWarehouse = iWarehouseService.save(warehouse);
 
-        return new ResponseSuccess(HttpStatus.CREATED, "Warehouses added successfully", dbWarehouse);
+        return new ResponseSuccess(HttpStatus.CREATED, "Warehouse added successfully", dbWarehouse);
     }
 
     @PutMapping("/warehouses")
@@ -44,12 +43,10 @@ public class WarehouseController {
         return new ResponseSuccess(HttpStatus.ACCEPTED, "Warehouse updated successfully", dbWarehouse);
     }
 
-
     // Get warehouse by id
     @GetMapping("/warehouses/{warehouseId}")
     public ResponseSuccess findById(
-            @Min(value = 1, message = "Id must be greater than 0")
-            @PathVariable int warehouseId)
+            @Min(value = 1, message = "Id must be greater than 0") @PathVariable int warehouseId)
             throws ObjectNotFoundException {
 
         Warehouse warehouse = iWarehouseService.findById(warehouseId);
@@ -57,10 +54,9 @@ public class WarehouseController {
     }
 
     @DeleteMapping("/warehouses/{warehouseId}")
-    public ResponseSuccess deleteWarehouse(
-            @Min(value = 1, message = "Id must be greater than 0")
-            @PathVariable int warehouseId)
-            throws ObjectNotFoundException{
+    public ResponseSuccess deleteById(
+            @Min(value = 1, message = "Id must be greater than 0") @PathVariable int warehouseId)
+            throws ObjectNotFoundException {
 
         iWarehouseService.deleteById(warehouseId);
         return new ResponseSuccess(HttpStatus.NO_CONTENT, "Successfully deleted warehouse id: " + warehouseId);

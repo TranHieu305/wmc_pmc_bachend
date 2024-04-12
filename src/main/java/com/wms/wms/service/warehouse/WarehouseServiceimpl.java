@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class WarehouseService implements  IWarehouseService{
+public class WarehouseServiceimpl implements  IWarehouseService{
     private IWarehouseDAO iWarehouseDAO;
 
-    public WarehouseService(IWarehouseDAO iWarehouseDAO) {
+    public WarehouseServiceimpl(IWarehouseDAO iWarehouseDAO) {
         this.iWarehouseDAO = iWarehouseDAO;
     }
 
