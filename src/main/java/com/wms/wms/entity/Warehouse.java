@@ -139,4 +139,20 @@ public class Warehouse {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Timestamp getModifiedAt() {
+        return modifiedAt;
+    }
+
+    public void setModifiedAt(Timestamp modifiedAt) {
+        this.modifiedAt = modifiedAt;
+    }
 }
