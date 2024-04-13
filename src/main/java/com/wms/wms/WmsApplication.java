@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class WmsApplication {
 	@RequestMapping("/")
 	String home() {
-		return "Hello World!";
+		return "Server is running";
 	}
 	public static void main(String[] args) {
 		System.out.println("------------------rerun");
