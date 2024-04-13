@@ -4,10 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.sql.Timestamp;
 
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "supplier")
 public class Supplier {
     // Define fields
@@ -44,14 +47,12 @@ public class Supplier {
     public Supplier() {
     }
 
-    public Supplier(int id, String name, String address, String email, String phone, Timestamp createdAt, Timestamp modifiedAt) {
+    public Supplier(int id, String name, String address, String email, String phone) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.email = email;
         this.phone = phone;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 
     public int getId() {

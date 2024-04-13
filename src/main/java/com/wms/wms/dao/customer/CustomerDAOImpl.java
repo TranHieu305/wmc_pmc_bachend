@@ -3,10 +3,12 @@ package com.wms.wms.dao.customer;
 import com.wms.wms.entity.Customer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import org.springframework.stereotype.Repository;
 
 
 import java.util.List;
 
+@Repository
 public class CustomerDAOImpl implements ICustomerDAO{
     private EntityManager entityManager;
 
@@ -30,6 +32,8 @@ public class CustomerDAOImpl implements ICustomerDAO{
     @Override
     public Customer save(Customer theCustomer) {
         Customer dbCustomer = entityManager.merge(theCustomer);
+        entityManager.flush();
+        entityManager.refresh(dbCustomer);
         return dbCustomer;
     }
 

@@ -28,7 +28,7 @@ public class WarehouseServiceimpl implements  IWarehouseService{
         if (warehouse == null) {
             throw new ObjectNotFoundException("Warehouse not found with id : " + id);
         }
-        return iWarehouseDAO.findById(id);
+        return warehouse;
     }
 
     @Transactional

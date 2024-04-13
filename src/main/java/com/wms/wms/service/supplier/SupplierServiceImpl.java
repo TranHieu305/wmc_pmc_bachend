@@ -28,7 +28,7 @@ public class SupplierServiceImpl implements ISupplierService{
         if (supplier == null) {
             throw new ObjectNotFoundException("Supplier not found with id : " + id);
         }
-        return iSupplierDAO.findById(id);
+        return supplier;
     }
 
     @Override

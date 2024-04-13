@@ -35,6 +35,8 @@ public class WarehouseDAOImpl implements IWarehouseDAO{
     @Override
     public Warehouse save(Warehouse theWarehouse) {
         Warehouse dbWarehouse = entityManager.merge(theWarehouse);
+        entityManager.flush();
+        entityManager.refresh(dbWarehouse);
         return dbWarehouse;
     }
 

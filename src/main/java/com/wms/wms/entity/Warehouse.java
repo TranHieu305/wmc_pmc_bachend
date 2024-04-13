@@ -3,16 +3,16 @@ package com.wms.wms.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name="warehouse")
 public class Warehouse {
     // Define constants
@@ -64,9 +64,8 @@ public class Warehouse {
     public Warehouse() {}
 
     // All args constructor
-    public Warehouse(int id, String name, String description, String address, BigDecimal longitude,
+    public Warehouse(String name, String description, String address, BigDecimal longitude,
                      BigDecimal latitude, String supervisor, String status) {
-        this.id = id;
         this.name = name;
         this.description = description;
         this.address = address;

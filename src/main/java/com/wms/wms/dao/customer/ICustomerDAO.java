@@ -1,6 +1,7 @@
 package com.wms.wms.dao.customer;
 
 import com.wms.wms.entity.Customer;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
