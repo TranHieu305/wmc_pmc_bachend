@@ -1,16 +1,16 @@
 package com.wms.wms.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "customer")
 public class Customer {
     // Define fields
@@ -25,12 +25,20 @@ public class Customer {
     private String name;
 
     @Column(name = "description")
-    @Size(min = 1, max = 255, message = "Customer description must be between 1 and 255 characters")
+    @Size(max = 255, message = "Customer description must be between 1 and 255 characters")
     private  String description;
 
     @Column(name = "address")
     @Size(min = 1, max = 255, message = "Customer address must be between 1 and 255 characters")
     private String address;
+
+    @Column(name = "email")
+    @Email(message = "Please provide a valid phone email")
+    private String email;
+
+    @Column(name = "phone")
+    @Pattern(regexp="^(\\d[- .]*){7,15}$", message="Please provide a valid phone number")
+    private String phone;
 
     @Column(name = "longitude")
     @Digits(integer = 10, fraction = 6, message = "Customer longitude must be decimal")
@@ -51,15 +59,16 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(int id, String name, String description, String address, BigDecimal longitude, BigDecimal latitude, Timestamp createdAt, Timestamp modifiedAt) {
+    public Customer(int id, String name, String description, String address, String email, String phone,
+                    BigDecimal longitude, BigDecimal latitude) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.address = address;
+        this.email = email;
+        this.phone = phone;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 
     public int getId() {
@@ -124,5 +133,21 @@ public class Customer {
 
     public void setModifiedAt(Timestamp modifiedAt) {
         this.modifiedAt = modifiedAt;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

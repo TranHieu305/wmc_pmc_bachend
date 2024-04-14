@@ -37,6 +37,7 @@ public class CustomerServiceImpl implements ICustomerService{
     }
 
     @Override
+    @Transactional
     public void deleteById(int id) throws ObjectNotFoundException {
         Customer customer = customerDAO.findById(id);
         if (customer == null) {
