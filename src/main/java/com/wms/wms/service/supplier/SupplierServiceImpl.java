@@ -38,6 +38,7 @@ public class SupplierServiceImpl implements ISupplierService{
     }
 
     @Override
+    @Transactional
     public void deleteById(int id) throws ObjectNotFoundException {
         Supplier supplier = iSupplierDAO.findById(id);
 
