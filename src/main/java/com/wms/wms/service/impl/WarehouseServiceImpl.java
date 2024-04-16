@@ -1,18 +1,19 @@
-package com.wms.wms.service.warehouse;
+package com.wms.wms.service.impl;
 
 import com.wms.wms.dao.warehouse.IWarehouseDAO;
 import com.wms.wms.entity.Warehouse;
 import com.wms.wms.exception.ObjectNotFoundException;
+import com.wms.wms.service.IWarehouseService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class WarehouseServiceimpl implements  IWarehouseService{
+public class WarehouseServiceImpl implements IWarehouseService {
     private IWarehouseDAO iWarehouseDAO;
 
-    public WarehouseServiceimpl(IWarehouseDAO iWarehouseDAO) {
+    public WarehouseServiceImpl(IWarehouseDAO iWarehouseDAO) {
         this.iWarehouseDAO = iWarehouseDAO;
     }
 

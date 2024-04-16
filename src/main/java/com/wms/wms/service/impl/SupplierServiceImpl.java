@@ -1,15 +1,16 @@
-package com.wms.wms.service.supplier;
+package com.wms.wms.service.impl;
 
 import com.wms.wms.dao.supplier.ISupplierDAO;
 import com.wms.wms.entity.Supplier;
 import com.wms.wms.exception.ObjectNotFoundException;
+import com.wms.wms.service.ISupplierService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class SupplierServiceImpl implements ISupplierService{
+public class SupplierServiceImpl implements ISupplierService {
     private ISupplierDAO iSupplierDAO;
 
     public SupplierServiceImpl(ISupplierDAO iSupplierDAO) {

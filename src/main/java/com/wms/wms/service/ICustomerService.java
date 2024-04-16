@@ -1,4 +1,4 @@
-package com.wms.wms.service.customer;
+package com.wms.wms.service;
 
 import com.wms.wms.entity.Customer;
 import com.wms.wms.exception.ObjectNotFoundException;

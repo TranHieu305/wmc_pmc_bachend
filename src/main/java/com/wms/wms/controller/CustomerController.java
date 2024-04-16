@@ -4,7 +4,7 @@ package com.wms.wms.controller;
 import com.wms.wms.entity.Customer;
 import com.wms.wms.exception.ObjectNotFoundException;
 import com.wms.wms.response.ResponseSuccess;
-import com.wms.wms.service.customer.ICustomerService;
+import com.wms.wms.service.ICustomerService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;

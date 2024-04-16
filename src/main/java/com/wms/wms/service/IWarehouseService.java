@@ -1,4 +1,4 @@
-package com.wms.wms.service.warehouse;
+package com.wms.wms.service;
 
 import com.wms.wms.entity.Warehouse;
 import com.wms.wms.exception.ObjectNotFoundException;

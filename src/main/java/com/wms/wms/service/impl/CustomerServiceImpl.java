@@ -1,15 +1,16 @@
-package com.wms.wms.service.customer;
+package com.wms.wms.service.impl;
 
 import com.wms.wms.dao.customer.ICustomerDAO;
 import com.wms.wms.entity.Customer;
 import com.wms.wms.exception.ObjectNotFoundException;
+import com.wms.wms.service.ICustomerService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class CustomerServiceImpl implements ICustomerService{
+public class CustomerServiceImpl implements ICustomerService {
     private ICustomerDAO customerDAO;
 
     public CustomerServiceImpl(ICustomerDAO customerDAO) {
