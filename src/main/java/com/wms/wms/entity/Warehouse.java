@@ -1,6 +1,7 @@
 package com.wms.wms.entity;
 
 import com.wms.wms.util.EnumPattern;
+import com.wms.wms.util.WarehouseStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -49,6 +50,5 @@ public class Warehouse extends  AbstractEntity{
     private  String supervisor;
 
     @Column(name = "status")
-    @EnumPattern(name = "status", regexp = "active|inactive")
     private  String status = STATUS_ACTIVE;
 }

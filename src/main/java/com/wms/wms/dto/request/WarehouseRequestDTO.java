@@ -8,12 +8,15 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WarehouseRequestDTO implements Serializable {
     @Column(name = "name")
     @NotBlank(message = "Warehouse name cannot be blank")
@@ -40,6 +43,5 @@ public class WarehouseRequestDTO implements Serializable {
     private  String supervisor;
 
     @Column(name = "status")
-    @EnumPattern(name = "status", regexp = "active|inactive")
     private  String status;
 }
