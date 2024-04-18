@@ -9,7 +9,7 @@ public class ResponseData<T> implements Serializable {
     public static final boolean RESPONSE_STATUS_SUCCESS = true;
     public static final boolean RESPONSE_STATUS_FAIL = false;
 
-    private final HttpStatus status;
+    private final int status;
     private final String message;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
@@ -19,7 +19,7 @@ public class ResponseData<T> implements Serializable {
      * @param status
      * @param message
      */
-    public ResponseData(HttpStatus status, String message) {
+    public ResponseData(int status, String message) {
         this.status = status;
         this.message = message;
     }
@@ -30,13 +30,13 @@ public class ResponseData<T> implements Serializable {
      * @param message
      * @param data
      */
-    public ResponseData(HttpStatus status, String message, T data) {
+    public ResponseData(int status, String message, T data) {
         this.status = status;
         this.message = message;
         this.data = data;
     }
 
-    public HttpStatus getStatus() {
+    public int getStatus() {
         return status;
     }
 

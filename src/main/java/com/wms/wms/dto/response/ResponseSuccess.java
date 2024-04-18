@@ -7,12 +7,12 @@ public class ResponseSuccess extends ResponseEntity<ResponseData> {
 
     // PUT, PATCH, DELETE
     public ResponseSuccess(HttpStatus status, String message) {
-        super(new ResponseData(status, message), HttpStatus.OK);
+        super(new ResponseData(status.value(), message), HttpStatus.OK);
     }
 
     // GET, POST
     public ResponseSuccess(HttpStatus status, String message, Object data) {
-        super(new ResponseData(status, message, data), HttpStatus.OK);
+        super(new ResponseData(status.value(), message, data), HttpStatus.OK);
     }
 
 }
