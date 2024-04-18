@@ -1,4 +1,4 @@
-package com.wms.wms.dao.supplier;
+package com.wms.wms.dao;
 
 import com.wms.wms.entity.Supplier;
 

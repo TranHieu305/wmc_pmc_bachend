@@ -3,11 +3,7 @@ package com.wms.wms.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -17,12 +13,13 @@ import java.sql.Timestamp;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "supplier")
-public class Supplier {
+public class Supplier extends AbstractEntity{
     // Define fields
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private  int id;
+    private int id;
 
     @Column(name = "name")
     @NotBlank(message = "Supplier name cannot be blank")
@@ -40,13 +37,4 @@ public class Supplier {
     @Column(name = "phone")
     @Pattern(regexp="^(\\d[- .]*){7,15}$", message="Please provide a valid phone number")
     private String phone;
-
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private Timestamp createdAt;
-
-    @LastModifiedDate
-    @Column(name = "modified_at")
-    private  Timestamp modifiedAt;
-
 }

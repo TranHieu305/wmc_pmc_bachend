@@ -1,5 +1,6 @@
-package com.wms.wms.dao.supplier;
+package com.wms.wms.dao.impl;
 
+import com.wms.wms.dao.ISupplierDAO;
 import com.wms.wms.entity.Supplier;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class SupplierDAOImpl implements ISupplierDAO{
+public class SupplierDAOImpl implements ISupplierDAO {
     private EntityManager entityManager;
     public SupplierDAOImpl(EntityManager entityManager) {
         this.entityManager = entityManager;

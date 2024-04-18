@@ -1,5 +1,6 @@
-package com.wms.wms.dao.customer;
+package com.wms.wms.dao.impl;
 
+import com.wms.wms.dao.ICustomerDAO;
 import com.wms.wms.entity.Customer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class CustomerDAOImpl implements ICustomerDAO{
+public class CustomerDAOImpl implements ICustomerDAO {
     private EntityManager entityManager;
 
     public CustomerDAOImpl(EntityManager entityManager) {

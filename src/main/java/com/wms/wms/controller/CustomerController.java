@@ -2,8 +2,8 @@ package com.wms.wms.controller;
 
 
 import com.wms.wms.entity.Customer;
-import com.wms.wms.exception.ObjectNotFoundException;
-import com.wms.wms.response.ResponseSuccess;
+import com.wms.wms.exception.ResourceNotFoundException;
+import com.wms.wms.dto.response.ResponseSuccess;
 import com.wms.wms.service.ICustomerService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -46,7 +46,7 @@ public class CustomerController {
     @GetMapping("/customers/{customerId}")
     public ResponseSuccess findById(
             @Min(value = 1, message = "Id must be greater than 0") @PathVariable int customerId)
-            throws ObjectNotFoundException {
+            throws ResourceNotFoundException {
 
         Customer customer = customerService.findById(customerId);
         return new ResponseSuccess(HttpStatus.OK, "Get the customer id " + customerId + " successfully", customer);
@@ -55,7 +55,7 @@ public class CustomerController {
     @DeleteMapping("/customers/{customerId}")
     public ResponseSuccess deleteById(
             @Min(value = 1, message = "Id must be greater than 0") @PathVariable int customerId)
-            throws ObjectNotFoundException {
+            throws ResourceNotFoundException {
 
         customerService.deleteById(customerId);
         return new ResponseSuccess(HttpStatus.NO_CONTENT, "Successfully deleted customer id: " + customerId);

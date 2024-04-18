@@ -1,7 +1,7 @@
-package com.wms.wms.dao.warehouse;
+package com.wms.wms.dao.impl;
 
+import com.wms.wms.dao.IWarehouseDAO;
 import com.wms.wms.entity.Warehouse;
-import com.wms.wms.exception.ObjectNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class WarehouseDAOImpl implements IWarehouseDAO{
+public class WarehouseDAOImpl implements IWarehouseDAO {
     private EntityManager entityManager;
 
     @Autowired

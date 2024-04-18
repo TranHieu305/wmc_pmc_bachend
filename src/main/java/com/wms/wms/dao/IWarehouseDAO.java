@@ -1,4 +1,4 @@
-package com.wms.wms.dao.warehouse;
+package com.wms.wms.dao;
 
 import com.wms.wms.entity.Warehouse;
 

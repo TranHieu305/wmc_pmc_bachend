@@ -1,4 +1,4 @@
-package com.wms.wms.dao.customer;
+package com.wms.wms.dao;
 
 import com.wms.wms.entity.Customer;
 import org.springframework.stereotype.Repository;

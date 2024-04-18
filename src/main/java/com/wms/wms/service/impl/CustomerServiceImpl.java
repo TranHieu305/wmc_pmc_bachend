@@ -1,8 +1,8 @@
 package com.wms.wms.service.impl;
 
-import com.wms.wms.dao.customer.ICustomerDAO;
+import com.wms.wms.dao.ICustomerDAO;
 import com.wms.wms.entity.Customer;
-import com.wms.wms.exception.ObjectNotFoundException;
+import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.service.ICustomerService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -23,10 +23,10 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     @Override
-    public Customer findById(int id) throws ObjectNotFoundException {
+    public Customer findById(int id) throws ResourceNotFoundException {
         Customer customer = customerDAO.findById(id);
         if (customer == null) {
-            throw new ObjectNotFoundException("Customer not found with id: " + id);
+            throw new ResourceNotFoundException("Customer not found with id: " + id);
         }
         return customer;
     }
@@ -39,10 +39,10 @@ public class CustomerServiceImpl implements ICustomerService {
 
     @Override
     @Transactional
-    public void deleteById(int id) throws ObjectNotFoundException {
+    public void deleteById(int id) throws ResourceNotFoundException {
         Customer customer = customerDAO.findById(id);
         if (customer == null) {
-            throw new ObjectNotFoundException("Customer not found with id: " + id);
+            throw new ResourceNotFoundException("Customer not found with id: " + id);
         }
 
         customerDAO.deleteById(id);

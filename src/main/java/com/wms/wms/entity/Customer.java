@@ -3,12 +3,9 @@ package com.wms.wms.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -18,7 +15,7 @@ import java.sql.Timestamp;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "customer")
-public class Customer {
+public class Customer extends AbstractEntity{
     // Define fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,13 +50,4 @@ public class Customer {
     @Column(name = "latitude")
     @Digits(integer = 10, fraction = 6, message = "Customer latitude must be decimal")
     private BigDecimal latitude = BigDecimal.ZERO;
-
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private Timestamp createdAt;
-
-    @LastModifiedDate
-    @Column(name = "modified_at")
-    private  Timestamp modifiedAt;
-
 }

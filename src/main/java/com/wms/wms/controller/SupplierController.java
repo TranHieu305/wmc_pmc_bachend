@@ -1,8 +1,8 @@
 package com.wms.wms.controller;
 
 import com.wms.wms.entity.Supplier;
-import com.wms.wms.exception.ObjectNotFoundException;
-import com.wms.wms.response.ResponseSuccess;
+import com.wms.wms.exception.ResourceNotFoundException;
+import com.wms.wms.dto.response.ResponseSuccess;
 import com.wms.wms.service.ISupplierService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -47,7 +47,7 @@ public class SupplierController {
     @GetMapping("/suppliers/{supplierId}")
     public ResponseSuccess findById(
             @Min(value = 1, message = "Id must be greater than 0") @PathVariable int supplierId)
-            throws ObjectNotFoundException {
+            throws ResourceNotFoundException {
 
         Supplier supplier = iSupplierService.findById(supplierId);
         return new ResponseSuccess(HttpStatus.OK, "Get the supplier id " + supplierId + " successfully", supplier);
@@ -56,7 +56,7 @@ public class SupplierController {
     @DeleteMapping("/suppliers/{supplierId}")
     public ResponseSuccess deleteById(
             @Min(value = 1, message = "Id must be greater than 0") @PathVariable int supplierId)
-            throws ObjectNotFoundException {
+            throws ResourceNotFoundException {
 
         iSupplierService.deleteById(supplierId);
         return new ResponseSuccess(HttpStatus.NO_CONTENT, "Successfully deleted supplier id: " + supplierId);

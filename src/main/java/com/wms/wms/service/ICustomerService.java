@@ -1,7 +1,7 @@
 package com.wms.wms.service;
 
 import com.wms.wms.entity.Customer;
-import com.wms.wms.exception.ObjectNotFoundException;
+import com.wms.wms.exception.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -10,11 +10,11 @@ public interface ICustomerService {
     List<Customer> findAll();
 
     // Get Customer by id
-    Customer findById(int id) throws ObjectNotFoundException;
+    Customer findById(int id) throws ResourceNotFoundException;
 
     // Save Customer
     Customer save(Customer warehouse);
 
     // Delete Customer by Id
-    void deleteById(int id) throws ObjectNotFoundException;
+    void deleteById(int id) throws ResourceNotFoundException;
 }

@@ -1,29 +1,20 @@
-package com.wms.wms.entity;
+package com.wms.wms.dto.request;
 
 import com.wms.wms.util.EnumPattern;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-
 @Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name="warehouse")
-public class Warehouse extends  AbstractEntity{
-    // Define constants
-    public static String STATUS_ACTIVE = "active";
-    public static String STATUS_INACTIVE = "inactive";
-
-    // Define fields
+public class WarehouseRequestDTO implements Serializable {
     @Column(name = "name")
     @NotBlank(message = "Warehouse name cannot be blank")
     @Size(min = 1, max = 255, message = "Warehouse name must be between 1 and 255 characters")
@@ -39,16 +30,16 @@ public class Warehouse extends  AbstractEntity{
 
     @Column(name = "longitude")
     @Digits(integer = 10, fraction = 6, message = "Warehouse longitude must be decimal")
-    private BigDecimal longitude = BigDecimal.ZERO;
+    private BigDecimal longitude;
 
     @Column(name = "latitude")
     @Digits(integer = 10, fraction = 6, message = "Warehouse latitude must be decimal")
-    private BigDecimal latitude = BigDecimal.ZERO;
+    private BigDecimal latitude;
 
     @Column(name = "supervisor")
     private  String supervisor;
 
     @Column(name = "status")
     @EnumPattern(name = "status", regexp = "active|inactive")
-    private  String status = STATUS_ACTIVE;
+    private  String status;
 }

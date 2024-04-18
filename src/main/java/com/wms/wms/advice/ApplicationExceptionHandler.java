@@ -1,11 +1,11 @@
 package com.wms.wms.advice;
 
-import com.wms.wms.exception.ObjectNotFoundException;
-import com.wms.wms.response.ResponseError;
+import com.wms.wms.exception.ResourceNotFoundException;
+import com.wms.wms.dto.response.ResponseError;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -49,14 +49,14 @@ public class ApplicationExceptionHandler {
 
 
     /**
-     * Exception handler for ObjectNotFoundException.
+     * Exception handler for ResourceNotFoundException.
      * Returns a map containing the exception message with key "message".
      *
-     * @param exception The ObjectNotFoundException that was thrown
+     * @param exception The ResourceNotFoundException that was thrown
      * @return A map containing the exception message
      */
-    @ExceptionHandler(ObjectNotFoundException.class)
-    public ResponseError handleObjectNotFound(ObjectNotFoundException exception) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseError handleObjectNotFound(ResourceNotFoundException exception) {
 
         return new ResponseError(HttpStatus.NOT_FOUND, exception.getMessage());
     }

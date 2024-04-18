@@ -1,51 +1,75 @@
 package com.wms.wms.service.impl;
 
-import com.wms.wms.dao.warehouse.IWarehouseDAO;
+import com.wms.wms.dao.IWarehouseDAO;
+import com.wms.wms.dto.request.WarehouseRequestDTO;
+import com.wms.wms.dto.response.WarehouseDetailResponse;
 import com.wms.wms.entity.Warehouse;
-import com.wms.wms.exception.ObjectNotFoundException;
+import com.wms.wms.exception.ResourceNotFoundException;
+import com.wms.wms.mapper.warehouse.WarehouseRequestMapper;
+import com.wms.wms.mapper.warehouse.WarehouseResponseMapper;
 import com.wms.wms.service.IWarehouseService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class WarehouseServiceImpl implements IWarehouseService {
-    private IWarehouseDAO iWarehouseDAO;
+    private final IWarehouseDAO warehouseDAO;
+    private final WarehouseRequestMapper warehouseRequestMapper;
+    private final WarehouseResponseMapper warehouseResponseMapper;
 
-    public WarehouseServiceImpl(IWarehouseDAO iWarehouseDAO) {
-        this.iWarehouseDAO = iWarehouseDAO;
+    @Override
+    public List<WarehouseDetailResponse> findAll() {
+        log.info("Get list warehouse service");
+        List<Warehouse> dbWarehouses = warehouseDAO.findAll();
+        return dbWarehouses.stream().map(warehouse -> warehouseResponseMapper.warehouseToResponse(warehouse)).toList();
     }
 
     @Override
-    public List<Warehouse> findAll() {
-        return iWarehouseDAO.findAll();
-    }
-
-    @Override
-    public Warehouse findById(int id) throws ObjectNotFoundException {
-        Warehouse warehouse = iWarehouseDAO.findById(id);
-
-        if (warehouse == null) {
-            throw new ObjectNotFoundException("Warehouse not found with id : " + id);
-        }
-        return warehouse;
+    public WarehouseDetailResponse findById(int id) {
+        log.info("Get warehouse detail service id: {}", id);
+        Warehouse warehouse = getWarehouseById(id);
+        return warehouseResponseMapper.warehouseToResponse(warehouse);
     }
 
     @Transactional
     @Override
-    public Warehouse save(Warehouse warehouse) {
-        return iWarehouseDAO.save(warehouse);
+    public WarehouseDetailResponse save(WarehouseRequestDTO warehouseRequestDTO) {
+        log.info("Add warehouse service");
+        Warehouse warehouse = warehouseRequestMapper.requestToWarehouse(warehouseRequestDTO);
+        Warehouse dbWarehouse = warehouseDAO.save(warehouse);
+        return warehouseResponseMapper.warehouseToResponse(dbWarehouse);
     }
 
     @Transactional
     @Override
-    public void deleteById(int id) throws ObjectNotFoundException{
-        Warehouse warehouse = iWarehouseDAO.findById(id);
-        if (warehouse == null) {
-            throw new ObjectNotFoundException("Warehouse not found with id : " + id);
-        }
+    public WarehouseDetailResponse update(int warehouseId, WarehouseRequestDTO request) {
+        log.info("Update warehouse service id: {}", warehouseId);
+        Warehouse dbWarehouse = getWarehouseById(warehouseId);
+        Warehouse updateWarehouse = warehouseRequestMapper.requestToWarehouse(request);
+        updateWarehouse.setId(dbWarehouse.getId());
 
-        iWarehouseDAO.deleteById(id);
+        Warehouse updatedDbWarehouse = warehouseDAO.save(updateWarehouse);
+        return warehouseResponseMapper.warehouseToResponse(updatedDbWarehouse);
     }
+
+    @Transactional
+    @Override
+    public void deleteById(int id) throws ResourceNotFoundException {
+        warehouseDAO.deleteById(id);
+    }
+
+    private Warehouse getWarehouseById(int id) {
+        Warehouse dbWarehouse = warehouseDAO.findById(id);
+        if (dbWarehouse == null) {
+            throw new ResourceNotFoundException("Warehouse not found with id : " + id);
+        }
+        return  dbWarehouse;
+    }
+
 }
