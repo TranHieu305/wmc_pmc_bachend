@@ -28,15 +28,13 @@ public class WarehouseDAOImpl implements IWarehouseDAO {
 
     @Override
     public Warehouse findById(int id) {
-        Warehouse theWarehouse = entityManager.find(Warehouse.class, id);
-        return theWarehouse;
+        Warehouse dbWarehouse = entityManager.find(Warehouse.class, id);
+        return dbWarehouse;
     }
 
     @Override
     public Warehouse save(Warehouse theWarehouse) {
         Warehouse dbWarehouse = entityManager.merge(theWarehouse);
-        entityManager.flush();
-        entityManager.refresh(dbWarehouse);
         return dbWarehouse;
     }
 

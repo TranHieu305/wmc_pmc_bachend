@@ -45,7 +45,8 @@ public class WarehouseController {
 
     // Get warehouse detail by id
     @GetMapping("/warehouses/{warehouseId}")
-    public ResponseEntity<ResponseData> findById(@Min(value = 0, message = "Id must be greater than 0") @PathVariable int warehouseId) {
+    public ResponseEntity<ResponseData> findById(@Min(value = 0, message = "Id must be greater than 0")
+                                                @PathVariable("warehouseId") int warehouseId) {
         log.info("Request get warehouseId={}", warehouseId);
         try {
             WarehouseDetailResponse response = warehouseService.findById(warehouseId);
@@ -74,7 +75,7 @@ public class WarehouseController {
     @PutMapping("/warehouses/{warehouseId}")
     public ResponseEntity<ResponseData> updateWarehouse(@RequestBody @Valid WarehouseRequestDTO warehouseRequestDTO,
                                                         @Min(value = 0, message = "Id must be greater than 0")
-                                                        @PathVariable int warehouseId) {
+                                                        @PathVariable("warehouseId") int warehouseId) {
         log.info("Request update warehouseId={}", warehouseId);
         try {
             WarehouseDetailResponse response = warehouseService.update(warehouseId, warehouseRequestDTO);
@@ -88,7 +89,7 @@ public class WarehouseController {
 
     @DeleteMapping("/warehouses/{warehouseId}")
     public ResponseEntity<ResponseData> deleteById(@Min(value = 0, message = "Id must be greater than 0")
-                                                       @PathVariable int warehouseId) {
+                                                   @PathVariable("warehouseId") int warehouseId) {
 
         log.info("Request delete warehouseId={}", warehouseId);
         try {

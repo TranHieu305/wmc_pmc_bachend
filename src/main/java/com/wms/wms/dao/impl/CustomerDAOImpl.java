@@ -33,8 +33,6 @@ public class CustomerDAOImpl implements ICustomerDAO {
     @Override
     public Customer save(Customer theCustomer) {
         Customer dbCustomer = entityManager.merge(theCustomer);
-        entityManager.flush();
-        entityManager.refresh(dbCustomer);
         return dbCustomer;
     }
 

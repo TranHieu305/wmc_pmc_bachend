@@ -31,8 +31,6 @@ public class SupplierDAOImpl implements ISupplierDAO {
     @Override
     public Supplier save(Supplier theSupplier) {
         Supplier dbSupplier = entityManager.merge(theSupplier);
-        entityManager.flush();
-        entityManager.refresh(dbSupplier);
         return dbSupplier;
     }
 
