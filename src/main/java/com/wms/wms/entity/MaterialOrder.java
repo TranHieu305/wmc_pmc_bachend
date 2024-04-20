@@ -1,6 +1,7 @@
 package com.wms.wms.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -53,9 +54,10 @@ public class MaterialOrder extends  AbstractEntity{
     private String status = STATUS_DRAFT;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "materialOrder")
+    @JsonManagedReference
     private List<OrderItem> orderItems;
 
-    public void saveItem(OrderItem newOrderItem) {
+    public void addItem(OrderItem newOrderItem) {
         if (newOrderItem == null) {
             return;
         }

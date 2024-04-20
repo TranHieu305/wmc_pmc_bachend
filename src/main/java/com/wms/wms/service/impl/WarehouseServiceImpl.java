@@ -20,30 +20,28 @@ import java.util.List;
 @Service
 public class WarehouseServiceImpl implements IWarehouseService {
     private final IWarehouseDAO warehouseDAO;
-    private final WarehouseRequestMapper warehouseRequestMapper;
-    private final WarehouseResponseMapper warehouseResponseMapper;
 
     @Override
     public List<WarehouseDetailResponse> findAll() {
         log.info("Get list warehouse service");
         List<Warehouse> dbWarehouses = warehouseDAO.findAll();
-        return dbWarehouses.stream().map(warehouse -> warehouseResponseMapper.warehouseToResponse(warehouse)).toList();
+        return dbWarehouses.stream().map(warehouse -> WarehouseResponseMapper.INSTANCE.warehouseToResponse(warehouse)).toList();
     }
 
     @Override
     public WarehouseDetailResponse findById(int id) {
         log.info("Get warehouse detail service id: {}", id);
         Warehouse warehouse = getWarehouseById(id);
-        return warehouseResponseMapper.warehouseToResponse(warehouse);
+        return WarehouseResponseMapper.INSTANCE.warehouseToResponse(warehouse);
     }
 
     @Transactional
     @Override
     public WarehouseDetailResponse save(WarehouseRequestDTO warehouseRequestDTO) {
         log.info("Add warehouse service");
-        Warehouse warehouse = warehouseRequestMapper.requestToWarehouse(warehouseRequestDTO);
+        Warehouse warehouse = WarehouseRequestMapper.INSTANCE.requestToWarehouse(warehouseRequestDTO);
         Warehouse dbWarehouse = warehouseDAO.save(warehouse);
-        return warehouseResponseMapper.warehouseToResponse(dbWarehouse);
+        return WarehouseResponseMapper.INSTANCE.warehouseToResponse(dbWarehouse);
     }
 
     @Transactional
@@ -51,11 +49,11 @@ public class WarehouseServiceImpl implements IWarehouseService {
     public WarehouseDetailResponse update(int warehouseId, WarehouseRequestDTO request) {
         log.info("Update warehouse service id: {}", warehouseId);
         Warehouse dbWarehouse = getWarehouseById(warehouseId);
-        Warehouse updateWarehouse = warehouseRequestMapper.requestToWarehouse(request);
+        Warehouse updateWarehouse = WarehouseRequestMapper.INSTANCE.requestToWarehouse(request);
         updateWarehouse.setId(dbWarehouse.getId());
 
         Warehouse updatedDbWarehouse = warehouseDAO.save(updateWarehouse);
-        return warehouseResponseMapper.warehouseToResponse(updatedDbWarehouse);
+        return WarehouseResponseMapper.INSTANCE.warehouseToResponse(updatedDbWarehouse);
     }
 
     @Transactional

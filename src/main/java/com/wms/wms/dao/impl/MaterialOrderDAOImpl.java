@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MaterialOrderImpl implements IMaterialOrderDAO {
-    private EntityManager entityManager;
+public class MaterialOrderDAOImpl implements IMaterialOrderDAO {
+    private final EntityManager entityManager;
 
     @Autowired
-    public MaterialOrderImpl(EntityManager entityManager) {
+    public MaterialOrderDAOImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
@@ -19,5 +19,11 @@ public class MaterialOrderImpl implements IMaterialOrderDAO {
     public MaterialOrder save(MaterialOrder theMaterialOrder) {
         MaterialOrder dbMaterialOrder = entityManager.merge(theMaterialOrder);
         return dbMaterialOrder;
+    }
+
+    @Override
+    public MaterialOrder findById(int id) {
+        MaterialOrder dbOrder = entityManager.find(MaterialOrder.class, id);
+        return dbOrder;
     }
 }

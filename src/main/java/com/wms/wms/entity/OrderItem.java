@@ -1,5 +1,6 @@
 package com.wms.wms.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -41,7 +42,8 @@ public class OrderItem extends AbstractEntity {
     @Digits(integer = 10, fraction = 6, message = "Order item price must be decimal")
     private BigDecimal price;
 
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
+    @JsonBackReference
     private MaterialOrder materialOrder;
 }

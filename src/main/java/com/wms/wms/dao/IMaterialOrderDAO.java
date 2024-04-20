@@ -6,7 +6,7 @@ public interface IMaterialOrderDAO {
 
 //    List<MaterialOrder> findAll();
 //
-//    MaterialOrder findById(int id);
+    MaterialOrder findById(int id);
 
     MaterialOrder save(MaterialOrder materialOrder);
 

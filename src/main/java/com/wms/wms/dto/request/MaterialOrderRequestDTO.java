@@ -1,7 +1,6 @@
 package com.wms.wms.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wms.wms.entity.OrderItem;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -34,5 +33,5 @@ public class MaterialOrderRequestDTO {
 
     private String status;
 
-    private List<OrderItem> orderItems;
+    private List<OrderItemRequestDTO> orderItems;
 }
