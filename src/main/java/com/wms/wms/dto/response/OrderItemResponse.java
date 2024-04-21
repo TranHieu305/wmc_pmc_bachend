@@ -1,5 +1,6 @@
 package com.wms.wms.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wms.wms.entity.MaterialOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,5 +23,5 @@ public class OrderItemResponse {
     private BigDecimal price;
     private Timestamp createdAt;
     private Timestamp modifiedAt;
-    private MaterialOrder materialOrder;
+    private int orderId;
 }

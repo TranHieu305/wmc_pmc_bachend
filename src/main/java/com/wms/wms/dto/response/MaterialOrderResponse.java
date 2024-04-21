@@ -1,10 +1,8 @@
 package com.wms.wms.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wms.wms.entity.OrderItem;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -24,5 +22,6 @@ public class MaterialOrderResponse {
     private String status;
     private Timestamp createdAt;
     private Timestamp modifiedAt;
-    private List<OrderItem> orderItems;
+    @Setter
+    private List<OrderItemResponse> orderItems;
 }
