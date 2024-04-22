@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -33,7 +34,7 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
     @Transactional
     @Override
     public MaterialOrderResponse save(MaterialOrderRequestDTO requestDTO) {
-        log.info("Request add material order");
+
         // Convert RequestDTO to entity
         MaterialOrder materialOrder = MaterialOrderRequestMapper.INSTANCE.requestToOrder(requestDTO);
         List<OrderItem> orderItemList = convertToItems(requestDTO.getOrderItems());
@@ -41,20 +42,56 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
 
         // Save to db
         MaterialOrder dbOrder = materialOrderDAO.save(materialOrder);
-
+        log.info("Add material order successfully");
         return convertOrderToResponse(dbOrder);
     }
 
     @Override
+    @Transactional
+    public MaterialOrderResponse update(MaterialOrderRequestDTO orderRequestDTO, int orderId) {
+        MaterialOrder oldOrder = getMaterialOrder(orderId);
+
+        // Convert RequestDTO to entity
+        MaterialOrder newOrder = MaterialOrderRequestMapper.INSTANCE.requestToOrder(orderRequestDTO);
+        List<OrderItem> orderItemList = convertToItems(orderRequestDTO.getOrderItems());
+        orderItemList.forEach(newOrder::addItem);
+        newOrder.setId(oldOrder.getId());
+
+        MaterialOrder newDbOrder = materialOrderDAO.save(newOrder);
+        log.info("Update material order Id: {} successfully", newDbOrder.getId());
+        return convertOrderToResponse(newDbOrder);
+    }
+
+    @Override
     public MaterialOrderResponse findById(int orderId) {
-        log.info("Get Material_order detail service id: {}", orderId);
         MaterialOrder dbOrder = getMaterialOrder(orderId);
+        log.info("Get Material_order detail service id: {} successfully", orderId);
         return convertOrderToResponse(dbOrder);
     }
 
 
+    @Override
+    public List<MaterialOrderResponse> findAll() {
+        List<MaterialOrder> materialOrderList = materialOrderDAO.findAll();
+        List<MaterialOrderResponse> orderResponseList = new ArrayList<>();
+        for (MaterialOrder order : materialOrderList) {
+            MaterialOrderResponse response = convertOrderToResponse(order);
+            orderResponseList.add(response);
+        }
+        log.info("Get all material orders successfully");
+        return orderResponseList;
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(int orderId) {
+        materialOrderDAO.deleteById(orderId);
+        log.info("Delete material order id: {} successfully", orderId);
+    }
+
+
     /**
-     * Find Material order by id
+     * Find Material order by id from Database
      *
      * @param orderId order ID
      * @return MaterialOrder || ResourceNotFoundException

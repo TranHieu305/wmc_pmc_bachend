@@ -59,6 +59,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
     @Transactional
     @Override
     public void deleteById(int id) throws ResourceNotFoundException {
+        log.info("Delete warehouse by Id: {}", id);
         warehouseDAO.deleteById(id);
     }
 
