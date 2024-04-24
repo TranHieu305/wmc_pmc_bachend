@@ -104,3 +104,42 @@ CREATE TABLE `order_item` (
      CONSTRAINT `FK_ORDER` FOREIGN KEY (`order_id`) REFERENCES `material_order`(`id`)
      ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `product_category`
+--
+DROP TABLE IF EXISTS `product_category`;
+CREATE TABLE `product_category` (
+    `id` int NOT NULL AUTO_INCREMENT,
+
+    `name` varchar(255) UNIQUE NOT NULL,
+    `description` varchar(255) DEFAULT NULL,
+
+    `created_at` datetime(6) NULL,
+    `modified_at` datetime(6) NULL,
+
+     PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `product`
+--
+DROP TABLE IF EXISTS `product`;
+CREATE TABLE `product` (
+    `id` int NOT NULL AUTO_INCREMENT,
+
+    `name` varchar(255) UNIQUE NOT NULL,
+    `description` varchar(255) DEFAULT NULL,
+    `code` varchar(63) UNIQUE NOT NULL,
+    `uom` varchar(63) DEFAULT NULL,
+    `category_id` int NOT NULL,
+    `custom_fields` text,
+
+    `created_at` datetime(6) NULL,
+    `modified_at` datetime(6) NULL,
+
+    PRIMARY KEY (`id`),
+    KEY `FK_PRODUCT_idx` (`category_id`),
+    CONSTRAINT `FK_PRODUCT` FOREIGN KEY (`category_id`) REFERENCES `product_category`(`id`)
+    ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
