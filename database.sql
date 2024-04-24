@@ -50,9 +50,10 @@ CREATE TABLE `warehouse` (
 DROP TABLE IF EXISTS `supplier`;
 CREATE TABLE `supplier` (
     `id` int NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) NOT NULL,
+    `description` varchar(255) DEFAULT NULL,
     `address` varchar(255) DEFAULT NULL,
     `email` varchar(255) DEFAULT NULL,
-    `name` varchar(255) NOT NULL,
     `phone` varchar(255) DEFAULT NULL,
     `created_at` datetime(6) NULL,
     `modified_at` datetime(6) NULL,

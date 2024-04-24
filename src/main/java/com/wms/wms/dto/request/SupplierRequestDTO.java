@@ -1,5 +1,6 @@
 package com.wms.wms.dto.request;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -14,6 +15,9 @@ public class SupplierRequestDTO {
     @NotBlank(message = "Supplier name cannot be blank")
     @Size(min = 1, max = 255, message = "Supplier name must be between 1 and 255 characters")
     private String name;
+
+    @Size(max = 255, message = "Customer description must be between 1 and 255 characters")
+    private  String description;
 
     @Size(max = 255, message = "Supplier address must be between 1 and 255 characters")
     private String address;

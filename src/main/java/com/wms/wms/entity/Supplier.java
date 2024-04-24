@@ -21,6 +21,10 @@ public class Supplier extends AbstractEntity{
     @Size(min = 1, max = 255, message = "Supplier name must be between 1 and 255 characters")
     private String name;
 
+    @Column(name = "description")
+    @Size(max = 255, message = "Customer description must be between 1 and 255 characters")
+    private  String description;
+
     @Column(name = "address")
     @Size(max = 255, message = "Supplier address must be between 1 and 255 characters")
     private String address;
