@@ -57,7 +57,7 @@ public class SupplierController {
 
     @PutMapping("/suppliers")
     public ResponseEntity<ResponseData> updateSupplier(@RequestBody @Valid SupplierRequestDTO requestDTO) {
-        log.info("Request add supplier");
+        log.info("Request update supplier id: {}", requestDTO.getId());
         try {
             SupplierDetailResponse response = supplierService.save(requestDTO);
             return new ResponseSuccess(HttpStatus.OK, "Update supplier successfully",response);
@@ -71,7 +71,8 @@ public class SupplierController {
     // Get supplier by id
     @GetMapping("/suppliers/{supplierId}")
     public ResponseEntity<ResponseData> findById(
-            @Min(value = 1, message = "Id must be greater than 0") @PathVariable int supplierId) {
+            @Min(value = 1, message = "Id must be greater than 0")
+            @PathVariable("supplierId") int supplierId) {
 
         log.info("Get Supplier detail id: {}", supplierId);
         try {
@@ -86,7 +87,8 @@ public class SupplierController {
 
     @DeleteMapping("/suppliers/{supplierId}")
     public ResponseEntity<ResponseData> deleteById(
-            @Min(value = 1, message = "Id must be greater than 0") @PathVariable int supplierId) {
+            @Min(value = 1, message = "Id must be greater than 0")
+            @PathVariable("supplierId") int supplierId) {
 
         log.info("Request delete Supplier Id={}", supplierId);
         try {

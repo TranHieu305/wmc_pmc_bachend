@@ -25,6 +25,11 @@ public class Warehouse extends  AbstractEntity{
     public static String STATUS_INACTIVE = "inactive";
 
     // Define fields
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
+
     @Column(name = "name")
     @NotBlank(message = "Warehouse name cannot be blank")
     @Size(min = 1, max = 255, message = "Warehouse name must be between 1 and 255 characters")

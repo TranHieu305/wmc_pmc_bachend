@@ -15,6 +15,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "supplier")
 public class Supplier extends AbstractEntity{
     // Define fields
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
 
     @Column(name = "name")
     @NotBlank(message = "Supplier name cannot be blank")

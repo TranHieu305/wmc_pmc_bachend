@@ -12,10 +12,6 @@ import java.sql.Timestamp;
 @Setter
 @MappedSuperclass
 public abstract class AbstractEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

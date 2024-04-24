@@ -49,7 +49,7 @@ public class SupplierServiceImpl implements ISupplierService {
         }
         Supplier supplier = SupplierRequestMapper.INSTANCE.requestToSupplier(requestDTO);
         Supplier dbSupplier = supplierDAO.save(supplier);
-        log.info("Add supplier list successfully");
+        log.info("Update supplier successfully");
         return SupplierResponseMapper.INSTANCE.supplierToResponse(dbSupplier);
     }
 
