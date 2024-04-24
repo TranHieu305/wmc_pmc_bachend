@@ -65,7 +65,7 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
     @Override
     public MaterialOrderResponse findById(int orderId) {
         MaterialOrder dbOrder = getMaterialOrder(orderId);
-        log.info("Get Material_order detail service id: {} successfully", orderId);
+        log.info("Get Material_order detail id: {} successfully", orderId);
         return convertOrderToResponse(dbOrder);
     }
 
