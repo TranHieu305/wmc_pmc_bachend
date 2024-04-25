@@ -61,6 +61,14 @@ public class SupplierServiceImpl implements ISupplierService {
         log.info("Delete supplier id: {} successfully", id);
     }
 
+    /**
+     * Retrieves the supplier with the given ID from the database.
+     * Throws a ResourceNotFoundException if the supplier does not exist.
+     *
+     * @param id The ID of the supplier to retrieve
+     * @return The supplier entity from the database
+     * @throws ResourceNotFoundException If the supplier with the given ID does not exist
+     */
     private Supplier getSupplier(int id) {
         Supplier dbSupplier = supplierDAO.findById(id);
         if (dbSupplier == null) {

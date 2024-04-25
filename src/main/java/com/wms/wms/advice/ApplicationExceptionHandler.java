@@ -2,6 +2,7 @@ package com.wms.wms.advice;
 
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.dto.response.ResponseError;
+import com.wms.wms.exception.UniqueConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -37,10 +38,9 @@ public class ApplicationExceptionHandler {
 
     /**
      * Exception handler for MethodArgumentTypeMismatchException.
-     * Returns a map containing the exception message with key "message".
      *
      * @param exception The MethodArgumentTypeMismatchException that was thrown.
-     * @return A map containing the exception message.
+     * @return A ResponseError containing the exception message.
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseError handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException exception) {
@@ -50,15 +50,25 @@ public class ApplicationExceptionHandler {
 
     /**
      * Exception handler for ResourceNotFoundException.
-     * Returns a map containing the exception message with key "message".
      *
      * @param exception The ResourceNotFoundException that was thrown
-     * @return A map containing the exception message
+     * @return A ResponseError containing the exception message
      */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseError handleObjectNotFound(ResourceNotFoundException exception) {
 
         return new ResponseError(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    /**
+     * Exception handler for UniqueConstraintViolationException.
+     *
+     * @param exception The UniqueConstraintViolationException that was thrown
+     * @return A ResponseError containing the exception message
+     */
+    @ExceptionHandler(UniqueConstraintViolationException.class)
+    public ResponseError handleUniqueConstraintViolation(UniqueConstraintViolationException exception) {
+        return new ResponseError(HttpStatus.CONFLICT, exception.getMessage());
     }
 
 }

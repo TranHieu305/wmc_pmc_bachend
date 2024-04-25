@@ -6,9 +6,6 @@ import org.springframework.http.HttpStatus;
 import java.io.Serializable;
 
 public class ResponseData<T> implements Serializable {
-    public static final boolean RESPONSE_STATUS_SUCCESS = true;
-    public static final boolean RESPONSE_STATUS_FAIL = false;
-
     private final int status;
     private final String message;
     @JsonInclude(JsonInclude.Include.NON_NULL)

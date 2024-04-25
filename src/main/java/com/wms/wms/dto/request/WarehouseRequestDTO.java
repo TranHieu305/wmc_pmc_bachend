@@ -24,10 +24,12 @@ public class WarehouseRequestDTO implements Serializable {
     private String name;
 
     @Column(name = "description")
+    @NotBlank(message = "Warehouse description cannot be blank")
     @Size(min = 1, max = 255, message = "Warehouse description must be between 1 and 255 characters")
     private  String description;
 
     @Column(name = "address")
+    @NotBlank(message = "Warehouse address cannot be blank")
     @Size(min = 1, max = 255, message = "Warehouse address must be between 1 and 255 characters")
     private String address;
 
