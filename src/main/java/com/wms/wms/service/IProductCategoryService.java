@@ -6,11 +6,8 @@ import com.wms.wms.dto.response.ProductCategoryDetailResponse;
 import java.util.List;
 
 public interface IProductCategoryService {
-    // Add new Product Category order
+    // Create/ Update Product Category order
     ProductCategoryDetailResponse save(ProductCategoryRequestDTO requestDTO);
-
-    // Update Product Category
-    ProductCategoryDetailResponse update(ProductCategoryRequestDTO requestDTO);
 
     // Find Product Category by categoryId
     ProductCategoryDetailResponse findById(int categoryId);
@@ -18,6 +15,9 @@ public interface IProductCategoryService {
     // Find all Product Category
     List<ProductCategoryDetailResponse> findAll();
 
-    // Delete Product Category by Id
+    // Delete Product Category by ID
     void deleteById(int id);
+
+    // Check if the specified product category exists with given ID
+    void verifyCategoryExists(int categoryId);
 }

@@ -45,7 +45,7 @@ public class SupplierServiceImpl implements ISupplierService {
     @Transactional
     public SupplierDetailResponse save(SupplierRequestDTO requestDTO) {
         if (requestDTO.getId() != 0) {
-            Supplier dbSupplier = getSupplier(requestDTO.getId()); // Check if supplier with ID is exist
+            Supplier dbSupplier = getSupplier(requestDTO.getId()); // Check if supplier with given ID is exist
         }
         Supplier supplier = SupplierRequestMapper.INSTANCE.requestToSupplier(requestDTO);
         Supplier dbSupplier = supplierDAO.save(supplier);
