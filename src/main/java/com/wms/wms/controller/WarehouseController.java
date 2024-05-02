@@ -68,7 +68,7 @@ public class WarehouseController {
         }
         catch (Exception exc) {
             log.error(ERROR_MESSAGE, exc.getMessage(), exc.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST, "Add warehouse  fail");
+            return new ResponseError(HttpStatus.BAD_REQUEST, "Add warehouse fail");
         }
     }
 

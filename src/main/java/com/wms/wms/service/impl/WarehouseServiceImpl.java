@@ -23,33 +23,33 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     @Override
     public List<WarehouseDetailResponse> findAll() {
-        log.info("Get list warehouse service");
         List<Warehouse> dbWarehouses = warehouseDAO.findAll();
+        log.info("Get list warehouse successfully");
         return dbWarehouses.stream().map(warehouse -> WarehouseResponseMapper.INSTANCE.warehouseToResponse(warehouse)).toList();
     }
 
     @Override
     public WarehouseDetailResponse findById(int id) {
-        log.info("Get warehouse detail service id: {}", id);
         Warehouse warehouse = getWarehouseById(id);
+        log.info("Get warehouse detail service id: {} successfully", id);
         return WarehouseResponseMapper.INSTANCE.warehouseToResponse(warehouse);
     }
 
     @Transactional
     @Override
     public WarehouseDetailResponse save(WarehouseRequestDTO warehouseRequestDTO) {
-        log.info("Add warehouse service");
         Warehouse warehouse = WarehouseRequestMapper.INSTANCE.requestToWarehouse(warehouseRequestDTO);
         Warehouse dbWarehouse = warehouseDAO.save(warehouse);
+        log.info("Add warehouse service successfully");
         return WarehouseResponseMapper.INSTANCE.warehouseToResponse(dbWarehouse);
     }
 
     @Transactional
     @Override
     public WarehouseDetailResponse update(int warehouseId, WarehouseRequestDTO request) {
-        log.info("Update warehouse service id: {}", warehouseId);
         Warehouse dbWarehouse = getWarehouseById(warehouseId);
         Warehouse updateWarehouse = WarehouseRequestMapper.INSTANCE.requestToWarehouse(request);
+        log.info("Update warehouse service id: {} successfully", warehouseId);
         updateWarehouse.setId(dbWarehouse.getId());
 
         Warehouse updatedDbWarehouse = warehouseDAO.save(updateWarehouse);
@@ -59,8 +59,9 @@ public class WarehouseServiceImpl implements IWarehouseService {
     @Transactional
     @Override
     public void deleteById(int id) throws ResourceNotFoundException {
-        log.info("Delete warehouse by Id: {}", id);
-        warehouseDAO.deleteById(id);
+        Warehouse warehouse = getWarehouseById(id);
+        warehouseDAO.deleteById(warehouse);
+        log.info("Delete warehouse by Id: {} successfully", id);
     }
 
     private Warehouse getWarehouseById(int id) {
@@ -70,5 +71,4 @@ public class WarehouseServiceImpl implements IWarehouseService {
         }
         return  dbWarehouse;
     }
-
 }

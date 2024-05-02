@@ -15,6 +15,6 @@ public interface IWarehouseDAO {
     // Save warehouse
     Warehouse save(Warehouse theWarehouse);
 
-    // Delete warehouse by Id
-    void deleteById(int id);
+    // Delete warehouse by ID
+    void deleteById(Warehouse warehouse);
 }

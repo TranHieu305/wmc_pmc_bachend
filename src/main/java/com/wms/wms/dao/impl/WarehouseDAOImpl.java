@@ -1,5 +1,6 @@
 package com.wms.wms.dao.impl;
 
+import com.wms.wms.dao.AbstractDAO;
 import com.wms.wms.dao.IWarehouseDAO;
 import com.wms.wms.entity.Warehouse;
 import jakarta.persistence.EntityManager;
@@ -10,37 +11,32 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class WarehouseDAOImpl implements IWarehouseDAO {
+public class WarehouseDAOImpl extends AbstractDAO<Warehouse> implements IWarehouseDAO {
     private EntityManager entityManager;
 
     @Autowired
     public WarehouseDAOImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
+        super(entityManager);
     }
 
 
     @Override
     public List<Warehouse> findAll() {
-        TypedQuery<Warehouse> query = entityManager.createQuery("FROM Warehouse", Warehouse.class);
-        List<Warehouse> warehouses = query.getResultList();
-        return warehouses;
+        return super.findAll(Warehouse.class);
     }
 
     @Override
     public Warehouse findById(int id) {
-        Warehouse dbWarehouse = entityManager.find(Warehouse.class, id);
-        return dbWarehouse;
+        return super.findById(Warehouse.class, id);
     }
 
     @Override
     public Warehouse save(Warehouse theWarehouse) {
-        Warehouse dbWarehouse = entityManager.merge(theWarehouse);
-        return dbWarehouse;
+      return super.save(theWarehouse);
     }
 
     @Override
-    public void deleteById(int id) {
-        Warehouse theWarehouse = entityManager.find(Warehouse.class, id);
-        entityManager.remove(theWarehouse);
+    public void deleteById(Warehouse warehouse) {
+        super.delete(warehouse);
     }
 }

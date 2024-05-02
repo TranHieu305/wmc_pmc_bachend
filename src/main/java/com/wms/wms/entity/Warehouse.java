@@ -56,6 +56,4 @@ public class Warehouse extends  AbstractEntity{
 
     @Column(name = "status")
     private  String status = STATUS_ACTIVE;
-
-
 }

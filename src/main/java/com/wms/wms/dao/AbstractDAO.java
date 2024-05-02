@@ -20,7 +20,7 @@ public abstract class AbstractDAO<T> {
      @param id The ID of the entity to retrieve.
      @return The entity retrieved from the database, or null if no entity with the specified ID is found.
      */
-    public T findByID(Class<T> clazz, int id) {
+    public T findById(Class<T> clazz, int id) {
         return entityManager.find(clazz, id);
     }
 
@@ -33,7 +33,7 @@ public abstract class AbstractDAO<T> {
     public List<T> findAll(Class<T> clazz) {
         String entityName = clazz.getSimpleName();
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT o FROM ").append(entityName);
+        sql.append("FROM ").append(entityName);
 
         TypedQuery<T> query = entityManager.createQuery(sql.toString(), clazz);
         return query.getResultList();
