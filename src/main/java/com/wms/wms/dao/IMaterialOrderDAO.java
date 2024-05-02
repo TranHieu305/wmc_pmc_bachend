@@ -12,5 +12,5 @@ public interface IMaterialOrderDAO {
 
     MaterialOrder save(MaterialOrder materialOrder);
 
-    void deleteById(int id);
+    void delete(MaterialOrder materialOrder);
 }

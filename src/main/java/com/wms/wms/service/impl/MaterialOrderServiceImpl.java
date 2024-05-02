@@ -85,7 +85,8 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
     @Override
     @Transactional
     public void deleteById(int orderId) {
-        materialOrderDAO.deleteById(orderId);
+        MaterialOrder materialOrder = getMaterialOrder(orderId);
+        materialOrderDAO.delete(materialOrder);
         log.info("Delete material order id: {} successfully", orderId);
     }
 

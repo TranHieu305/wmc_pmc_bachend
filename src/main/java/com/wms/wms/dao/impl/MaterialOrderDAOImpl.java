@@ -1,5 +1,6 @@
 package com.wms.wms.dao.impl;
 
+import com.wms.wms.dao.AbstractDAO;
 import com.wms.wms.dao.IMaterialOrderDAO;
 import com.wms.wms.entity.MaterialOrder;
 import jakarta.persistence.EntityManager;
@@ -10,35 +11,31 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class MaterialOrderDAOImpl implements IMaterialOrderDAO {
-    private final EntityManager entityManager;
+public class MaterialOrderDAOImpl extends AbstractDAO<MaterialOrder> implements IMaterialOrderDAO {
+    private EntityManager entityManager;
 
     @Autowired
     public MaterialOrderDAOImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
+        super(entityManager);
     }
 
     @Override
     public MaterialOrder save(MaterialOrder theMaterialOrder) {
-        MaterialOrder dbMaterialOrder = entityManager.merge(theMaterialOrder);
-        return dbMaterialOrder;
+      return super.save(theMaterialOrder);
     }
 
     @Override
     public MaterialOrder findById(int id) {
-        MaterialOrder dbOrder = entityManager.find(MaterialOrder.class, id);
-        return dbOrder;
+        return super.findById(MaterialOrder.class, id);
     }
 
     @Override
     public List<MaterialOrder> findAll() {
-        TypedQuery<MaterialOrder> query = entityManager.createQuery("FROM MaterialOrder", MaterialOrder.class);
-        return query.getResultList();
+       return super.findAll(MaterialOrder.class);
     }
 
     @Override
-    public void deleteById(int id) {
-        MaterialOrder order = entityManager.find(MaterialOrder.class, id);
-        entityManager.remove(order);
+    public void delete(MaterialOrder materialOrder) {
+        super.delete(materialOrder);
     }
 }
