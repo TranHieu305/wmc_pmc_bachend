@@ -47,6 +47,13 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
     }
 
     @Override
+    public List<ProductCategoryDetailResponse> findByName(String name) {
+        List<ProductCategory> categories = productCategoryDAO.findByName(name);
+        log.info("Get Product category detail by name: {} successfully ", name);
+        return categories.stream().map(ProductCategoryResponseMapper.INSTANCE::categoryToResponse).toList();
+    }
+
+    @Override
     public List<ProductCategoryDetailResponse> findAll() {
         List<ProductCategory> categorieList = productCategoryDAO.findAll();
         List<ProductCategoryDetailResponse> categoryDetailResponseList = categorieList.stream().map(

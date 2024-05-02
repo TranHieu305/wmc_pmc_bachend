@@ -12,6 +12,9 @@ public interface IProductCategoryService {
     // Find Product Category by categoryId
     ProductCategoryDetailResponse findById(int categoryId);
 
+    // Find Product Category by category name
+    List<ProductCategoryDetailResponse> findByName(String name);
+
     // Find all Product Category
     List<ProductCategoryDetailResponse> findAll();
 

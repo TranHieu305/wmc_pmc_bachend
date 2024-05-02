@@ -1,16 +1,14 @@
 package com.wms.wms.dto.request;
 
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductCategoryRequestDTO {
+    @Setter
     private int id;
 
     @Size(min = 1, max = 255, message = "Product category name must be between 1 and 255 characters")

@@ -26,7 +26,7 @@ public class ProductCategoryDAOImpl extends AbstractDAO<ProductCategory> impleme
 
     @Override
     public List<ProductCategory> findByName(String categoryName) {
-        String sql = "SELECT o FROM ProductCategory WHERE o.name = :0";
+        String sql = "SELECT p FROM ProductCategory WHERE p.name = :0";
         return super.findMany(ProductCategory.class, sql, categoryName);
     }
 
