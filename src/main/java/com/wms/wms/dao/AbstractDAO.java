@@ -2,6 +2,7 @@ package com.wms.wms.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ public abstract class AbstractDAO<T> {
 
     protected EntityManager entityManager;
 
+    @Autowired
     public AbstractDAO(EntityManager entityManager) {
         this.entityManager = entityManager;
     }

@@ -15,6 +15,6 @@ public interface ISupplierDAO {
     Supplier save(Supplier theSupplier);
 
     // Delete Supplier by Id
-    void deleteById(int id);
+    void delete(Supplier supplier);
 
 }

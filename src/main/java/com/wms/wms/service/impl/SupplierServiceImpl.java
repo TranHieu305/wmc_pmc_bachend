@@ -57,7 +57,7 @@ public class SupplierServiceImpl implements ISupplierService {
     @Transactional
     public void deleteById(int id) {
         Supplier supplier = getSupplier(id); // Validate id
-        supplierDAO.deleteById(id);
+        supplierDAO.delete(supplier);
         log.info("Delete supplier id: {} successfully", id);
     }
 

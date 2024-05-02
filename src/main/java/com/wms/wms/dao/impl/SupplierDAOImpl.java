@@ -1,5 +1,6 @@
 package com.wms.wms.dao.impl;
 
+import com.wms.wms.dao.AbstractDAO;
 import com.wms.wms.dao.ISupplierDAO;
 import com.wms.wms.entity.Supplier;
 import jakarta.persistence.EntityManager;
@@ -9,34 +10,29 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class SupplierDAOImpl implements ISupplierDAO {
+public class SupplierDAOImpl extends AbstractDAO<Supplier> implements ISupplierDAO {
     private EntityManager entityManager;
     public SupplierDAOImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
+        super(entityManager);
     }
 
     @Override
     public List<Supplier> findAll() {
-        TypedQuery<Supplier> query = entityManager.createQuery("FROM Supplier", Supplier.class);
-        List<Supplier> suppliers = query.getResultList();
-        return suppliers;
+       return super.findAll(Supplier.class);
     }
 
     @Override
     public Supplier findById(int id) {
-        Supplier theSupplier = entityManager.find(Supplier.class, id);
-        return theSupplier;
+       return super.findById(Supplier.class, id);
     }
 
     @Override
     public Supplier save(Supplier theSupplier) {
-        Supplier dbSupplier = entityManager.merge(theSupplier);
-        return dbSupplier;
+      return super.save(theSupplier);
     }
 
     @Override
-    public void deleteById(int id) {
-        Supplier theSupplier = entityManager.find(Supplier.class, id);
-        entityManager.remove(theSupplier);
+    public void delete(Supplier supplier) {
+      super.delete(supplier);
     }
 }
