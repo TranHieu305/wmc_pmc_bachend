@@ -30,6 +30,6 @@ public class ProductCategory extends AbstractEntity{
     private String name;
 
     @Column(name = "description")
-    @Size(min = 1, max = 255, message = "Product category description must be between 1 and 255 characters")
+    @Size(max = 255, message = "Product category description must be under 256 characters")
     private  String description;
 }
