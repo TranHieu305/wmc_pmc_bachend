@@ -14,6 +14,6 @@ public class ProductCategoryRequestDTO {
     @Size(min = 1, max = 255, message = "Product category name must be between 1 and 255 characters")
     private String name;
 
-    @Size(min = 1, max = 255, message = "Product category description must be between 1 and 255 characters")
+    @Size(max = 255, message = "Product category description must be under 256 characters")
     private  String description;
 }
