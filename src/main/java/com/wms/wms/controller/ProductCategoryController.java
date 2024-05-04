@@ -28,41 +28,23 @@ public class ProductCategoryController {
     @GetMapping("/product-categories")
     public ResponseEntity<ResponseData> findAllCategories() {
         log.info("Request get product-categories list");
-        try {
-            List<ProductCategoryDetailResponse> response = categoryService.findAll();
-            return new ResponseSuccess(HttpStatus.OK, "Get product-categories list successfully", response);
-        }
-        catch (Exception exc) {
-            log.error(ERROR_MESSAGE, exc.getMessage(), exc.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST, "Get product-categories list fail");
-        }
+        List<ProductCategoryDetailResponse> response = categoryService.findAll();
+        return new ResponseSuccess(HttpStatus.OK, "Get product-categories list successfully", response);
     }
 
     @PostMapping("/product-categories")
     public ResponseEntity<ResponseData> addProductCategory(@RequestBody @Valid ProductCategoryRequestDTO requestDTO) {
         log.info("Request add product category");
-        try {
-            requestDTO.setId(0);
-            ProductCategoryDetailResponse response = categoryService.save(requestDTO);
-            return new ResponseSuccess(HttpStatus.OK, "Create product category successfully",response);
-        }
-        catch (Exception exception) {
-            log.error(ERROR_MESSAGE, exception.getMessage(), exception.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST, "Create product category fail");
-        }
+        requestDTO.setId(0);
+        ProductCategoryDetailResponse response = categoryService.save(requestDTO);
+        return new ResponseSuccess(HttpStatus.OK, "Create product category successfully",response);
     }
 
     @PutMapping("/product-categories")
     public ResponseEntity<ResponseData> updateProductCategory(@RequestBody @Valid ProductCategoryRequestDTO requestDTO) {
         log.info("Request update product category id: {}", requestDTO.getId());
-        try {
-            ProductCategoryDetailResponse response = categoryService.save(requestDTO);
-            return new ResponseSuccess(HttpStatus.OK, "Update product category successfully",response);
-        }
-        catch (Exception exception) {
-            log.error(ERROR_MESSAGE, exception.getMessage(), exception.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST, "Update product category fail");
-        }
+        ProductCategoryDetailResponse response = categoryService.save(requestDTO);
+        return new ResponseSuccess(HttpStatus.OK, "Update product category successfully",response);
     }
 
     // Get product-category by id
@@ -72,27 +54,15 @@ public class ProductCategoryController {
             @PathVariable("categoryId") int categoryId) {
 
         log.info("Get product category detail id: {}", categoryId);
-        try {
-            ProductCategoryDetailResponse response = categoryService.findById(categoryId);
-            return new ResponseSuccess(HttpStatus.OK, "Get product category detail successfully", response);
-        }
-        catch (Exception exception) {
-            log.error(ERROR_MESSAGE, exception.getMessage(), exception.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST, "Get product category detail fail");
-        }
+        ProductCategoryDetailResponse response = categoryService.findById(categoryId);
+        return new ResponseSuccess(HttpStatus.OK, "Get product category detail successfully", response);
     }
 
     @GetMapping("/product-categories/find-by-name")
     public ResponseEntity<ResponseData> findByName(@RequestParam String name) {
         log.info("Get product category detail name: {}", name);
-        try {
-            List<ProductCategoryDetailResponse> response = categoryService.findByName(name);
-            return new ResponseSuccess(HttpStatus.OK, "Get product category by name successfully", response);
-        }
-        catch (Exception exception) {
-            log.error(ERROR_MESSAGE, exception.getMessage(), exception.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST, "Get product category by name fail");
-        }
+        List<ProductCategoryDetailResponse> response = categoryService.findByName(name);
+        return new ResponseSuccess(HttpStatus.OK, "Get product category by name successfully", response);
     }
 
     @DeleteMapping("/product-categories/{categoryId}")
@@ -101,13 +71,7 @@ public class ProductCategoryController {
             @PathVariable("categoryId") int categoryId) {
 
         log.info("Request delete product category Id={}", categoryId);
-        try {
-            categoryService.deleteById(categoryId);
-            return new ResponseSuccess(HttpStatus.OK, "Delete product category successfully");
-        }
-        catch (Exception exc) {
-            log.error(ERROR_MESSAGE, exc.getMessage(), exc.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST, "Delete product category fail");
-        }
+        categoryService.deleteById(categoryId);
+        return new ResponseSuccess(HttpStatus.OK, "Delete product category successfully");
     }
 }

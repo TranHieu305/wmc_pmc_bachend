@@ -10,6 +10,7 @@ import com.wms.wms.exception.UniqueConstraintViolationException;
 import com.wms.wms.mapper.productcategory.ProductCategoryRequestMapper;
 import com.wms.wms.mapper.productcategory.ProductCategoryResponseMapper;
 import com.wms.wms.service.IProductCategoryService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
     }
 
     @Override
+    @Transactional
     public ProductCategoryDetailResponse save(ProductCategoryRequestDTO requestDTO) {
         checkUniqueConstraints(requestDTO);
         if (requestDTO.getId() != 0) {
@@ -64,6 +66,7 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteById(int id) {
         ProductCategory category = getCategoryById(id);
         productCategoryDAO.deleteById(category);

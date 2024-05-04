@@ -5,6 +5,7 @@ import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractDAO<T> {
 
@@ -52,11 +53,11 @@ public abstract class AbstractDAO<T> {
      @param params The parameters to bind to the query.
      @return A list of entities retrieved from the database.
      */
-    public List<T> findMany(Class<T> clazz, String sql, Object... params) {
+    public List<T> findMany(Class<T> clazz, String sql, Map<String, Object> params) {
         TypedQuery<T> query = entityManager.createQuery(sql, clazz);
-        for (int i = 0; i < params.length; i++) {
-            query.setParameter(i, params[i]);
-        }
+       for (Map.Entry<String, Object> entry : params.entrySet()) {
+           query.setParameter(entry.getKey(), entry.getValue());
+       }
         return query.getResultList();
     }
 

@@ -8,7 +8,10 @@ import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class ProductCategoryDAOImpl extends AbstractDAO<ProductCategory> implements IProductCategoryDAO {
@@ -26,8 +29,9 @@ public class ProductCategoryDAOImpl extends AbstractDAO<ProductCategory> impleme
 
     @Override
     public List<ProductCategory> findByName(String categoryName) {
-        String sql = "SELECT p FROM ProductCategory WHERE p.name = :0";
-        return super.findMany(ProductCategory.class, sql, categoryName);
+        String sql = "SELECT pc FROM ProductCategory pc WHERE pc.name = :name";
+        Map<String, Object> params = Collections.singletonMap("name", categoryName);
+        return super.findMany(ProductCategory.class, sql, params);
     }
 
     @Override
