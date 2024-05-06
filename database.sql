@@ -134,6 +134,7 @@ CREATE TABLE `product` (
     `uom` varchar(63) DEFAULT NULL,
     `category_id` int NOT NULL,
     `custom_fields` text,
+    `images` blob,
 
     `created_at` datetime(6) NULL,
     `modified_at` datetime(6) NULL,
