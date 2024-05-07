@@ -128,7 +128,7 @@ DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (
     `id` int NOT NULL AUTO_INCREMENT,
 
-    `name` varchar(255) UNIQUE NOT NULL,
+    `name` varchar(255) NOT NULL,
     `description` varchar(255) DEFAULT NULL,
     `code` varchar(63) UNIQUE NOT NULL,
     `uom` varchar(63) DEFAULT NULL,
@@ -141,6 +141,7 @@ CREATE TABLE `product` (
 
     PRIMARY KEY (`id`),
     KEY `FK_PRODUCT_idx` (`category_id`),
+    CONSTRAINT `unique_name_uom_pair` UNIQUE (`name`, `uom`),
     CONSTRAINT `FK_PRODUCT` FOREIGN KEY (`category_id`) REFERENCES `product_category`(`id`)
     ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
