@@ -36,7 +36,7 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
         ProductCategory category = ProductCategoryRequestMapper.INSTANCE.requestToCategory(requestDTO);
         ProductCategory dbCategory = productCategoryDAO.save(category);
         log.info("Save Product category successfully with ID: {}", dbCategory.getId());
-        return ProductCategoryResponseMapper.INSTANCE.categoryToResponse(getCategoryById(dbCategory.getId()));
+        return ProductCategoryResponseMapper.INSTANCE.categoryToResponse(dbCategory);
     }
 
     @Override
