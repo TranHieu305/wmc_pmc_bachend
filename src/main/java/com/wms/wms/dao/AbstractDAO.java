@@ -2,6 +2,7 @@ package com.wms.wms.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -68,7 +69,11 @@ public abstract class AbstractDAO<T> {
      @return the managed entity after it has been saved or updated
      */
     public T save(T entity) {
-        return entityManager.merge(entity);
+        T dbEntity = entityManager.merge(entity);
+        // flush and refresh to get createdAt and modifiedAt
+        entityManager.flush();
+        entityManager.refresh(dbEntity);
+        return dbEntity;
     }
 
     /**
