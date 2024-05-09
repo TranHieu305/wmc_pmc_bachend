@@ -10,6 +10,7 @@ import com.wms.wms.exception.UniqueConstraintViolationException;
 import com.wms.wms.mapper.productcategory.ProductCategoryRequestMapper;
 import com.wms.wms.mapper.productcategory.ProductCategoryResponseMapper;
 import com.wms.wms.service.IProductCategoryService;
+import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +31,12 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
     @Override
     @Transactional
     public ProductCategoryDetailResponse save(ProductCategoryRequestDTO requestDTO) {
-        checkUniqueConstraints(requestDTO);
-        if (requestDTO.getId() != 0) {
-            ProductCategory category = getCategoryById(requestDTO.getId()); // Check if category with given ID exists
-        }
+        validate(requestDTO);
 
         ProductCategory category = ProductCategoryRequestMapper.INSTANCE.requestToCategory(requestDTO);
         ProductCategory dbCategory = productCategoryDAO.save(category);
         log.info("Save Product category successfully with ID: {}", dbCategory.getId());
-        return ProductCategoryResponseMapper.INSTANCE.categoryToResponse(dbCategory);
+        return ProductCategoryResponseMapper.INSTANCE.categoryToResponse(getCategoryById(dbCategory.getId()));
     }
 
     @Override
@@ -93,15 +91,19 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
         return category;
     }
 
+    private void validate(ProductCategoryRequestDTO requestDTO) {
+        // validate ID
+        ProductCategory existingCategory = null;
+        if (requestDTO.getId() != 0) {
+            existingCategory = getCategoryById(requestDTO.getId());
+        }
+        if (existingCategory == null) {
+            checkUniqueNameForNew(requestDTO.getName());
+        }
+        else  {
+            checkUniqueNameForUpdate(requestDTO.getName(), existingCategory.getName());
+        }
 
-    /**
-     * Checks if the provided product category request DTO satisfies unique constraints.
-     *
-     * @param requestDTO The product category request DTO to validate.
-     * @throws UniqueConstraintViolationException If any unique constraint is violated.
-     */
-    private void checkUniqueConstraints(ProductCategoryRequestDTO requestDTO) {
-        checkUniqueName(requestDTO.getName());
     }
 
     /**
@@ -110,10 +112,22 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
      * @param categoryName Product category name
      * @throws UniqueConstraintViolationException If a category with the same name already exists.
      */
-    private void checkUniqueName(String categoryName) {
-        List<ProductCategory> dbCategoryList = productCategoryDAO.findByName(categoryName);
+    private void checkUniqueNameForNew(String categoryName) {
+        String cleanName = StringHelper.preProcess(categoryName);
+        List<ProductCategory> dbCategoryList = productCategoryDAO.findByName(cleanName);
         if (!dbCategoryList.isEmpty()) {
-            throw new UniqueConstraintViolationException("Product category name must be unique");
+            throw new UniqueConstraintViolationException("A product category with the name '" + cleanName + "' already exists.");
+        }
+    }
+
+    private void checkUniqueNameForUpdate(String newName, String existingName) {
+        String cleanNewName = StringHelper.preProcess(newName);
+        if (cleanNewName.equals(existingName)) {
+            return;
+        }
+        List<ProductCategory> dbCategoryList = productCategoryDAO.findByName(cleanNewName);
+        if (!dbCategoryList.isEmpty()) {
+            throw new UniqueConstraintViolationException("A product category with the name '" + cleanNewName + "' already exists.");
         }
     }
 

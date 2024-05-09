@@ -40,6 +40,13 @@ public class ProductCategoryController {
         return new ResponseSuccess(HttpStatus.OK, "Create product category successfully",response);
     }
 
+    @PostMapping("/product-categories/test")
+    public ResponseEntity<ResponseData> test(@RequestBody @Valid ProductCategoryRequestDTO requestDTO) {
+        log.info("test filter");
+
+        return new ResponseSuccess(HttpStatus.OK, "test filter successfully");
+    }
+
     @PutMapping("/product-categories")
     public ResponseEntity<ResponseData> updateProductCategory(@RequestBody @Valid ProductCategoryRequestDTO requestDTO) {
         log.info("Request update product category id: {}", requestDTO.getId());
