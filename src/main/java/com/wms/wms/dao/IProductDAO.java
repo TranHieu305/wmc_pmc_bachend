@@ -15,6 +15,8 @@ public interface IProductDAO {
     // Get Product by id
     Product findById(int id);
 
+    List<Product> findByCategoryId(int categoryId);
+
     // Save Product
     Product save(Product product);
 

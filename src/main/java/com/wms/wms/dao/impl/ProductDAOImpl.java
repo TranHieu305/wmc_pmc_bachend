@@ -56,4 +56,11 @@ public class ProductDAOImpl extends AbstractDAO<Product> implements IProductDAO 
     public void delete(Product product) {
         super.delete(product);
     }
+
+    @Override
+    public List<Product> findByCategoryId(int categoryId) {
+        String sql = "SELECT pc FROM Product pc WHERE pc.category_id = :categoryId";
+        Map<String, Object> params = Collections.singletonMap("category_id", categoryId);
+        return super.findMany(Product.class, sql, params);
+    }
 }

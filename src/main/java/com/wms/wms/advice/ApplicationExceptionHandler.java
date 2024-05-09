@@ -1,11 +1,12 @@
 package com.wms.wms.advice;
 
+import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.dto.response.ResponseError;
 import com.wms.wms.exception.UniqueConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -26,12 +27,10 @@ public class ApplicationExceptionHandler {
      * @return A map containing field names and their error messages.
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseError handleInvalidArgument(MethodArgumentNotValidException exception){
+    public ResponseEntity handleInvalidArgument(MethodArgumentNotValidException exception){
         Map<String, String> errorMap = new HashMap<>();
 
-        exception.getBindingResult().getFieldErrors().forEach(error -> {
-            errorMap.put(error.getField(), error.getDefaultMessage());
-        });
+        exception.getBindingResult().getFieldErrors().forEach(error -> errorMap.put(error.getField(), error.getDefaultMessage()));
 
         return  new ResponseError(HttpStatus.BAD_REQUEST, "Data is not valid", errorMap);
     }
@@ -43,7 +42,7 @@ public class ApplicationExceptionHandler {
      * @return A ResponseError containing the exception message.
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseError handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException exception) {
+    public ResponseEntity handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException exception) {
         return new ResponseError(HttpStatus.BAD_REQUEST, "Argument type mismatch");
     }
 
@@ -55,7 +54,7 @@ public class ApplicationExceptionHandler {
      * @return A ResponseError containing the exception message
      */
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseError handleObjectNotFound(ResourceNotFoundException exception) {
+    public ResponseEntity handleObjectNotFound(ResourceNotFoundException exception) {
 
         return new ResponseError(HttpStatus.NOT_FOUND, exception.getMessage());
     }
@@ -67,7 +66,18 @@ public class ApplicationExceptionHandler {
      * @return A ResponseError containing the exception message
      */
     @ExceptionHandler(UniqueConstraintViolationException.class)
-    public ResponseError handleUniqueConstraintViolation(UniqueConstraintViolationException exception) {
+    public ResponseEntity handleUniqueConstraintViolation(UniqueConstraintViolationException exception) {
+        return new ResponseError(HttpStatus.CONFLICT, exception.getMessage());
+    }
+
+    /**
+     * Exception handler for ConstraintViolationException.
+     *
+     * @param exception The ConstraintViolationException that was thrown
+     * @return A ResponseError containing the exception message
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity handleConstraintViolation(ConstraintViolationException exception) {
         return new ResponseError(HttpStatus.CONFLICT, exception.getMessage());
     }
 

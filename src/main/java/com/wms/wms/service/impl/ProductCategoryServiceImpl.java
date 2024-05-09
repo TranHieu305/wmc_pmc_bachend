@@ -5,11 +5,13 @@ import com.wms.wms.dao.IProductCategoryDAO;
 import com.wms.wms.dto.request.ProductCategoryRequestDTO;
 import com.wms.wms.dto.response.ProductCategoryDetailResponse;
 import com.wms.wms.entity.ProductCategory;
+import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.exception.UniqueConstraintViolationException;
 import com.wms.wms.mapper.productcategory.ProductCategoryRequestMapper;
 import com.wms.wms.mapper.productcategory.ProductCategoryResponseMapper;
 import com.wms.wms.service.IProductCategoryService;
+import com.wms.wms.service.IProductService;
 import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +24,12 @@ import java.util.List;
 @Service
 public class ProductCategoryServiceImpl implements IProductCategoryService {
     private final IProductCategoryDAO productCategoryDAO;
+    private final IProductService productService;
 
     @Autowired
-    public ProductCategoryServiceImpl(IProductCategoryDAO productCategoryDAO) {
+    public ProductCategoryServiceImpl(IProductCategoryDAO productCategoryDAO, IProductService productService) {
         this.productCategoryDAO = productCategoryDAO;
+        this.productService = productService;
     }
 
     @Override
@@ -67,6 +71,8 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
     @Transactional
     public void deleteById(int id) {
         ProductCategory category = getCategoryById(id);
+
+        checkConstraintToDelete(id);
         productCategoryDAO.deleteById(category);
         log.info("Delete Product category ID: {} successfully", id);
     }
@@ -128,6 +134,13 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
         List<ProductCategory> dbCategoryList = productCategoryDAO.findByName(cleanNewName);
         if (!dbCategoryList.isEmpty()) {
             throw new UniqueConstraintViolationException("A product category with the name '" + cleanNewName + "' already exists.");
+        }
+    }
+
+    private void checkConstraintToDelete(int categoryId) {
+        boolean cannotDelete = productService.hasProductsInCategory(categoryId);
+        if (cannotDelete) {
+            throw new ConstraintViolationException("Cannot delete category. Associated products exist.");
         }
     }
 

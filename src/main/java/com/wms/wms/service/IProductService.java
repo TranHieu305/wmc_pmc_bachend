@@ -23,4 +23,6 @@ public interface IProductService {
 
     // Check if the specified product exists with given ID
     void verifyProductExists(int productId);
+
+    boolean hasProductsInCategory(int categoryId);
 }

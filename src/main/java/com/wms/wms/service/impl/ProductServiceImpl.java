@@ -70,6 +70,12 @@ public class ProductServiceImpl implements IProductService {
         getProductById(productId);
     }
 
+    @Override
+    public boolean hasProductsInCategory(int categoryId) {
+        List<Product> productList = productDAO.findByCategoryId(categoryId);
+        return !productList.isEmpty();
+    }
+
     /**
      * Retrieves the Product with the given ID from the database.
      * Throws a ResourceNotFoundException if the supplier does not exist.
@@ -129,4 +135,6 @@ public class ProductServiceImpl implements IProductService {
             throw new UniqueConstraintViolationException("Product name: '" + name + "' and uom: '" + uom + "' already exists");
         }
     }
+
+
 }
