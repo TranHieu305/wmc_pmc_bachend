@@ -34,39 +34,29 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
     @Transactional
     @Override
     public MaterialOrderResponse save(MaterialOrderRequestDTO requestDTO) {
-
-        // Convert RequestDTO to entity
         MaterialOrder materialOrder = MaterialOrderRequestMapper.INSTANCE.requestToOrder(requestDTO);
-        List<OrderItem> orderItemList = convertToItems(requestDTO.getOrderItems());
-        orderItemList.forEach(materialOrder::addItem);
-
-        // Save to db
         MaterialOrder dbOrder = materialOrderDAO.save(materialOrder);
         log.info("Add material order successfully");
-        return convertOrderToResponse(dbOrder);
+        return MaterialOrderResponseMapper.INSTANCE.orderToResponse(dbOrder);
     }
 
     @Override
     @Transactional
     public MaterialOrderResponse update(MaterialOrderRequestDTO orderRequestDTO, int orderId) {
         MaterialOrder oldOrder = getMaterialOrder(orderId);
-
-        // Convert RequestDTO to entity
         MaterialOrder newOrder = MaterialOrderRequestMapper.INSTANCE.requestToOrder(orderRequestDTO);
-        List<OrderItem> orderItemList = convertToItems(orderRequestDTO.getOrderItems());
-        orderItemList.forEach(newOrder::addItem);
         newOrder.setId(oldOrder.getId());
 
         MaterialOrder newDbOrder = materialOrderDAO.save(newOrder);
         log.info("Update material order Id: {} successfully", newDbOrder.getId());
-        return convertOrderToResponse(newDbOrder);
+        return MaterialOrderResponseMapper.INSTANCE.orderToResponse(newDbOrder);
     }
 
     @Override
     public MaterialOrderResponse findById(int orderId) {
         MaterialOrder dbOrder = getMaterialOrder(orderId);
         log.info("Get Material_order detail id: {} successfully", orderId);
-        return convertOrderToResponse(dbOrder);
+        return MaterialOrderResponseMapper.INSTANCE.orderToResponse(dbOrder);
     }
 
 
@@ -75,7 +65,7 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
         List<MaterialOrder> materialOrderList = materialOrderDAO.findAll();
         List<MaterialOrderResponse> orderResponseList = new ArrayList<>();
         for (MaterialOrder order : materialOrderList) {
-            MaterialOrderResponse response = convertOrderToResponse(order);
+            MaterialOrderResponse response = MaterialOrderResponseMapper.INSTANCE.orderToResponse(order);
             orderResponseList.add(response);
         }
         log.info("Get all material orders successfully");
@@ -103,41 +93,5 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
             throw new ResourceNotFoundException("Material order not found");
         }
         return  dbOrder;
-    }
-
-
-    /**
-     * Convert List<OrderItemRequestDTO> to List<OrderItem>
-     *
-     * @param orderItemRequestDTOList list of item request
-     * @return List<OrderItem> || null
-     */
-    private List<OrderItem> convertToItems(List<OrderItemRequestDTO> orderItemRequestDTOList) {
-        if (orderItemRequestDTOList == null) {
-            return null;
-        }
-        List<OrderItem> orderItemList = orderItemRequestDTOList.stream().map(requestDTO -> {
-            OrderItem orderItem = OrderItemRequestMapper.INSTANCE.requestToOrderItem(requestDTO);
-            orderItem.setOrderType(OrderItem.TYPE_MATERIAL);
-            return orderItem;
-        }).toList();
-        return orderItemList;
-    }
-
-
-    private List<OrderItemResponse> convertItemsToResponse(List<OrderItem> orderItemList) {
-        if (orderItemList == null) {
-            return null;
-        }
-        return orderItemList.stream().map(OrderItemResponseMapper.INSTANCE::itemToResponse).toList();
-    }
-
-    private MaterialOrderResponse convertOrderToResponse(MaterialOrder materialOrder) {
-        if (materialOrder == null) {
-            return null;
-        }
-        MaterialOrderResponse orderResponse = MaterialOrderResponseMapper.INSTANCE.orderToResponse(materialOrder);
-        orderResponse.setOrderItems(convertItemsToResponse(materialOrder.getOrderItems()));
-        return orderResponse;
     }
 }

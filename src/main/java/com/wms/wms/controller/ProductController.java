@@ -2,6 +2,7 @@ package com.wms.wms.controller;
 
 import com.wms.wms.dto.request.ProductRequestDTO;
 import com.wms.wms.dto.response.ProductDetailResponse;
+import com.wms.wms.dto.response.ProductGeneralResponse;
 import com.wms.wms.dto.response.ResponseSuccess;
 import com.wms.wms.service.IProductService;
 import jakarta.validation.Valid;
@@ -28,7 +29,7 @@ public class ProductController {
     @GetMapping("/products")
     public ResponseEntity findAll() {
         log.info("Request get product list");
-        List<ProductDetailResponse> response = productService.findAll();
+        List<ProductGeneralResponse> response = productService.findAll();
         return new ResponseSuccess(HttpStatus.OK, "Get product list successfully", response);
     }
 

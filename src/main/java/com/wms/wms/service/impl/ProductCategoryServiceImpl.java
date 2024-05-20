@@ -4,16 +4,20 @@ package com.wms.wms.service.impl;
 import com.wms.wms.dao.IProductCategoryDAO;
 import com.wms.wms.dto.request.ProductCategoryRequestDTO;
 import com.wms.wms.dto.response.ProductCategoryDetailResponse;
+import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductCategory;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.exception.UniqueConstraintViolationException;
 import com.wms.wms.mapper.productcategory.ProductCategoryRequestMapper;
 import com.wms.wms.mapper.productcategory.ProductCategoryResponseMapper;
+import com.wms.wms.repository.ProductCategoryRepository;
+import com.wms.wms.repository.ProductRepository;
 import com.wms.wms.service.IProductCategoryService;
 import com.wms.wms.service.IProductService;
 import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,15 +26,10 @@ import java.util.List;
 
 @Slf4j
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductCategoryServiceImpl implements IProductCategoryService {
-    private final IProductCategoryDAO productCategoryDAO;
-    private final IProductService productService;
-
-    @Autowired
-    public ProductCategoryServiceImpl(IProductCategoryDAO productCategoryDAO, IProductService productService) {
-        this.productCategoryDAO = productCategoryDAO;
-        this.productService = productService;
-    }
+    private final ProductCategoryRepository productCategoryRepository;
+    private final ProductRepository productRepository;
 
     @Override
     @Transactional
@@ -38,28 +37,28 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
         validate(requestDTO);
 
         ProductCategory category = ProductCategoryRequestMapper.INSTANCE.requestToCategory(requestDTO);
-        ProductCategory dbCategory = productCategoryDAO.save(category);
+        ProductCategory dbCategory = productCategoryRepository.saveAndFlush(category);
         log.info("Save Product category successfully with ID: {}", dbCategory.getId());
         return ProductCategoryResponseMapper.INSTANCE.categoryToResponse(dbCategory);
     }
 
     @Override
     public ProductCategoryDetailResponse findById(int categoryId) {
-        ProductCategory dbCategory = getCategoryById(categoryId);
+        ProductCategory dbCategory = this.getCategory(categoryId);
         log.info("Get Product category detail ID: {} successfully ", categoryId);
         return ProductCategoryResponseMapper.INSTANCE.categoryToResponse(dbCategory);
     }
 
     @Override
     public List<ProductCategoryDetailResponse> findByName(String name) {
-        List<ProductCategory> categories = productCategoryDAO.findByName(name);
+        List<ProductCategory> categories = productCategoryRepository.findByName(name);
         log.info("Get Product category detail by name: {} successfully ", name);
         return categories.stream().map(ProductCategoryResponseMapper.INSTANCE::categoryToResponse).toList();
     }
 
     @Override
     public List<ProductCategoryDetailResponse> findAll() {
-        List<ProductCategory> categorieList = productCategoryDAO.findAll();
+        List<ProductCategory> categorieList = productCategoryRepository.findAll();
         List<ProductCategoryDetailResponse> categoryDetailResponseList = categorieList.stream().map(
                 ProductCategoryResponseMapper.INSTANCE::categoryToResponse
         ).toList();
@@ -70,38 +69,30 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
     @Override
     @Transactional
     public void deleteById(int id) {
-        ProductCategory category = getCategoryById(id);
+        ProductCategory category = this.getCategory(id);
 
         checkConstraintToDelete(id);
-        productCategoryDAO.deleteById(category);
+        productCategoryRepository.delete(category);
         log.info("Delete Product category ID: {} successfully", id);
     }
 
     @Override
     public void verifyCategoryExists(int categoryId) {
-        getCategoryById(categoryId);
+        this.getCategory(categoryId);
     }
 
-    /**
-     * Retrieves the Product Category with the given ID from the database.
-     * Throws a ResourceNotFoundException if the supplier does not exist.
-     *
-     * @param id Product category ID
-     * @return ProductCategory entity from Database
-     */
-    private ProductCategory getCategoryById(int id) {
-        ProductCategory category = productCategoryDAO.findById(id);
-        if (category == null) {
-            throw new ResourceNotFoundException ("No Product category exists with the given Id: " + id);
-        }
-        return category;
+
+    @Override
+    public ProductCategory getCategory(int id) {
+        return productCategoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException ("No Product category exists with the given Id: " + id));
     }
 
     private void validate(ProductCategoryRequestDTO requestDTO) {
         // validate ID
         ProductCategory existingCategory = null;
         if (requestDTO.getId() != 0) {
-            existingCategory = getCategoryById(requestDTO.getId());
+            existingCategory = this.getCategory(requestDTO.getId());
         }
         if (existingCategory == null) {
             checkUniqueNameForNew(requestDTO.getName());
@@ -120,7 +111,7 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
      */
     private void checkUniqueNameForNew(String categoryName) {
         String cleanName = StringHelper.preProcess(categoryName);
-        List<ProductCategory> dbCategoryList = productCategoryDAO.findByName(cleanName);
+        List<ProductCategory> dbCategoryList = productCategoryRepository.findByName(cleanName);
         if (!dbCategoryList.isEmpty()) {
             throw new UniqueConstraintViolationException("A product category with the name '" + cleanName + "' already exists.");
         }
@@ -131,15 +122,15 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
         if (cleanNewName.equals(existingName)) {
             return;
         }
-        List<ProductCategory> dbCategoryList = productCategoryDAO.findByName(cleanNewName);
+        List<ProductCategory> dbCategoryList = productCategoryRepository.findByName(cleanNewName);
         if (!dbCategoryList.isEmpty()) {
             throw new UniqueConstraintViolationException("A product category with the name '" + cleanNewName + "' already exists.");
         }
     }
 
     private void checkConstraintToDelete(int categoryId) {
-        boolean cannotDelete = productService.hasProductsInCategory(categoryId);
-        if (cannotDelete) {
+        List<Product> products = productRepository.findByProductCategoryId(categoryId);
+        if (!products.isEmpty()) {
             throw new ConstraintViolationException("Cannot delete category. Associated products exist.");
         }
     }

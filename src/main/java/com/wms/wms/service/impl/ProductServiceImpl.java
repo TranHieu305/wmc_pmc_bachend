@@ -1,15 +1,18 @@
 package com.wms.wms.service.impl;
 
-import com.wms.wms.dao.IProductDAO;
 import com.wms.wms.dto.request.ProductRequestDTO;
 import com.wms.wms.dto.response.ProductDetailResponse;
+import com.wms.wms.dto.response.ProductGeneralResponse;
 import com.wms.wms.entity.Product;
+import com.wms.wms.entity.ProductCategory;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.exception.UniqueConstraintViolationException;
-import com.wms.wms.mapper.product.ProductRequestMapper;
-import com.wms.wms.mapper.product.ProductResponseMapper;
+import com.wms.wms.repository.ProductRepository;
+import com.wms.wms.service.IProductCategoryService;
 import com.wms.wms.service.IProductService;
 import com.wms.wms.util.StringHelper;
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,29 +21,63 @@ import java.util.List;
 
 @Slf4j
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductServiceImpl implements IProductService {
-    private final IProductDAO productDAO;
-
-    @Autowired
-    public ProductServiceImpl(IProductDAO productDAO) {
-        this.productDAO = productDAO;
-    }
+    private final ProductRepository productRepository;
+    private final IProductCategoryService productCategoryService;
 
     @Override
+    @Transactional
     public ProductDetailResponse save(ProductRequestDTO requestDTO) {
-        validate(requestDTO);
+        this.validate(requestDTO);
+        Product product;
+        if (requestDTO.getId() != 0) {
+            product = this.getProduct(requestDTO.getId());
+        }
+        else {
+            product = Product.builder().id(0).build();
+        }
 
-        Product product = ProductRequestMapper.INSTANCE.requestToProduct(requestDTO);
-        Product dbProduct = productDAO.save(product);
+        product.setName(StringHelper.preProcess(requestDTO.getName()));
+        product.setCode(StringHelper.preProcess(requestDTO.getCode()));
+        product.setUom(StringHelper.preProcess(requestDTO.getUom()));
+        product.setDescription(requestDTO.getDescription());
+        product.setCustomFields(requestDTO.getCustomFields());
+        product.setImages(requestDTO.getImages());
+
+        ProductCategory category = productCategoryService.getCategory(requestDTO.getCategoryId());
+        product.setProductCategory(category);
+
+        Product dbProduct = productRepository.save(product);
         log.info("Save Product successfully with ID: {}", dbProduct.getId());
-        return ProductResponseMapper.INSTANCE.productToResponse(dbProduct);
+        return ProductDetailResponse.builder()
+                .id(dbProduct.getId())
+                .name(dbProduct.getName())
+                .description(dbProduct.getDescription())
+                .code(dbProduct.getCode())
+                .uom(dbProduct.getUom())
+                .customFields(dbProduct.getCustomFields())
+                .images(dbProduct.getImages())
+                .productCategoryId(dbProduct.getProductCategory().getId())
+                .productCategory(category)
+                .build();
     }
 
     @Override
     public ProductDetailResponse findById(int productId) {
-        Product dbProduct = getProductById(productId);
+        Product dbProduct = this.getProduct(productId);
         log.info("Get Product detail ID: {} successfully ", productId);
-        return ProductResponseMapper.INSTANCE.productToResponse(dbProduct);
+        return ProductDetailResponse.builder()
+                .id(dbProduct.getId())
+                .name(dbProduct.getName())
+                .description(dbProduct.getDescription())
+                .code(dbProduct.getCode())
+                .uom(dbProduct.getUom())
+                .customFields(dbProduct.getCustomFields())
+                .images(dbProduct.getImages())
+                .productCategoryId(dbProduct.getProductCategory().getId())
+                .productCategory(dbProduct.getProductCategory())
+                .build();
     }
 
     @Override
@@ -49,53 +86,38 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public List<ProductDetailResponse> findAll() {
-        List<Product> productList = productDAO.findAll();
-        List<ProductDetailResponse> productDetailResponseList = productList.stream().map(
-                ProductResponseMapper.INSTANCE::productToResponse
+    public List<ProductGeneralResponse> findAll() {
+        List<Product> productList = productRepository.findAll();
+        List<ProductGeneralResponse> productDetailResponseList = productList.stream().map(product -> ProductGeneralResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .categoryName(product.getProductCategory().getName())
+                .build()
         ).toList();
         log.info("Get Product list successfully");
         return productDetailResponseList;
     }
 
     @Override
+    @Transactional
     public void deleteById(int id) {
-        Product product = getProductById(id);
-        productDAO.delete(product);
+        Product product = this.getProduct(id);
+        productRepository.delete(product);
         log.info("Delete Product ID: {} successfully", id);
     }
 
     @Override
-    public void verifyProductExists(int productId) {
-        getProductById(productId);
-    }
-
-    @Override
-    public boolean hasProductsInCategory(int categoryId) {
-        List<Product> productList = productDAO.findByCategoryId(categoryId);
-        return !productList.isEmpty();
-    }
-
-    /**
-     * Retrieves the Product with the given ID from the database.
-     * Throws a ResourceNotFoundException if the supplier does not exist.
-     *
-     * @param id Product ID
-     * @return Product entity from Database
-     */
-    private Product getProductById(int id) {
-        Product product = productDAO.findById(id);
-        if (product == null) {
-            throw new ResourceNotFoundException("No Product exists with the given Id: " + id);
-        }
-        return product;
+    public Product getProduct(int id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No Product exists with the given Id: " + id));
     }
 
     private void validate(ProductRequestDTO requestDTO) {
         // validate ID
         Product existingProduct = null;
         if (requestDTO.getId() != 0) {
-            existingProduct = getProductById(requestDTO.getId());
+            existingProduct = this.getProduct(requestDTO.getId());
         }
         if (existingProduct == null) {
             checkUniqueNameAndUomForCreate(requestDTO.getName(), requestDTO.getUom());
@@ -130,11 +152,9 @@ public class ProductServiceImpl implements IProductService {
     }
 
     private void checkUniqueNameAndUom(String name, String uom) {
-        List<Product> dbProductList = productDAO.findByNameAndUom(name, uom);
+        List<Product> dbProductList = productRepository.findByNameAndUom(name, uom);
         if (!dbProductList.isEmpty()) {
             throw new UniqueConstraintViolationException("Product name: '" + name + "' and uom: '" + uom + "' already exists");
         }
     }
-
-
 }

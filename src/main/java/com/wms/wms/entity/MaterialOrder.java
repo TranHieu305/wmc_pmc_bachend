@@ -72,8 +72,4 @@ public class MaterialOrder extends  AbstractEntity{
         orderItems.add(newOrderItem);
         newOrderItem.setMaterialOrder(this);
     }
-
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
-    }
 }

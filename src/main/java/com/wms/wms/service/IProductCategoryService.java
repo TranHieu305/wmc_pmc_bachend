@@ -2,6 +2,7 @@ package com.wms.wms.service;
 
 import com.wms.wms.dto.request.ProductCategoryRequestDTO;
 import com.wms.wms.dto.response.ProductCategoryDetailResponse;
+import com.wms.wms.entity.ProductCategory;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public interface IProductCategoryService {
 
     List<ProductCategoryDetailResponse> findAll();
 
+    ProductCategory getCategory(int categoryId);
     void deleteById(int id);
 
     void verifyCategoryExists(int categoryId);

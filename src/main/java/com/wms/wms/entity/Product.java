@@ -44,6 +44,7 @@ public class Product extends AbstractEntity{
     private String code;
 
     @Column(name = "uom")
+    @NotBlank(message = "Product uom cannot be blank")
     @Size(max = 63, message = "Product uom must be under 63 characters")
     private String uom;
 
@@ -54,7 +55,7 @@ public class Product extends AbstractEntity{
     @Lob
     private byte[] images;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private ProductCategory productCategory;
 }

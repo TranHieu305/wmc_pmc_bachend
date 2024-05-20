@@ -30,5 +30,5 @@ public class ProductRequestDTO {
     @Lob
     private byte[] images;
 
-    private ProductCategoryRequestDTO productCategory;
+    private int categoryId;
 }

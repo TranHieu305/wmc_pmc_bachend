@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
-@EnableJpaAuditing
 @RestController
 public class WmsApplication {
 	@RequestMapping("/")
