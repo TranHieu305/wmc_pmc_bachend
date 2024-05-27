@@ -90,13 +90,7 @@ public class SupplierController {
             @PathVariable("supplierId") int supplierId) {
 
         log.info("Request delete Supplier Id={}", supplierId);
-        try {
-            supplierService.deleteById(supplierId);
-            return new ResponseSuccess(HttpStatus.OK, "Delete Supplier successfully");
-        }
-        catch (Exception exc) {
-            log.error(ERROR_MESSAGE, exc.getMessage(), exc.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST, "Delete Supplier fail");
-        }
+        supplierService.deleteById(supplierId);
+        return new ResponseSuccess(HttpStatus.OK, "Delete Supplier successfully");
     }
 }

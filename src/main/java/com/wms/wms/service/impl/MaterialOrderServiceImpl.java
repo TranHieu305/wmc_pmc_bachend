@@ -50,7 +50,6 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
         materialOrder.setOrderDate(requestDTO.getOrderDate());
         materialOrder.setExpectedDate(requestDTO.getExpectedDate());
         materialOrder.setActualDate(requestDTO.getActualDate());
-        materialOrder.setStatus(requestDTO.getStatus());
 
         // Remove old OrderItems
         if (!materialOrder.getOrderItems().isEmpty()) {
@@ -84,7 +83,7 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
                 orderItem = OrderItem.builder().build();
             }
             orderItem.setOrderType(OrderItemType.MATERIAL);
-            orderItem.setProduct(product);
+            orderItem.setProductId(product.getId());
             orderItem.setProductName(product.getName());
             orderItem.setProductUom(product.getUom());
             //TODO: Set price
@@ -117,7 +116,6 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
         materialOrderRepository.delete(materialOrder);
         log.info("Delete material order id: {} successfully", orderId);
     }
-
 
     /**
      * Find Material order by id from Database

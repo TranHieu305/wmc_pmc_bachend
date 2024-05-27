@@ -3,9 +3,11 @@ package com.wms.wms.service.impl;
 import com.wms.wms.dto.request.SupplierRequestDTO;
 import com.wms.wms.dto.response.SupplierDetailResponse;
 import com.wms.wms.entity.Supplier;
+import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.mapper.supplier.SupplierRequestMapper;
 import com.wms.wms.mapper.supplier.SupplierResponseMapper;
+import com.wms.wms.repository.MaterialOrderRepository;
 import com.wms.wms.repository.SupplierRepository;
 import com.wms.wms.service.ISupplierService;
 import jakarta.transaction.Transactional;
@@ -21,6 +23,7 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SupplierServiceImpl implements ISupplierService {
     private SupplierRepository supplierRepository;
+    private MaterialOrderRepository materialOrderRepository;
 
     @Override
     public List<SupplierDetailResponse> findAll() {
@@ -55,6 +58,7 @@ public class SupplierServiceImpl implements ISupplierService {
     @Transactional
     public void deleteById(int id) {
         Supplier supplier = this.getSupplierById(id); // Validate id
+        this.checkConstraintToDelete(supplier);
         supplierRepository.delete(supplier);
         log.info("Delete supplier id: {} successfully", id);
     }
@@ -69,5 +73,11 @@ public class SupplierServiceImpl implements ISupplierService {
     public Supplier getSupplierById(int supplierId) {
         return supplierRepository.findById(supplierId)
                 .orElseThrow(() -> new ResourceNotFoundException("No supplier exists with the given Id: " + supplierId));
+    }
+
+    private void checkConstraintToDelete(Supplier supplier) {
+        if (materialOrderRepository.existsBySupplierId(supplier.getId())) {
+            throw new ConstraintViolationException("Cannot delete supplier. Associated orders exist.");
+        }
     }
 }

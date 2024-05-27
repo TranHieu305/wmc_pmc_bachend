@@ -1,7 +1,7 @@
 package com.wms.wms.dto.response;
 
 import com.wms.wms.entity.OrderItem;
-import com.wms.wms.entity.Supplier;
+import com.wms.wms.entity.enumentity.OrderStatus;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -20,7 +20,7 @@ public class MaterialOrderDetailResponse {
     private Date expectedDate;
     private Date actualDate;
     private String additionalData;
-    private String status;
+    private OrderStatus status;
     private Timestamp createdAt;
     private Timestamp modifiedAt;
     private List<OrderItem> orderItems;

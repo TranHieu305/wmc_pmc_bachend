@@ -5,8 +5,10 @@ import com.wms.wms.dto.response.ProductDetailResponse;
 import com.wms.wms.dto.response.ProductGeneralResponse;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductCategory;
+import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.exception.UniqueConstraintViolationException;
+import com.wms.wms.repository.OrderItemRepository;
 import com.wms.wms.repository.ProductRepository;
 import com.wms.wms.service.IProductCategoryService;
 import com.wms.wms.service.IProductService;
@@ -25,6 +27,7 @@ import java.util.List;
 public class ProductServiceImpl implements IProductService {
     private final ProductRepository productRepository;
     private final IProductCategoryService productCategoryService;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     @Transactional
@@ -105,6 +108,7 @@ public class ProductServiceImpl implements IProductService {
     @Transactional
     public void deleteById(int id) {
         Product product = this.getProductById(id);
+        this.checkConstraintToDelete(product);
         productRepository.delete(product);
         log.info("Delete Product ID: {} successfully", id);
     }
@@ -157,6 +161,12 @@ public class ProductServiceImpl implements IProductService {
         List<Product> dbProductList = productRepository.findByNameAndUom(name, uom);
         if (!dbProductList.isEmpty()) {
             throw new UniqueConstraintViolationException("Product name: '" + name + "' and uom: '" + uom + "' already exists");
+        }
+    }
+
+    private void checkConstraintToDelete(Product product) {
+        if (orderItemRepository.existsByProductId(product.getId())) {
+            throw new ConstraintViolationException("Cannot delete product. Associated order item exist.");
         }
     }
 }

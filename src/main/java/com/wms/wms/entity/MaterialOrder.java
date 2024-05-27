@@ -1,6 +1,7 @@
 package com.wms.wms.entity;
 
 
+import com.wms.wms.entity.enumentity.OrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -16,12 +17,7 @@ import java.util.Date;
 @DiscriminatorValue("MATERIAL_ORDER")
 @Table(name="material_order")
 public class MaterialOrder extends AbstractOrder{
-    // Define constants
-    public static String STATUS_DRAFT = "draft";
-    public static String STATUS_PENDING = "pending";
-    public static String STATUS_APPROVED = "approved";
 
-    // Define fields
     @Column(name = "supplier_id")
     private int supplierId;
 
@@ -46,5 +42,7 @@ public class MaterialOrder extends AbstractOrder{
     private String additionalData;
 
     @Column(name = "status")
-    private String status = STATUS_DRAFT;
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private OrderStatus status = OrderStatus.CREATED;
 }

@@ -2,6 +2,7 @@ package com.wms.wms.service;
 
 import com.wms.wms.dto.request.MaterialOrderRequestDTO;
 import com.wms.wms.dto.response.MaterialOrderDetailResponse;
+import com.wms.wms.entity.Supplier;
 
 import java.util.List;
 
@@ -18,5 +19,4 @@ public interface IMaterialOrderService {
 
     // Delete material order by Id
     void deleteById(int id);
-
 }
