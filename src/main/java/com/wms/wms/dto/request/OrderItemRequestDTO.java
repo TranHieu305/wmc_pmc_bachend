@@ -15,15 +15,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItemRequestDTO {
-    @NotBlank(message = "Order item name cannot be blank")
-    @Size(min = 1, max = 255, message = "Order item name must be between 1 and 255 characters")
-    private String name;
-
-    private String uom;
+    private int id;
+    private int productId;
 
     @Digits(integer = 10, fraction = 6, message = "Order item quantity must be decimal")
     private BigDecimal quantity;
-
-    @Digits(integer = 10, fraction = 6, message = "Order item price must be decimal")
-    private BigDecimal price;
 }

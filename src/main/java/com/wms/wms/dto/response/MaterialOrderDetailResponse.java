@@ -1,7 +1,7 @@
 package com.wms.wms.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wms.wms.entity.OrderItem;
+import com.wms.wms.entity.Supplier;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -12,8 +12,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MaterialOrderResponse {
+public class MaterialOrderDetailResponse {
     private int id;
+    private int supplierId;
     private String name;
     private Date orderDate;
     private Date expectedDate;
@@ -22,6 +23,5 @@ public class MaterialOrderResponse {
     private String status;
     private Timestamp createdAt;
     private Timestamp modifiedAt;
-    @Setter
-    private List<OrderItemResponse> orderItems;
+    private List<OrderItem> orderItems;
 }

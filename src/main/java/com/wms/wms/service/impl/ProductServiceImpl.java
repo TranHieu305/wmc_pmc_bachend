@@ -32,7 +32,7 @@ public class ProductServiceImpl implements IProductService {
         this.validate(requestDTO);
         Product product;
         if (requestDTO.getId() != 0) {
-            product = this.getProduct(requestDTO.getId());
+            product = this.getProductById(requestDTO.getId());
         }
         else {
             product = Product.builder().id(0).build();
@@ -60,12 +60,14 @@ public class ProductServiceImpl implements IProductService {
                 .images(dbProduct.getImages())
                 .productCategoryId(dbProduct.getProductCategory().getId())
                 .productCategory(category)
+                .createdAt(dbProduct.getCreatedAt())
+                .modifiedAt(dbProduct.getModifiedAt())
                 .build();
     }
 
     @Override
     public ProductDetailResponse findById(int productId) {
-        Product dbProduct = this.getProduct(productId);
+        Product dbProduct = this.getProductById(productId);
         log.info("Get Product detail ID: {} successfully ", productId);
         return ProductDetailResponse.builder()
                 .id(dbProduct.getId())
@@ -102,13 +104,13 @@ public class ProductServiceImpl implements IProductService {
     @Override
     @Transactional
     public void deleteById(int id) {
-        Product product = this.getProduct(id);
+        Product product = this.getProductById(id);
         productRepository.delete(product);
         log.info("Delete Product ID: {} successfully", id);
     }
 
     @Override
-    public Product getProduct(int id) {
+    public Product getProductById(int id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No Product exists with the given Id: " + id));
     }
@@ -117,7 +119,7 @@ public class ProductServiceImpl implements IProductService {
         // validate ID
         Product existingProduct = null;
         if (requestDTO.getId() != 0) {
-            existingProduct = this.getProduct(requestDTO.getId());
+            existingProduct = this.getProductById(requestDTO.getId());
         }
         if (existingProduct == null) {
             checkUniqueNameAndUomForCreate(requestDTO.getName(), requestDTO.getUom());

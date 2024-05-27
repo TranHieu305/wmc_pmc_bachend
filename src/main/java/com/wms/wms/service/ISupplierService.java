@@ -18,6 +18,9 @@ public interface ISupplierService {
     // Save supplier
     SupplierDetailResponse save(SupplierRequestDTO supplierRequestDTO);
 
+    // Find by Id
+    Supplier getSupplierById(int supplierId);
+
     // Delete supplier by Id
     void deleteById(int id);
 }

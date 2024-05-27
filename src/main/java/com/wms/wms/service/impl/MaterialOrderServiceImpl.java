@@ -1,19 +1,22 @@
 package com.wms.wms.service.impl;
 
-import com.wms.wms.dao.IMaterialOrderDAO;
 import com.wms.wms.dto.request.MaterialOrderRequestDTO;
 import com.wms.wms.dto.request.OrderItemRequestDTO;
-import com.wms.wms.dto.response.MaterialOrderResponse;
-import com.wms.wms.dto.response.OrderItemResponse;
+import com.wms.wms.dto.response.MaterialOrderDetailResponse;
 import com.wms.wms.entity.MaterialOrder;
 import com.wms.wms.entity.OrderItem;
+import com.wms.wms.entity.Product;
+import com.wms.wms.entity.Supplier;
+import com.wms.wms.entity.enumentity.OrderItemType;
 import com.wms.wms.exception.ResourceNotFoundException;
-import com.wms.wms.mapper.materialorder.MaterialOrderRequestMapper;
-import com.wms.wms.mapper.materialorder.MaterialOrderResponseMapper;
-import com.wms.wms.mapper.orderitem.OrderItemRequestMapper;
-import com.wms.wms.mapper.orderitem.OrderItemResponseMapper;
+import com.wms.wms.repository.MaterialOrderRepository;
 import com.wms.wms.service.IMaterialOrderService;
+import com.wms.wms.service.IOrderItemService;
+import com.wms.wms.service.IProductService;
+import com.wms.wms.service.ISupplierService;
+import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,51 +26,86 @@ import java.util.List;
 
 @Slf4j
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class MaterialOrderServiceImpl implements IMaterialOrderService {
-    private final  IMaterialOrderDAO materialOrderDAO;
-
-    @Autowired
-    public MaterialOrderServiceImpl(IMaterialOrderDAO materialOrderDAO) {
-        this.materialOrderDAO = materialOrderDAO;
-    }
+    private final MaterialOrderRepository materialOrderRepository;
+    private final ISupplierService supplierService;
+    private final IProductService productService;
+    private final IOrderItemService orderItemService;
 
     @Transactional
     @Override
-    public MaterialOrderResponse save(MaterialOrderRequestDTO requestDTO) {
-        MaterialOrder materialOrder = MaterialOrderRequestMapper.INSTANCE.requestToOrder(requestDTO);
-        MaterialOrder dbOrder = materialOrderDAO.save(materialOrder);
+    public MaterialOrderDetailResponse save(MaterialOrderRequestDTO requestDTO) {
+        MaterialOrder materialOrder;
+        if (requestDTO.getId() != 0) {
+            materialOrder = this.getMaterialOrder(requestDTO.getId());
+        }
+        else {
+            materialOrder = MaterialOrder.builder().build();
+        }
+        // Validate Supplier
+        Supplier supplier = supplierService.getSupplierById(requestDTO.getSupplierId());
+        materialOrder.setSupplierId(supplier.getId());
+        materialOrder.setName(StringHelper.preProcess(requestDTO.getName()));
+        materialOrder.setOrderDate(requestDTO.getOrderDate());
+        materialOrder.setExpectedDate(requestDTO.getExpectedDate());
+        materialOrder.setActualDate(requestDTO.getActualDate());
+        materialOrder.setStatus(requestDTO.getStatus());
+
+        // Remove old OrderItems
+        if (!materialOrder.getOrderItems().isEmpty()) {
+            List<OrderItem> existingItems = new ArrayList<>(materialOrder.getOrderItems());
+            existingItems.forEach(materialOrder::removeOrderItem);
+        }
+
+        // Save new OrderItems
+        if (!requestDTO.getOrderItems().isEmpty()) {
+            List<OrderItem> newItems = this.convertToOrderItems(requestDTO.getOrderItems());
+            newItems.forEach(materialOrder::addOrderItem);
+        }
+
+        MaterialOrder dbOrder = materialOrderRepository.save(materialOrder);
         log.info("Add material order successfully");
-        return MaterialOrderResponseMapper.INSTANCE.orderToResponse(dbOrder);
+        return this.convertToDetailResponse(dbOrder);
+    }
+
+    // Map OrderItem request to OrderItem entity
+    private List<OrderItem> convertToOrderItems(List<OrderItemRequestDTO> requestDTOList) {
+        return  requestDTOList.stream().map(requestDTO -> {
+            // Validate product
+            Product product = productService.getProductById(requestDTO.getProductId());
+
+            // Map OrderItem
+            OrderItem orderItem;
+            if (requestDTO.getId() != 0) {
+                orderItem = orderItemService.getById(requestDTO.getId());
+            }
+            else {
+                orderItem = OrderItem.builder().build();
+            }
+            orderItem.setOrderType(OrderItemType.MATERIAL);
+            orderItem.setProduct(product);
+            orderItem.setProductName(product.getName());
+            orderItem.setProductUom(product.getUom());
+            //TODO: Set price
+            orderItem.setQuantity(requestDTO.getQuantity());
+            return orderItem;
+        }).toList();
     }
 
     @Override
-    @Transactional
-    public MaterialOrderResponse update(MaterialOrderRequestDTO orderRequestDTO, int orderId) {
-        MaterialOrder oldOrder = getMaterialOrder(orderId);
-        MaterialOrder newOrder = MaterialOrderRequestMapper.INSTANCE.requestToOrder(orderRequestDTO);
-        newOrder.setId(oldOrder.getId());
-
-        MaterialOrder newDbOrder = materialOrderDAO.save(newOrder);
-        log.info("Update material order Id: {} successfully", newDbOrder.getId());
-        return MaterialOrderResponseMapper.INSTANCE.orderToResponse(newDbOrder);
-    }
-
-    @Override
-    public MaterialOrderResponse findById(int orderId) {
+    public MaterialOrderDetailResponse findById(int orderId) {
         MaterialOrder dbOrder = getMaterialOrder(orderId);
         log.info("Get Material_order detail id: {} successfully", orderId);
-        return MaterialOrderResponseMapper.INSTANCE.orderToResponse(dbOrder);
+        return this.convertToDetailResponse(dbOrder);
     }
 
 
     @Override
-    public List<MaterialOrderResponse> findAll() {
-        List<MaterialOrder> materialOrderList = materialOrderDAO.findAll();
-        List<MaterialOrderResponse> orderResponseList = new ArrayList<>();
-        for (MaterialOrder order : materialOrderList) {
-            MaterialOrderResponse response = MaterialOrderResponseMapper.INSTANCE.orderToResponse(order);
-            orderResponseList.add(response);
-        }
+    public List<MaterialOrderDetailResponse> findAll() {
+        List<MaterialOrder> materialOrderList = materialOrderRepository.findAll();
+        List<MaterialOrderDetailResponse> orderResponseList = new ArrayList<>();
+        materialOrderList.forEach(order -> orderResponseList.add(this.convertToDetailResponse(order)));
         log.info("Get all material orders successfully");
         return orderResponseList;
     }
@@ -75,8 +113,8 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
     @Override
     @Transactional
     public void deleteById(int orderId) {
-        MaterialOrder materialOrder = getMaterialOrder(orderId);
-        materialOrderDAO.delete(materialOrder);
+        MaterialOrder materialOrder = this.getMaterialOrder(orderId);
+        materialOrderRepository.delete(materialOrder);
         log.info("Delete material order id: {} successfully", orderId);
     }
 
@@ -88,10 +126,25 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
      * @return MaterialOrder || ResourceNotFoundException
      */
     private MaterialOrder getMaterialOrder(int orderId) {
-        MaterialOrder dbOrder = materialOrderDAO.findById(orderId);
-        if (dbOrder == null) {
-            throw new ResourceNotFoundException("Material order not found");
-        }
-        return  dbOrder;
+        return  materialOrderRepository
+                .findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Material order not found with ID:" + orderId));
+    }
+
+
+    private MaterialOrderDetailResponse convertToDetailResponse(MaterialOrder materialOrder) {
+        return MaterialOrderDetailResponse.builder()
+                .id(materialOrder.getId())
+                .supplierId(materialOrder.getSupplierId())
+                .name(materialOrder.getName())
+                .orderDate(materialOrder.getOrderDate())
+                .expectedDate(materialOrder.getExpectedDate())
+                .actualDate(materialOrder.getActualDate())
+                .additionalData(materialOrder.getAdditionalData())
+                .status(materialOrder.getStatus())
+                .createdAt(materialOrder.getCreatedAt())
+                .modifiedAt(materialOrder.getModifiedAt())
+                .orderItems(materialOrder.getOrderItems())
+                .build();
     }
 }

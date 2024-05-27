@@ -2,6 +2,7 @@ package com.wms.wms.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wms.wms.entity.MaterialOrder;
+import com.wms.wms.entity.enumentity.OrderItemType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import java.sql.Timestamp;
 public class OrderItemResponse {
     private int id;
     private String name;
-    private String orderType;
+    private OrderItemType orderType;
     private String uom;
     private BigDecimal quantity;
     private BigDecimal price;

@@ -16,7 +16,6 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = { "http://localhost:3000", "https://phucthanhwms.netlify.app" })
 @RequestMapping("/api")
 public class ProductController {
     private final IProductService productService;

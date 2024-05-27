@@ -1,19 +1,11 @@
 package com.wms.wms.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.query.Order;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
@@ -21,19 +13,17 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@EntityListeners(AuditingEntityListener.class)
+@DiscriminatorValue("MATERIAL_ORDER")
 @Table(name="material_order")
-public class MaterialOrder extends  AbstractEntity{
+public class MaterialOrder extends AbstractOrder{
     // Define constants
     public static String STATUS_DRAFT = "draft";
     public static String STATUS_PENDING = "pending";
     public static String STATUS_APPROVED = "approved";
 
     // Define fields
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
+    @Column(name = "supplier_id")
+    private int supplierId;
 
     @Column(name = "name")
     @NotBlank(message = "Material order name cannot be blank")
@@ -57,19 +47,4 @@ public class MaterialOrder extends  AbstractEntity{
 
     @Column(name = "status")
     private String status = STATUS_DRAFT;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "materialOrder")
-    @JsonManagedReference
-    private List<OrderItem> orderItems;
-
-    public void addItem(OrderItem newOrderItem) {
-        if (newOrderItem == null) {
-            return;
-        }
-        if (orderItems  == null) {
-            orderItems = new ArrayList<>();
-        }
-        orderItems.add(newOrderItem);
-        newOrderItem.setMaterialOrder(this);
-    }
 }

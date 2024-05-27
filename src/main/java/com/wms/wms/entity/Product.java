@@ -1,18 +1,14 @@
 package com.wms.wms.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import jdk.jfr.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -43,6 +39,8 @@ public class Product extends AbstractEntity{
     @Size(max = 63, message = "Product code must be under 63 characters")
     private String code;
 
+    //TODO: Price Objects
+
     @Column(name = "uom")
     @NotBlank(message = "Product uom cannot be blank")
     @Size(max = 63, message = "Product uom must be under 63 characters")
@@ -55,7 +53,7 @@ public class Product extends AbstractEntity{
     @Lob
     private byte[] images;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id", nullable = false)
     private ProductCategory productCategory;
 }

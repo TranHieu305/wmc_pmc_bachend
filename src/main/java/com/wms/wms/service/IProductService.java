@@ -23,5 +23,5 @@ public interface IProductService {
     // Delete Product by ID
     void deleteById(int id);
 
-    Product getProduct(int productId);
+    Product getProductById(int productId);
 }

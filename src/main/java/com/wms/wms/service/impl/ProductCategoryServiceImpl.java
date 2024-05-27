@@ -1,7 +1,6 @@
 package com.wms.wms.service.impl;
 
 
-import com.wms.wms.dao.IProductCategoryDAO;
 import com.wms.wms.dto.request.ProductCategoryRequestDTO;
 import com.wms.wms.dto.response.ProductCategoryDetailResponse;
 import com.wms.wms.entity.Product;
@@ -14,7 +13,6 @@ import com.wms.wms.mapper.productcategory.ProductCategoryResponseMapper;
 import com.wms.wms.repository.ProductCategoryRepository;
 import com.wms.wms.repository.ProductRepository;
 import com.wms.wms.service.IProductCategoryService;
-import com.wms.wms.service.IProductService;
 import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;

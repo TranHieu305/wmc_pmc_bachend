@@ -16,6 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MaterialOrderRequestDTO {
+    private int id;
+    private int supplierId;
+
     @NotBlank(message = "Material order name cannot be blank")
     @Size(min = 1, max = 255, message = "Material order name must be between 1 and 255 characters")
     private String name;

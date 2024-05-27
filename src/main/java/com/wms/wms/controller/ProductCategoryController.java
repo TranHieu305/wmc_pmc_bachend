@@ -14,11 +14,9 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = { "http://localhost:3000", "https://phucthanhwms.netlify.app" })
 @RequestMapping("/api")
 public class ProductCategoryController {
     private final IProductCategoryService categoryService;
-    private static final String ERROR_MESSAGE = "errorMessage={}";
 
     public ProductCategoryController(IProductCategoryService categoryService) {
         this.categoryService = categoryService;

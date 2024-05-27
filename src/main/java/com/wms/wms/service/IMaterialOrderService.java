@@ -1,24 +1,20 @@
 package com.wms.wms.service;
 
 import com.wms.wms.dto.request.MaterialOrderRequestDTO;
-import com.wms.wms.dto.response.MaterialOrderResponse;
-import com.wms.wms.entity.MaterialOrder;
+import com.wms.wms.dto.response.MaterialOrderDetailResponse;
 
 import java.util.List;
 
 public interface IMaterialOrderService {
 
     // Add new material order
-    MaterialOrderResponse save(MaterialOrderRequestDTO order);
-
-    // Update material order
-    MaterialOrderResponse update(MaterialOrderRequestDTO orderRequestDTO, int orderId);
+    MaterialOrderDetailResponse save(MaterialOrderRequestDTO order);
 
     // Find material order by Id
-    MaterialOrderResponse findById(int orderId);
+    MaterialOrderDetailResponse findById(int orderId);
 
     // Find all material orders
-    List<MaterialOrderResponse> findAll();
+    List<MaterialOrderDetailResponse> findAll();
 
     // Delete material order by Id
     void deleteById(int id);

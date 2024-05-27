@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = { "http://localhost:3000", "https://phucthanhwms.netlify.app" })
 @RequestMapping("/api")
 public class CustomerController {
     private ICustomerService customerService;

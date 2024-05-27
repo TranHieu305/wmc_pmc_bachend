@@ -1,7 +1,7 @@
 package com.wms.wms.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wms.wms.entity.enumentity.OrderItemType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -28,28 +28,33 @@ public class OrderItem extends AbstractEntity {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "name")
-    @NotBlank(message = "Order item name cannot be blank")
-    @Size(min = 1, max = 255, message = "Order item name must be between 1 and 255 characters")
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    @JsonBackReference
+    private AbstractOrder order;
 
     @Column(name = "order_type")
-    @NotBlank(message = "Order item type cannot be blank")
-    private String orderType;
+    @Enumerated(EnumType.STRING)
+    private OrderItemType orderType;
 
-    @Column(name = "uom")
-    private String uom;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @Column(name = "product_name")
+    @NotBlank(message = "Order item name cannot be blank")
+    @Size(min = 1, max = 255, message = "Order item name must be between 1 and 255 characters")
+    private String productName;
+
+    @Column(name = "product_uom")
+    @NotBlank(message = "Order item code cannot be blank")
+    @Size(max = 63, message = "Order item code must be under 63 characters")
+    private String productUom;
+
+    @Column(name = "product_price")
+    private BigDecimal productPrice;
 
     @Column(name = "quantity")
     @Digits(integer = 10, fraction = 6, message = "Order item quantity must be decimal")
     private BigDecimal quantity;
-
-    @Column(name = "price")
-    @Digits(integer = 10, fraction = 6, message = "Order item price must be decimal")
-    private BigDecimal price;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_id")
-    @JsonBackReference
-    private MaterialOrder materialOrder;
 }
