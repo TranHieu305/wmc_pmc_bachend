@@ -2,6 +2,7 @@ package com.wms.wms.controller;
 
 import com.wms.wms.dto.request.ProductCategoryRequestDTO;
 import com.wms.wms.dto.response.*;
+import com.wms.wms.dto.response.product.ProductCategoryDetailResponse;
 import com.wms.wms.service.IProductCategoryService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;

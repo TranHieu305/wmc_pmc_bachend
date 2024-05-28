@@ -1,9 +1,8 @@
 package com.wms.wms.service;
 
 import com.wms.wms.dto.request.SupplierRequestDTO;
-import com.wms.wms.dto.response.SupplierDetailResponse;
+import com.wms.wms.dto.response.supplier.SupplierDetailResponse;
 import com.wms.wms.entity.Supplier;
-import com.wms.wms.exception.ResourceNotFoundException;
 
 import java.util.List;
 

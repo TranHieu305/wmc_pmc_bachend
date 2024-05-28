@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.sql.Date;
 
 @Data
 @NoArgsConstructor
@@ -29,7 +29,7 @@ public class InventoryItem extends AbstractEntity {
     private BigDecimal quantityOnHand;
 
     @Column(name = "datetime_received")
-    private Timestamp datetimeReceived;
+    private Date datetimeReceived;
 
     @Column(name = "unit_price")
     private BigDecimal unitPrice;

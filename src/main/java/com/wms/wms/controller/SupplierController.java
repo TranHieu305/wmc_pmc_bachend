@@ -2,8 +2,7 @@ package com.wms.wms.controller;
 
 import com.wms.wms.dto.request.SupplierRequestDTO;
 import com.wms.wms.dto.response.*;
-import com.wms.wms.entity.Supplier;
-import com.wms.wms.exception.ResourceNotFoundException;
+import com.wms.wms.dto.response.supplier.SupplierDetailResponse;
 import com.wms.wms.service.ISupplierService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -30,41 +29,23 @@ public class SupplierController {
     @GetMapping("/suppliers")
     public ResponseEntity<ResponseData> findAll() {
         log.info("Request get supplier list");
-        try {
-            List<SupplierDetailResponse> response = supplierService.findAll();
-            return new ResponseSuccess(HttpStatus.OK, "Get supplier list successfully", response);
-        }
-        catch (Exception exc) {
-            log.error(ERROR_MESSAGE, exc.getMessage(), exc.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST, "Get supplier list fail");
-        }
+        List<SupplierDetailResponse> response = supplierService.findAll();
+        return new ResponseSuccess(HttpStatus.OK, "Get supplier list successfully", response);
     }
 
     @PostMapping("/suppliers")
     public ResponseEntity<ResponseData> addSupplier(@RequestBody @Valid SupplierRequestDTO requestDTO) {
         log.info("Request add supplier");
-        try {
-            requestDTO.setId(0);
-            SupplierDetailResponse response = supplierService.save(requestDTO);
-            return new ResponseSuccess(HttpStatus.OK, "Create supplier successfully",response);
-        }
-        catch (Exception exception) {
-            log.error(ERROR_MESSAGE, exception.getMessage(), exception.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST, "Create supplier fail");
-        }
+        requestDTO.setId(0);
+        SupplierDetailResponse response = supplierService.save(requestDTO);
+        return new ResponseSuccess(HttpStatus.OK, "Create supplier successfully",response);
     }
 
     @PutMapping("/suppliers")
     public ResponseEntity<ResponseData> updateSupplier(@RequestBody @Valid SupplierRequestDTO requestDTO) {
         log.info("Request update supplier id: {}", requestDTO.getId());
-        try {
-            SupplierDetailResponse response = supplierService.save(requestDTO);
-            return new ResponseSuccess(HttpStatus.OK, "Update supplier successfully",response);
-        }
-        catch (Exception exception) {
-            log.error(ERROR_MESSAGE, exception.getMessage(), exception.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST, "Update supplier fail");
-        }
+        SupplierDetailResponse response = supplierService.save(requestDTO);
+        return new ResponseSuccess(HttpStatus.OK, "Update supplier successfully",response);
     }
 
     // Get supplier by id
@@ -74,14 +55,9 @@ public class SupplierController {
             @PathVariable("supplierId") int supplierId) {
 
         log.info("Get Supplier detail id: {}", supplierId);
-        try {
-            SupplierDetailResponse response = supplierService.findById(supplierId);
-            return new ResponseSuccess(HttpStatus.OK, "Get Supplier detail successfully", response);
-        }
-        catch (Exception exception) {
-            log.error(ERROR_MESSAGE, exception.getMessage(), exception.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST, "Get Supplier detail fail");
-        }
+        SupplierDetailResponse response = supplierService.findById(supplierId);
+        return new ResponseSuccess(HttpStatus.OK, "Get Supplier detail successfully", response);
+
     }
 
     @DeleteMapping("/suppliers/{supplierId}")

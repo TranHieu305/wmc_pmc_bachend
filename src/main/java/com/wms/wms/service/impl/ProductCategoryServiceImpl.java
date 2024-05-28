@@ -2,14 +2,12 @@ package com.wms.wms.service.impl;
 
 
 import com.wms.wms.dto.request.ProductCategoryRequestDTO;
-import com.wms.wms.dto.response.ProductCategoryDetailResponse;
+import com.wms.wms.dto.response.product.ProductCategoryDetailResponse;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductCategory;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.exception.UniqueConstraintViolationException;
-import com.wms.wms.mapper.productcategory.ProductCategoryRequestMapper;
-import com.wms.wms.mapper.productcategory.ProductCategoryResponseMapper;
 import com.wms.wms.repository.ProductCategoryRepository;
 import com.wms.wms.repository.ProductRepository;
 import com.wms.wms.service.IProductCategoryService;
@@ -33,33 +31,41 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
     @Transactional
     public ProductCategoryDetailResponse save(ProductCategoryRequestDTO requestDTO) {
         validate(requestDTO);
+        ProductCategory category;
+        if (requestDTO.getId() != 0) {
+            category = this.getCategory(requestDTO.getId());
+        }
+        else {
+            category = ProductCategory.builder().build();
+        }
+        category.setName(StringHelper.preProcess(requestDTO.getName()));
+        category.setDescription(requestDTO.getDescription());
 
-        ProductCategory category = ProductCategoryRequestMapper.INSTANCE.requestToCategory(requestDTO);
-        ProductCategory dbCategory = productCategoryRepository.saveAndFlush(category);
+        ProductCategory dbCategory = productCategoryRepository.save(category);
         log.info("Save Product category successfully with ID: {}", dbCategory.getId());
-        return ProductCategoryResponseMapper.INSTANCE.categoryToResponse(dbCategory);
+        return this.convertToDetailResponse(dbCategory);
     }
 
     @Override
     public ProductCategoryDetailResponse findById(int categoryId) {
         ProductCategory dbCategory = this.getCategory(categoryId);
         log.info("Get Product category detail ID: {} successfully ", categoryId);
-        return ProductCategoryResponseMapper.INSTANCE.categoryToResponse(dbCategory);
+        return this.convertToDetailResponse(dbCategory);
     }
 
     @Override
     public List<ProductCategoryDetailResponse> findByName(String name) {
         List<ProductCategory> categories = productCategoryRepository.findByName(name);
         log.info("Get Product category detail by name: {} successfully ", name);
-        return categories.stream().map(ProductCategoryResponseMapper.INSTANCE::categoryToResponse).toList();
+        return categories.stream().map(this::convertToDetailResponse).toList();
     }
 
     @Override
     public List<ProductCategoryDetailResponse> findAll() {
         List<ProductCategory> categorieList = productCategoryRepository.findAll();
-        List<ProductCategoryDetailResponse> categoryDetailResponseList = categorieList.stream().map(
-                ProductCategoryResponseMapper.INSTANCE::categoryToResponse
-        ).toList();
+        List<ProductCategoryDetailResponse> categoryDetailResponseList = categorieList.stream()
+                .map(this::convertToDetailResponse)
+                .toList();
         log.info("Get Product category list successfully");
         return categoryDetailResponseList;
     }
@@ -98,7 +104,6 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
         else  {
             checkUniqueNameForUpdate(requestDTO.getName(), existingCategory.getName());
         }
-
     }
 
     /**
@@ -133,4 +138,13 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
         }
     }
 
+    private ProductCategoryDetailResponse convertToDetailResponse(ProductCategory category) {
+        return ProductCategoryDetailResponse.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .description(category.getDescription())
+                .createdAt(category.getCreatedAt())
+                .modifiedAt(category.getModifiedAt())
+                .build();
+    }
 }

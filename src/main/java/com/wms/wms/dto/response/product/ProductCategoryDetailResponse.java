@@ -1,4 +1,4 @@
-package com.wms.wms.dto.response;
+package com.wms.wms.dto.response.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

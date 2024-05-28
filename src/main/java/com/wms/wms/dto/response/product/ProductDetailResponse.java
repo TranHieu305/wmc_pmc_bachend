@@ -1,4 +1,4 @@
-package com.wms.wms.dto.response;
+package com.wms.wms.dto.response.product;
 
 import com.wms.wms.entity.ProductCategory;
 import jakarta.persistence.Column;

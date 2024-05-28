@@ -31,7 +31,8 @@ public class OrderItem extends AbstractEntity {
     private OrderItemType orderType;
 
     @JoinColumn(name = "product_id")
-    private int productId;
+    @ManyToOne
+    private Product product;
 
     @Column(name = "product_name")
     @NotBlank(message = "Order item name cannot be blank")

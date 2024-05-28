@@ -1,6 +1,5 @@
 package com.wms.wms.dto.request;
 
-import com.wms.wms.util.EnumPattern;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -18,6 +17,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WarehouseRequestDTO implements Serializable {
+    private int id;
+
     @Column(name = "name")
     @NotBlank(message = "Warehouse name cannot be blank")
     @Size(min = 1, max = 255, message = "Warehouse name must be between 1 and 255 characters")

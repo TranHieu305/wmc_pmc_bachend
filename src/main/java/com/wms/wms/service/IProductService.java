@@ -1,8 +1,8 @@
 package com.wms.wms.service;
 
 import com.wms.wms.dto.request.ProductRequestDTO;
-import com.wms.wms.dto.response.ProductDetailResponse;
-import com.wms.wms.dto.response.ProductGeneralResponse;
+import com.wms.wms.dto.response.product.ProductDetailResponse;
+import com.wms.wms.dto.response.product.ProductGeneralResponse;
 import com.wms.wms.entity.Product;
 
 import java.util.List;

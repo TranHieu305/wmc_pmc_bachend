@@ -1,4 +1,4 @@
-package com.wms.wms.dto.response;
+package com.wms.wms.dto.response.order;
 
 import com.wms.wms.entity.OrderItem;
 import com.wms.wms.entity.enumentity.OrderStatus;

@@ -1,15 +1,14 @@
 package com.wms.wms.service.impl;
 
 import com.wms.wms.dto.request.SupplierRequestDTO;
-import com.wms.wms.dto.response.SupplierDetailResponse;
+import com.wms.wms.dto.response.supplier.SupplierDetailResponse;
 import com.wms.wms.entity.Supplier;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
-import com.wms.wms.mapper.supplier.SupplierRequestMapper;
-import com.wms.wms.mapper.supplier.SupplierResponseMapper;
 import com.wms.wms.repository.MaterialOrderRepository;
 import com.wms.wms.repository.SupplierRepository;
 import com.wms.wms.service.ISupplierService;
+import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ public class SupplierServiceImpl implements ISupplierService {
     public List<SupplierDetailResponse> findAll() {
         List<Supplier> dbSuppliers= supplierRepository.findAll();
         List<SupplierDetailResponse> supplierDetailResponseList =
-                dbSuppliers.stream().map(SupplierResponseMapper.INSTANCE::supplierToResponse).toList();
+                dbSuppliers.stream().map(this::convertToDetailResponse).toList();
         log.info("Get supplier list successfully");
         return supplierDetailResponseList;
     }
@@ -38,20 +37,28 @@ public class SupplierServiceImpl implements ISupplierService {
     public SupplierDetailResponse findById(int id) {
         Supplier supplier = this.getSupplierById(id);
         log.info("Get Supplier detail id: {} successfully", id);
-        return SupplierResponseMapper.INSTANCE.supplierToResponse(supplier);
+        return this.convertToDetailResponse(supplier);
     }
 
     @Override
     @Transactional
     public SupplierDetailResponse save(SupplierRequestDTO requestDTO) {
-        // Validate supplier ID
+        Supplier supplier;
         if (requestDTO.getId() != 0) {
-            Supplier dbSupplier = this.getSupplierById(requestDTO.getId());
+            supplier = this.getSupplierById(requestDTO.getId());
         }
-        Supplier supplier = SupplierRequestMapper.INSTANCE.requestToSupplier(requestDTO);
+        else  {
+            supplier = Supplier.builder().build();
+        }
+        supplier.setName(StringHelper.preProcess(requestDTO.getName()));
+        supplier.setDescription(requestDTO.getDescription());
+        supplier.setAddress(requestDTO.getAddress());
+        supplier.setEmail(requestDTO.getEmail());
+        supplier.setPhone(requestDTO.getPhone());
+
         Supplier dbSupplier = supplierRepository.save(supplier);
         log.info("Update supplier successfully");
-        return SupplierResponseMapper.INSTANCE.supplierToResponse(dbSupplier);
+        return this.convertToDetailResponse(dbSupplier);
     }
 
     @Override
@@ -79,5 +86,18 @@ public class SupplierServiceImpl implements ISupplierService {
         if (materialOrderRepository.existsBySupplierId(supplier.getId())) {
             throw new ConstraintViolationException("Cannot delete supplier. Associated orders exist.");
         }
+    }
+
+    private SupplierDetailResponse convertToDetailResponse (Supplier supplier) {
+        return SupplierDetailResponse.builder()
+                .id(supplier.getId())
+                .name(supplier.getName())
+                .description(supplier.getDescription())
+                .address(supplier.getAddress())
+                .email(supplier.getEmail())
+                .phone(supplier.getPhone())
+                .createdAt(supplier.getCreatedAt())
+                .modifiedAt(supplier.getModifiedAt())
+                .build();
     }
 }

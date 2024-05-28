@@ -1,8 +1,8 @@
 package com.wms.wms.controller;
 
 import com.wms.wms.dto.request.ProductRequestDTO;
-import com.wms.wms.dto.response.ProductDetailResponse;
-import com.wms.wms.dto.response.ProductGeneralResponse;
+import com.wms.wms.dto.response.product.ProductDetailResponse;
+import com.wms.wms.dto.response.product.ProductGeneralResponse;
 import com.wms.wms.dto.response.ResponseSuccess;
 import com.wms.wms.service.IProductService;
 import jakarta.validation.Valid;

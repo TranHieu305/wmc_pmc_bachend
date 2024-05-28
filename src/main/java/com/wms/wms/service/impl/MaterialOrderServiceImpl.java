@@ -2,12 +2,14 @@ package com.wms.wms.service.impl;
 
 import com.wms.wms.dto.request.MaterialOrderRequestDTO;
 import com.wms.wms.dto.request.OrderItemRequestDTO;
-import com.wms.wms.dto.response.MaterialOrderDetailResponse;
+import com.wms.wms.dto.request.OrderStatusRequest;
+import com.wms.wms.dto.response.order.MaterialOrderDetailResponse;
 import com.wms.wms.entity.MaterialOrder;
 import com.wms.wms.entity.OrderItem;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.Supplier;
 import com.wms.wms.entity.enumentity.OrderItemType;
+import com.wms.wms.entity.enumentity.OrderStatus;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.repository.MaterialOrderRepository;
 import com.wms.wms.service.IMaterialOrderService;
@@ -83,13 +85,22 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
                 orderItem = OrderItem.builder().build();
             }
             orderItem.setOrderType(OrderItemType.MATERIAL);
-            orderItem.setProductId(product.getId());
+            orderItem.setProduct(product);
             orderItem.setProductName(product.getName());
             orderItem.setProductUom(product.getUom());
             //TODO: Set price
             orderItem.setQuantity(requestDTO.getQuantity());
             return orderItem;
         }).toList();
+    }
+
+    @Override
+    @Transactional
+    public void updateOrderStatus(int orderId, OrderStatusRequest request) {
+        MaterialOrder order = this.getMaterialOrder(orderId);
+        OrderStatus newStatus = request.getStatus();
+        order.setStatus(newStatus);
+        materialOrderRepository.save(order);
     }
 
     @Override

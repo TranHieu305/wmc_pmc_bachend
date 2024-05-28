@@ -1,4 +1,4 @@
-package com.wms.wms.dto.response;
+package com.wms.wms.dto.response.order;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wms.wms.entity.MaterialOrder;
