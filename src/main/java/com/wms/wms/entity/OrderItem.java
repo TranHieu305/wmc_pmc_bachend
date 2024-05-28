@@ -20,13 +20,6 @@ import java.math.BigDecimal;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name="order_item")
 public class OrderItem extends AbstractEntity {
-    public static String TYPE_MATERIAL = "material";
-    public static String TYPE_PRODUCT = "product";
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")

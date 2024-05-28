@@ -3,7 +3,6 @@ package com.wms.wms.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Setter
@@ -11,14 +10,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "supplier")
 public class Supplier extends AbstractEntity{
-    // Define fields
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
 
     @Column(name = "name")
     @NotBlank(message = "Supplier name cannot be blank")

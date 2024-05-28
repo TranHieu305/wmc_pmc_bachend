@@ -159,4 +159,53 @@ CREATE TABLE `product` (
     ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Table structure for table `product_warehouse`
+--
+DROP TABLE IF EXISTS `product_warehouse`;
+CREATE TABLE `product_warehouse` (
+    `id` int AUTO_INCREMENT,
+
+    `product_id` int NOT NULL,
+    `warehouse_id` int NOT NULL,
+    `quantity_on_hand` decimal(16,6),
+
+    `created_at` TIMESTAMP NULL,
+    `modified_at` TIMESTAMP NULL,
+
+    PRIMARY KEY (`id`),
+    KEY `FK_PW_PRODUCT_idx` (`product_id`),
+    KEY `FK_PW_WAREHOUSE_idx` (`warehouse_id`),
+
+    CONSTRAINT `FK_PW_PRODUCT` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`),
+    CONSTRAINT `FK_PW_WAREHOUSE` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse`(`id`)
+
+    ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `product_warehouse`
+--
+DROP TABLE IF EXISTS `inventory_item`;
+CREATE TABLE `inventory_item` (
+    `id` int AUTO_INCREMENT,
+
+    `product_id` int NOT NULL,
+    `warehouse_id` int NOT NULL,
+    `quantity_on_hand` decimal(16,6),
+    `unit_price` decimal(16,6),
+    `datetime_received` TIMESTAMP NULL,
+    `created_at` TIMESTAMP NULL,
+    `modified_at` TIMESTAMP NULL,
+
+    PRIMARY KEY (`id`),
+    KEY `FK_II_PRODUCT_idx` (`product_id`),
+    KEY `FK_II_WAREHOUSE_idx` (`warehouse_id`),
+
+    CONSTRAINT `FK_II_PRODUCT` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`),
+    CONSTRAINT `FK_II_WAREHOUSE` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse`(`id`)
+
+    ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 SET FOREIGN_KEY_CHECKS=1;

@@ -7,11 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.sql.Timestamp;
 
 @Data
 @NoArgsConstructor
@@ -20,12 +15,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "product_category")
-public class ProductCategory extends AbstractEntity{
-    // Define fields
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
+public class ProductCategory extends AbstractEntity {
 
     @Column(name = "name")
     @NotBlank(message = "Product category name cannot be blank")

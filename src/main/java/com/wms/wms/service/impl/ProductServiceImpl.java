@@ -38,7 +38,7 @@ public class ProductServiceImpl implements IProductService {
             product = this.getProductById(requestDTO.getId());
         }
         else {
-            product = Product.builder().id(0).build();
+            product = Product.builder().build();
         }
 
         product.setName(StringHelper.preProcess(requestDTO.getName()));

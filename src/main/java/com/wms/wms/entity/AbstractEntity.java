@@ -14,6 +14,10 @@ import java.sql.Timestamp;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

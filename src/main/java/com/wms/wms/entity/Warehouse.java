@@ -1,13 +1,10 @@
 package com.wms.wms.entity;
 
-import com.wms.wms.util.EnumPattern;
-import com.wms.wms.util.WarehouseStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.math.BigDecimal;
 
 
@@ -17,18 +14,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(name="warehouse")
-public class Warehouse extends  AbstractEntity{
+public class Warehouse extends AbstractEntity{
     // Define constants
     public static String STATUS_ACTIVE = "active";
     public static String STATUS_INACTIVE = "inactive";
-
-    // Define fields
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
 
     @Column(name = "name")
     @NotBlank(message = "Warehouse name cannot be blank")

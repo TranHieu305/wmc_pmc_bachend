@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "customer")
 public class Customer extends AbstractEntity{
     // Define fields
