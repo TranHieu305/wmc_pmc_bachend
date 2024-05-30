@@ -1,5 +1,6 @@
 package com.wms.wms.entity;
 
+import com.wms.wms.entity.enumentity.ProductType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -12,7 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 @Entity
 @Table(name = "product_category")
 public class ProductCategory extends AbstractEntity {
@@ -24,5 +24,9 @@ public class ProductCategory extends AbstractEntity {
 
     @Column(name = "description")
     @Size(max = 255, message = "Product category description must be under 256 characters")
-    private  String description;
+    private String description;
+
+    @Column(name = "product_type")
+    @Enumerated(EnumType.STRING)
+    private ProductType productType;
 }

@@ -1,7 +1,7 @@
 package com.wms.wms.service.impl;
 
 
-import com.wms.wms.dto.request.ProductCategoryRequestDTO;
+import com.wms.wms.dto.request.ProductCategoryRequest;
 import com.wms.wms.dto.response.product.ProductCategoryDetailResponse;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductCategory;
@@ -29,7 +29,7 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
 
     @Override
     @Transactional
-    public ProductCategoryDetailResponse save(ProductCategoryRequestDTO requestDTO) {
+    public ProductCategoryDetailResponse save(ProductCategoryRequest requestDTO) {
         validate(requestDTO);
         ProductCategory category;
         if (requestDTO.getId() != 0) {
@@ -92,7 +92,7 @@ public class ProductCategoryServiceImpl implements IProductCategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException ("No Product category exists with the given Id: " + id));
     }
 
-    private void validate(ProductCategoryRequestDTO requestDTO) {
+    private void validate(ProductCategoryRequest requestDTO) {
         // validate ID
         ProductCategory existingCategory = null;
         if (requestDTO.getId() != 0) {

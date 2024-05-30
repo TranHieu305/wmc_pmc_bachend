@@ -1,8 +1,7 @@
 package com.wms.wms.controller;
 
-import com.wms.wms.dto.request.WarehouseRequestDTO;
+import com.wms.wms.dto.request.WarehouseRequest;
 import com.wms.wms.dto.response.ResponseData;
-import com.wms.wms.dto.response.ResponseError;
 import com.wms.wms.dto.response.warehouse.WarehouseDetailResponse;
 import com.wms.wms.dto.response.ResponseSuccess;
 import com.wms.wms.service.IWarehouseService;
@@ -44,16 +43,16 @@ public class WarehouseController {
     }
 
     @PostMapping("/warehouses")
-    public ResponseEntity<ResponseData> addWarehouse(@RequestBody @Valid WarehouseRequestDTO warehouseRequestDTO) {
+    public ResponseEntity<ResponseData> addWarehouse(@RequestBody @Valid WarehouseRequest warehouseRequest) {
         log.info("Request add warehouse");
-        WarehouseDetailResponse response = warehouseService.save(warehouseRequestDTO);
+        WarehouseDetailResponse response = warehouseService.save(warehouseRequest);
         return new ResponseSuccess(HttpStatus.OK, "Add warehouses successfully", response);
     }
 
     @PutMapping("/warehouses/{warehouseId}")
-    public ResponseEntity<ResponseData> updateWarehouse(@RequestBody @Valid WarehouseRequestDTO warehouseRequestDTO) {
-        log.info("Request update warehouseId={}", warehouseRequestDTO.getId());
-        WarehouseDetailResponse response = warehouseService.save(warehouseRequestDTO);
+    public ResponseEntity<ResponseData> updateWarehouse(@RequestBody @Valid WarehouseRequest warehouseRequest) {
+        log.info("Request update warehouseId={}", warehouseRequest.getId());
+        WarehouseDetailResponse response = warehouseService.save(warehouseRequest);
         return new ResponseSuccess(HttpStatus.OK, "Update warehouses successfully", response);
     }
 

@@ -127,6 +127,7 @@ CREATE TABLE `product_category` (
 
     `name` varchar(255) UNIQUE NOT NULL,
     `description` varchar(255) DEFAULT NULL,
+    `product_type` varchar(63),
 
     `created_at` TIMESTAMP NULL,
     `modified_at` TIMESTAMP NULL,
@@ -208,4 +209,30 @@ CREATE TABLE `inventory_item` (
     ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Table structure for table `product_price`
+--
+DROP TABLE IF EXISTS `product_price`;
+CREATE TABLE `product_price` (
+    `id` int AUTO_INCREMENT,
+
+    `product_id` int NOT NULL,
+    `partner_id` int NOT NULL,
+    `product_type` varchar(63),
+    `price` decimal(16,6),
+    `start_date` DATE NULL,
+    `end_date` DATE NULL,
+    `description` varchar(255) DEFAULT NULL,
+
+    `created_at` TIMESTAMP NULL,
+    `modified_at` TIMESTAMP NULL,
+
+    PRIMARY KEY (`id`),
+    KEY `FK_PP_PRODUCT_idx` (`product_id`),
+    KEY `FK_PP_PARTNER_idx` (`partner_id`),
+
+    CONSTRAINT `FK_PP_PRODUCT` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`)
+
+    ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 SET FOREIGN_KEY_CHECKS=1;

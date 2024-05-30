@@ -1,9 +1,8 @@
 package com.wms.wms.dto.response.product;
 
 import com.wms.wms.entity.ProductCategory;
-import jakarta.persistence.Column;
+import com.wms.wms.entity.ProductPrice;
 import lombok.*;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.sql.Timestamp;
 
@@ -23,4 +22,5 @@ public class ProductDetailResponse {
     private ProductCategory productCategory;
     private Timestamp createdAt;
     private Timestamp modifiedAt;
+    private ProductPrice currentPrice;
 }

@@ -1,6 +1,6 @@
 package com.wms.wms.service.impl;
 
-import com.wms.wms.dto.request.ProductRequestDTO;
+import com.wms.wms.dto.request.ProductRequest;
 import com.wms.wms.dto.response.product.ProductDetailResponse;
 import com.wms.wms.dto.response.product.ProductGeneralResponse;
 import com.wms.wms.entity.Product;
@@ -31,7 +31,7 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     @Transactional
-    public ProductDetailResponse save(ProductRequestDTO requestDTO) {
+    public ProductDetailResponse save(ProductRequest requestDTO) {
         this.validate(requestDTO);
         Product product;
         if (requestDTO.getId() != 0) {
@@ -119,7 +119,7 @@ public class ProductServiceImpl implements IProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("No Product exists with the given Id: " + id));
     }
 
-    private void validate(ProductRequestDTO requestDTO) {
+    private void validate(ProductRequest requestDTO) {
         // validate ID
         Product existingProduct = null;
         if (requestDTO.getId() != 0) {

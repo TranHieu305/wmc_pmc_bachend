@@ -1,6 +1,5 @@
 package com.wms.wms.dto.request;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -8,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SupplierRequestDTO {
+public class SupplierRequest {
     @Setter
     private int id;
 

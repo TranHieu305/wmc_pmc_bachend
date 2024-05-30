@@ -1,6 +1,6 @@
 package com.wms.wms.service;
 
-import com.wms.wms.dto.request.SupplierRequestDTO;
+import com.wms.wms.dto.request.SupplierRequest;
 import com.wms.wms.dto.response.supplier.SupplierDetailResponse;
 import com.wms.wms.entity.Supplier;
 
@@ -15,7 +15,7 @@ public interface ISupplierService {
     SupplierDetailResponse findById(int id);
 
     // Save supplier
-    SupplierDetailResponse save(SupplierRequestDTO supplierRequestDTO);
+    SupplierDetailResponse save(SupplierRequest supplierRequestDTO);
 
     // Find by Id
     Supplier getSupplierById(int supplierId);

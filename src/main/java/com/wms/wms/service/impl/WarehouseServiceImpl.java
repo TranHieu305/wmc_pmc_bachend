@@ -1,6 +1,6 @@
 package com.wms.wms.service.impl;
 
-import com.wms.wms.dto.request.WarehouseRequestDTO;
+import com.wms.wms.dto.request.WarehouseRequest;
 import com.wms.wms.dto.response.warehouse.WarehouseDetailResponse;
 import com.wms.wms.entity.Warehouse;
 import com.wms.wms.exception.ResourceNotFoundException;
@@ -36,16 +36,16 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     @Transactional
     @Override
-    public WarehouseDetailResponse save(WarehouseRequestDTO warehouseRequestDTO) {
+    public WarehouseDetailResponse save(WarehouseRequest warehouseRequest) {
         Warehouse warehouse;
-        if (warehouseRequestDTO.getId() != 0) {
-            warehouse = this.getWarehouseById(warehouseRequestDTO.getId());
+        if (warehouseRequest.getId() != 0) {
+            warehouse = this.getWarehouseById(warehouseRequest.getId());
         }
         else {
             warehouse = Warehouse.builder().build();
         }
-        warehouse.setName(StringHelper.preProcess(warehouseRequestDTO.getName()));
-        warehouse.setDescription(warehouseRequestDTO.getDescription());
+        warehouse.setName(StringHelper.preProcess(warehouseRequest.getName()));
+        warehouse.setDescription(warehouseRequest.getDescription());
 
         Warehouse dbWarehouse = warehouseRepository.save(warehouse);
         log.info("Add warehouse service successfully");

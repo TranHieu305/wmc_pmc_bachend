@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductCategoryRequestDTO {
+public class ProductCategoryRequest {
     @Setter
     private int id;
 

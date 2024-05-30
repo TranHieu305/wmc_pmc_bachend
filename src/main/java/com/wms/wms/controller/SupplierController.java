@@ -1,6 +1,6 @@
 package com.wms.wms.controller;
 
-import com.wms.wms.dto.request.SupplierRequestDTO;
+import com.wms.wms.dto.request.SupplierRequest;
 import com.wms.wms.dto.response.*;
 import com.wms.wms.dto.response.supplier.SupplierDetailResponse;
 import com.wms.wms.service.ISupplierService;
@@ -34,7 +34,7 @@ public class SupplierController {
     }
 
     @PostMapping("/suppliers")
-    public ResponseEntity<ResponseData> addSupplier(@RequestBody @Valid SupplierRequestDTO requestDTO) {
+    public ResponseEntity<ResponseData> addSupplier(@RequestBody @Valid SupplierRequest requestDTO) {
         log.info("Request add supplier");
         requestDTO.setId(0);
         SupplierDetailResponse response = supplierService.save(requestDTO);
@@ -42,7 +42,7 @@ public class SupplierController {
     }
 
     @PutMapping("/suppliers")
-    public ResponseEntity<ResponseData> updateSupplier(@RequestBody @Valid SupplierRequestDTO requestDTO) {
+    public ResponseEntity<ResponseData> updateSupplier(@RequestBody @Valid SupplierRequest requestDTO) {
         log.info("Request update supplier id: {}", requestDTO.getId());
         SupplierDetailResponse response = supplierService.save(requestDTO);
         return new ResponseSuccess(HttpStatus.OK, "Update supplier successfully",response);

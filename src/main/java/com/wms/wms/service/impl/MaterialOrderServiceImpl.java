@@ -1,7 +1,7 @@
 package com.wms.wms.service.impl;
 
-import com.wms.wms.dto.request.MaterialOrderRequestDTO;
-import com.wms.wms.dto.request.OrderItemRequestDTO;
+import com.wms.wms.dto.request.MaterialOrderRequest;
+import com.wms.wms.dto.request.OrderItemRequest;
 import com.wms.wms.dto.request.OrderStatusRequest;
 import com.wms.wms.dto.response.order.MaterialOrderDetailResponse;
 import com.wms.wms.entity.MaterialOrder;
@@ -37,7 +37,7 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
 
     @Transactional
     @Override
-    public MaterialOrderDetailResponse save(MaterialOrderRequestDTO requestDTO) {
+    public MaterialOrderDetailResponse save(MaterialOrderRequest requestDTO) {
         MaterialOrder materialOrder;
         if (requestDTO.getId() != 0) {
             materialOrder = this.getMaterialOrder(requestDTO.getId());
@@ -71,7 +71,7 @@ public class MaterialOrderServiceImpl implements IMaterialOrderService {
     }
 
     // Map OrderItem request to OrderItem entity
-    private List<OrderItem> convertToOrderItems(List<OrderItemRequestDTO> requestDTOList) {
+    private List<OrderItem> convertToOrderItems(List<OrderItemRequest> requestDTOList) {
         return  requestDTOList.stream().map(requestDTO -> {
             // Validate product
             Product product = productService.getProductById(requestDTO.getProductId());

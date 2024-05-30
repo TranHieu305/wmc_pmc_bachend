@@ -1,6 +1,6 @@
 package com.wms.wms.service.impl;
 
-import com.wms.wms.dto.request.SupplierRequestDTO;
+import com.wms.wms.dto.request.SupplierRequest;
 import com.wms.wms.dto.response.supplier.SupplierDetailResponse;
 import com.wms.wms.entity.Supplier;
 import com.wms.wms.exception.ConstraintViolationException;
@@ -42,7 +42,7 @@ public class SupplierServiceImpl implements ISupplierService {
 
     @Override
     @Transactional
-    public SupplierDetailResponse save(SupplierRequestDTO requestDTO) {
+    public SupplierDetailResponse save(SupplierRequest requestDTO) {
         Supplier supplier;
         if (requestDTO.getId() != 0) {
             supplier = this.getSupplierById(requestDTO.getId());

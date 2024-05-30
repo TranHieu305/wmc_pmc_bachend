@@ -1,6 +1,6 @@
 package com.wms.wms.controller;
 
-import com.wms.wms.dto.request.ProductRequestDTO;
+import com.wms.wms.dto.request.ProductRequest;
 import com.wms.wms.dto.response.product.ProductDetailResponse;
 import com.wms.wms.dto.response.product.ProductGeneralResponse;
 import com.wms.wms.dto.response.ResponseSuccess;
@@ -33,7 +33,7 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public ResponseEntity addProduct(@RequestBody @Valid ProductRequestDTO requestDTO) {
+    public ResponseEntity addProduct(@RequestBody @Valid ProductRequest requestDTO) {
         log.info("Request add product ");
         requestDTO.setId(0);
         ProductDetailResponse response = productService.save(requestDTO);
@@ -41,7 +41,7 @@ public class ProductController {
     }
 
     @PutMapping("/products")
-    public ResponseEntity updateProduct(@RequestBody @Valid ProductRequestDTO requestDTO) {
+    public ResponseEntity updateProduct(@RequestBody @Valid ProductRequest requestDTO) {
         log.info("Request update product id: {}", requestDTO.getId());
         ProductDetailResponse response = productService.save(requestDTO);
         return new ResponseSuccess(HttpStatus.OK, "Update product successfully",response);

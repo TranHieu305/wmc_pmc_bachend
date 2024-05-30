@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MaterialOrderRequestDTO {
+public class MaterialOrderRequest {
     private int id;
     private int supplierId;
 
@@ -36,5 +36,5 @@ public class MaterialOrderRequestDTO {
 
     private String status;
 
-    private List<OrderItemRequestDTO> orderItems;
+    private List<OrderItemRequest> orderItems;
 }

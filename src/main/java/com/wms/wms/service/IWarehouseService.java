@@ -1,6 +1,6 @@
 package com.wms.wms.service;
 
-import com.wms.wms.dto.request.WarehouseRequestDTO;
+import com.wms.wms.dto.request.WarehouseRequest;
 import com.wms.wms.dto.response.warehouse.WarehouseDetailResponse;
 import com.wms.wms.entity.Warehouse;
 
@@ -15,7 +15,7 @@ public interface IWarehouseService {
     WarehouseDetailResponse findById(int id);
 
     // Save warehouse
-    WarehouseDetailResponse save(WarehouseRequestDTO request);
+    WarehouseDetailResponse save(WarehouseRequest request);
 
     // Get warehouse by ID
     Warehouse getWarehouseById(int warehouseId);

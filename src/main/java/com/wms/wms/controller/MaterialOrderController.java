@@ -1,7 +1,7 @@
 package com.wms.wms.controller;
 
 
-import com.wms.wms.dto.request.MaterialOrderRequestDTO;
+import com.wms.wms.dto.request.MaterialOrderRequest;
 import com.wms.wms.dto.request.OrderStatusRequest;
 import com.wms.wms.dto.response.order.MaterialOrderDetailResponse;
 import com.wms.wms.dto.response.ResponseData;
@@ -43,7 +43,7 @@ public class MaterialOrderController {
 
     // Create new Material Order
     @PostMapping("/material-orders")
-    public ResponseEntity<ResponseData> addMaterialOrder(@RequestBody @Valid MaterialOrderRequestDTO requestDTO) {
+    public ResponseEntity<ResponseData> addMaterialOrder(@RequestBody @Valid MaterialOrderRequest requestDTO) {
         log.info("Request add material order");
         MaterialOrderDetailResponse response = materialOrderService.save(requestDTO);
         return new ResponseSuccess(HttpStatus.OK, "Create material order successfully",response);
@@ -52,7 +52,7 @@ public class MaterialOrderController {
 
     // Update Material order
     @PutMapping("/material-orders")
-    public ResponseEntity<ResponseData> updateMaterialOrder(@RequestBody @Valid MaterialOrderRequestDTO orderRequestDTO,
+    public ResponseEntity<ResponseData> updateMaterialOrder(@RequestBody @Valid MaterialOrderRequest orderRequestDTO,
                                                             @Min(value = 0, message = "Id must be greater than 0")
                                                             @PathVariable("orderId") int orderId) {
         log.info("Request update orderId={}", orderId);

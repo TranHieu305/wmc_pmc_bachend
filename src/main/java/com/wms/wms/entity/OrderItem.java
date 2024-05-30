@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(name="order_item")
 public class OrderItem extends AbstractEntity {
 

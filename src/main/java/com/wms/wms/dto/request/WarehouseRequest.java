@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WarehouseRequestDTO implements Serializable {
+public class WarehouseRequest implements Serializable {
     private int id;
 
     @Column(name = "name")

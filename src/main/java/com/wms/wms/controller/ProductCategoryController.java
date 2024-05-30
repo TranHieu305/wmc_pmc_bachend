@@ -1,6 +1,6 @@
 package com.wms.wms.controller;
 
-import com.wms.wms.dto.request.ProductCategoryRequestDTO;
+import com.wms.wms.dto.request.ProductCategoryRequest;
 import com.wms.wms.dto.response.*;
 import com.wms.wms.dto.response.product.ProductCategoryDetailResponse;
 import com.wms.wms.service.IProductCategoryService;
@@ -32,7 +32,7 @@ public class ProductCategoryController {
     }
 
     @PostMapping("/product-categories")
-    public ResponseEntity<ResponseData> addProductCategory(@RequestBody @Valid ProductCategoryRequestDTO requestDTO) {
+    public ResponseEntity<ResponseData> addProductCategory(@RequestBody @Valid ProductCategoryRequest requestDTO) {
         log.info("Request add product category");
         requestDTO.setId(0);
         ProductCategoryDetailResponse response = categoryService.save(requestDTO);
@@ -40,7 +40,7 @@ public class ProductCategoryController {
     }
 
     @PutMapping("/product-categories")
-    public ResponseEntity<ResponseData> updateProductCategory(@RequestBody @Valid ProductCategoryRequestDTO requestDTO) {
+    public ResponseEntity<ResponseData> updateProductCategory(@RequestBody @Valid ProductCategoryRequest requestDTO) {
         log.info("Request update product category id: {}", requestDTO.getId());
         ProductCategoryDetailResponse response = categoryService.save(requestDTO);
         return new ResponseSuccess(HttpStatus.OK, "Update product category successfully",response);
