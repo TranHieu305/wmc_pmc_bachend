@@ -5,29 +5,42 @@ import com.wms.wms.dto.response.product.ProductDetailResponse;
 import com.wms.wms.dto.response.product.ProductGeneralResponse;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductCategory;
+import com.wms.wms.entity.ProductPrice;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.exception.UniqueConstraintViolationException;
 import com.wms.wms.repository.OrderItemRepository;
 import com.wms.wms.repository.ProductRepository;
 import com.wms.wms.service.IProductCategoryService;
+import com.wms.wms.service.IProductPriceService;
 import com.wms.wms.service.IProductService;
 import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Slf4j
 @Service
-@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductServiceImpl implements IProductService {
     private final ProductRepository productRepository;
     private final IProductCategoryService productCategoryService;
     private final OrderItemRepository orderItemRepository;
+    private final IProductPriceService productPriceService;
+
+    public ProductServiceImpl(ProductRepository productRepository,
+                              IProductCategoryService productCategoryService,
+                              OrderItemRepository orderItemRepository,
+                              @Lazy IProductPriceService productPriceService) {
+        this.productRepository = productRepository;
+        this.productCategoryService = productCategoryService;
+        this.orderItemRepository = orderItemRepository;
+        this.productPriceService = productPriceService;
+    }
 
     @Override
     @Transactional
@@ -53,6 +66,7 @@ public class ProductServiceImpl implements IProductService {
 
         Product dbProduct = productRepository.save(product);
         log.info("Save Product successfully with ID: {}", dbProduct.getId());
+        ProductPrice currentPrice = productPriceService.getCurrentPrice(dbProduct);
         return ProductDetailResponse.builder()
                 .id(dbProduct.getId())
                 .name(dbProduct.getName())
@@ -63,6 +77,7 @@ public class ProductServiceImpl implements IProductService {
                 .images(dbProduct.getImages())
                 .productCategoryId(dbProduct.getProductCategory().getId())
                 .productCategory(category)
+                .currentPrice(currentPrice)
                 .createdAt(dbProduct.getCreatedAt())
                 .modifiedAt(dbProduct.getModifiedAt())
                 .build();
