@@ -8,29 +8,20 @@ import com.wms.wms.entity.enumentity.ProductType;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.repository.ProductPriceRepository;
+import com.wms.wms.service.IEntityRetrievalService;
 import com.wms.wms.service.IProductPriceService;
-import com.wms.wms.service.IProductService;
-import com.wms.wms.service.ISupplierService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductPriceServiceImpl implements IProductPriceService {
     private final ProductPriceRepository productPriceRepository;
-    private final IProductService productService;
-    private final ISupplierService supplierService;
+    private final IEntityRetrievalService entityRetrievalService;
 
-    @Autowired
-    public ProductPriceServiceImpl(ProductPriceRepository productPriceRepository,
-                                   @Lazy IProductService productService,
-                                   @Lazy ISupplierService supplierService) {
-        this.productPriceRepository = productPriceRepository;
-        this.productService = productService;
-        this.supplierService = supplierService;
-    }
 
     @Override
     public ProductPrice save(ProductPriceRequest request) {
@@ -44,10 +35,12 @@ public class ProductPriceServiceImpl implements IProductPriceService {
         }
 
         // Validate
-        Product product = productService.getProductById(request.getProductId());
+        Product product = entityRetrievalService.getProductById(request.getProductId());
+
         ProductType productType = product.getProductCategory().getProductType();
+
         if (productType.equals(ProductType.MATERIAL)) {
-            Supplier supplier = supplierService.getSupplierById(request.getPartnerId());
+            Supplier supplier = entityRetrievalService.getSupplierById(request.getPartnerId());
             productPrice.setPartnerId(supplier.getId());
         }
 
