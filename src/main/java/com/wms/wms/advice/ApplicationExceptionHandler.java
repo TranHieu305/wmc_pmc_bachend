@@ -1,9 +1,9 @@
 package com.wms.wms.advice;
 
-import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.dto.response.ResponseError;
 import com.wms.wms.exception.UniqueConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -79,7 +79,9 @@ public class ApplicationExceptionHandler {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity handleConstraintViolation(ConstraintViolationException exception) {
-        return new ResponseError(HttpStatus.CONFLICT, exception.getMessage());
+        Map<String, String> errorMap = new HashMap<>();
+        exception.getConstraintViolations().forEach(violation -> errorMap.put(violation.getPropertyPath().toString(), violation.getMessage()));
+        return new ResponseError(HttpStatus.CONFLICT, "Validation error", errorMap);
     }
 
 }

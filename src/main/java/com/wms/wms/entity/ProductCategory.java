@@ -3,6 +3,7 @@ package com.wms.wms.entity;
 import com.wms.wms.entity.enumentity.ProductType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,7 @@ public class ProductCategory extends AbstractEntity {
     private String description;
 
     @Column(name = "product_type")
+    @NotNull(message = "Product type can not be null")
     @Enumerated(EnumType.STRING)
     private ProductType productType;
 }

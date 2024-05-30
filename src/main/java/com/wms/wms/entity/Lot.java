@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name="lot")
-public class Lot {
+public class Lot extends AbstractEntity {
 
     @Column(name = "order_id")
     private int orderId;

@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @Builder
 @Entity
 @Table(name="assigned_order_item")
-public class AssignedOrderItem extends OrderItem {
+public class AssignedOrderItem extends AbstractEntity {
     @Column(name = "order_item_id", nullable = false)
     private int orderItemId;
 
