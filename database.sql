@@ -43,6 +43,18 @@ CREATE TABLE `warehouse` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Table structure for table `partner`
+--
+DROP TABLE IF EXISTS `partner`;
+CREATE TABLE `partner` (
+    `id` int AUTO_INCREMENT,
+    `partner_type` varchar(31),
+    `created_at` TIMESTAMP NULL,
+    `modified_at` TIMESTAMP NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 --
 -- Table structure for table `supplier`
@@ -55,9 +67,9 @@ CREATE TABLE `supplier` (
     `address` varchar(255) DEFAULT NULL,
     `email` varchar(255) DEFAULT NULL,
     `phone` varchar(255) DEFAULT NULL,
-    `created_at` TIMESTAMP NULL,
-    `modified_at` TIMESTAMP NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_SUP_ID` FOREIGN KEY (`id`) REFERENCES `partner`(`id`)
+    ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -218,7 +230,6 @@ CREATE TABLE `product_price` (
 
     `product_id` int NOT NULL,
     `partner_id` int NOT NULL,
-    `product_type` varchar(63),
     `price` decimal(16,6),
     `start_date` DATE NULL,
     `end_date` DATE NULL,
@@ -231,7 +242,9 @@ CREATE TABLE `product_price` (
     KEY `FK_PP_PRODUCT_idx` (`product_id`),
     KEY `FK_PP_PARTNER_idx` (`partner_id`),
 
-    CONSTRAINT `FK_PP_PRODUCT` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`)
+    CONSTRAINT `FK_PP_PRODUCT` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`),
+    CONSTRAINT `FK_PP_PARTNER` FOREIGN KEY (`partner_id`) REFERENCES `partner`(`id`)
+
 
     ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -1,6 +1,8 @@
 package com.wms.wms.dto.request;
 
 import com.wms.wms.entity.enumentity.ProductType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -20,5 +22,6 @@ public class ProductCategoryRequest {
     private  String description;
 
     @NotNull(message = "Product type can not be null")
+    @Enumerated(EnumType.STRING)
     private ProductType productType;
 }

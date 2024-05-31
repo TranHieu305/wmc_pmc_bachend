@@ -1,6 +1,7 @@
 package com.wms.wms.service.impl;
 
 import com.wms.wms.dto.request.ProductPriceRequest;
+import com.wms.wms.entity.AbstractPartner;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductPrice;
 import com.wms.wms.entity.Supplier;
@@ -15,13 +16,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductPriceServiceImpl implements IProductPriceService {
     private final ProductPriceRepository productPriceRepository;
     private final IEntityRetrievalService entityRetrievalService;
-
 
     @Override
     public ProductPrice save(ProductPriceRequest request) {
@@ -36,16 +38,10 @@ public class ProductPriceServiceImpl implements IProductPriceService {
 
         // Validate
         Product product = entityRetrievalService.getProductById(request.getProductId());
-
-        ProductType productType = product.getProductCategory().getProductType();
-
-        if (productType.equals(ProductType.MATERIAL)) {
-            Supplier supplier = entityRetrievalService.getSupplierById(request.getPartnerId());
-            productPrice.setPartnerId(supplier.getId());
-        }
+        AbstractPartner partner = entityRetrievalService.getPartnerById(request.getPartnerId());
 
         productPrice.setProductId(product.getId());
-        productPrice.setProductType(productType);
+        productPrice.setPartnerId(product.getId());
         productPrice.setPrice(request.getPrice());
         productPrice.setStartDate(request.getStartDate());
 
@@ -62,6 +58,11 @@ public class ProductPriceServiceImpl implements IProductPriceService {
         log.info("Save Product price successfully with ID: {}", productPrice.getId());
 
         return productPrice;
+    }
+
+    @Override
+    public List<ProductPrice> findAll() {
+        return productPriceRepository.findAll();
     }
 
     @Override

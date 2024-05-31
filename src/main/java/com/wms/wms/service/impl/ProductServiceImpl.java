@@ -111,7 +111,7 @@ public class ProductServiceImpl implements IProductService {
         List<ProductGeneralResponse> productDetailResponseList = productList.stream().map(product -> ProductGeneralResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
-                .description(product.getDescription())
+                .uom(product.getUom())
                 .categoryName(product.getProductCategory().getName())
                 .build()
         ).toList();

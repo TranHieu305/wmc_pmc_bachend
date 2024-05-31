@@ -11,7 +11,8 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "supplier")
-public class Supplier extends AbstractEntity{
+@DiscriminatorValue("SUPPLIER")
+public class Supplier extends AbstractPartner{
 
     @Column(name = "name")
     @NotBlank(message = "Supplier name cannot be blank")

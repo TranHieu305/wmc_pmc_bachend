@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class ProductGeneralResponse {
     private int id;
     private String name;
-    private String description;
+    private String uom;
     private String categoryName;
 }

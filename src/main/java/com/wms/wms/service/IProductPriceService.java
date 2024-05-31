@@ -4,10 +4,14 @@ import com.wms.wms.dto.request.ProductPriceRequest;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductPrice;
 
+import java.util.List;
+
 public interface IProductPriceService {
 
     // Save product price
     ProductPrice save(ProductPriceRequest request);
+
+    List<ProductPrice> findAll();
 
     void deleteById(int id);
 

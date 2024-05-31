@@ -1,5 +1,6 @@
 package com.wms.wms.service.impl;
 
+import com.wms.wms.entity.AbstractPartner;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductCategory;
 import com.wms.wms.entity.Supplier;
@@ -12,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -37,5 +40,14 @@ public class EntityRetrievalServiceImpl implements IEntityRetrievalService {
     public ProductCategory getProductCategoryById(int categoryId) {
         return productCategoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException ("No Product category exists with the given Id: " + categoryId));
+    }
+
+    @Override
+    public AbstractPartner getPartnerById(int partnerId) {
+        Optional<Supplier> supplier = supplierRepository.findById(partnerId);
+        if (supplier.isPresent()) {
+            return supplier.get();
+        }
+        return null;
     }
 }

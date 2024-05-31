@@ -18,10 +18,6 @@ public class ProductPrice extends AbstractEntity {
     @Column(name = "product_id")
     private int productId;
 
-    @Column(name = "product_type")
-    @Enumerated(EnumType.STRING)
-    private ProductType productType;
-
     @Column(name = "partner_id")
     private int partnerId;
 

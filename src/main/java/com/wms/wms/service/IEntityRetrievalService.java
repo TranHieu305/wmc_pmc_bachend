@@ -1,5 +1,6 @@
 package com.wms.wms.service;
 
+import com.wms.wms.entity.AbstractPartner;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductCategory;
 import com.wms.wms.entity.Supplier;
@@ -10,4 +11,6 @@ public interface IEntityRetrievalService {
     Product getProductById(int productId);
 
     ProductCategory getProductCategoryById(int categoryId);
+
+    AbstractPartner getPartnerById(int partnerId);
 }

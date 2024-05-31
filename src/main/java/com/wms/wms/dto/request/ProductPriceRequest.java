@@ -13,7 +13,6 @@ public class ProductPriceRequest {
     @Setter
     private int id;
     private int productId;
-    private ProductType productType;
     private int partnerId;
     private BigDecimal price;
     private Date startDate;
