@@ -9,6 +9,7 @@ import com.wms.wms.repository.ProductCategoryRepository;
 import com.wms.wms.repository.ProductRepository;
 import com.wms.wms.repository.SupplierRepository;
 import com.wms.wms.service.IEntityRetrievalService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,6 @@ public class EntityRetrievalServiceImpl implements IEntityRetrievalService {
         if (supplier.isPresent()) {
             return supplier.get();
         }
-        return null;
+        throw new EntityNotFoundException("Partner not exists");
     }
 }

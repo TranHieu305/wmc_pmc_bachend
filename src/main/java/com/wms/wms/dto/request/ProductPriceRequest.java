@@ -1,5 +1,6 @@
 package com.wms.wms.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wms.wms.entity.enumentity.ProductType;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -15,6 +16,7 @@ public class ProductPriceRequest {
     private int productId;
     private int partnerId;
     private BigDecimal price;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date startDate;
     private Date endDate;
     @Size(max = 255, message = "Product price description must be under 256 characters")

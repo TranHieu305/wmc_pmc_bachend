@@ -4,8 +4,6 @@ import com.wms.wms.dto.request.ProductPriceRequest;
 import com.wms.wms.entity.AbstractPartner;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductPrice;
-import com.wms.wms.entity.Supplier;
-import com.wms.wms.entity.enumentity.ProductType;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.repository.ProductPriceRepository;
@@ -16,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -40,20 +39,28 @@ public class ProductPriceServiceImpl implements IProductPriceService {
         Product product = entityRetrievalService.getProductById(request.getProductId());
         AbstractPartner partner = entityRetrievalService.getPartnerById(request.getPartnerId());
 
+        // Check start Date
+        Date startDate;
+        if (request.getStartDate() != null) {
+            startDate = request.getStartDate();
+        }
+        else {
+            startDate = new Date();
+        }
         productPrice.setProductId(product.getId());
-        productPrice.setPartnerId(product.getId());
+        productPrice.setPartnerId(partner.getId());
         productPrice.setPrice(request.getPrice());
-        productPrice.setStartDate(request.getStartDate());
+        productPrice.setStartDate(startDate);
 
         // If currentPrice of product exists, update endDate of that price
-        ProductPrice currentPrice = this.getCurrentPrice(product);
-        if (currentPrice != null) {
-            if (currentPrice.getStartDate().after(request.getStartDate())) {
-                throw new ConstraintViolationException("Start Date must be after" + currentPrice.getStartDate());
-            }
-            currentPrice.setEndDate(request.getStartDate());
-            productPriceRepository.save(currentPrice);
-        }
+//        ProductPrice currentPrice = this.getCurrentPrice(product);
+//        if (currentPrice != null) {
+//            if (currentPrice.getStartDate().after(startDate)) {
+//                throw new ConstraintViolationException("Start Date must be after" + currentPrice.getStartDate());
+//            }
+//            currentPrice.setEndDate(request.getStartDate());
+//            productPriceRepository.save(currentPrice);
+//        }
         productPriceRepository.save(productPrice);
         log.info("Save Product price successfully with ID: {}", productPrice.getId());
 
