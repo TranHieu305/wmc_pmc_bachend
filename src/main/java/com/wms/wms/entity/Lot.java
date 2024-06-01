@@ -22,6 +22,9 @@ public class Lot extends AbstractEntity {
     @Column(name = "order_id")
     private int orderId;
 
+    @Column(name = "warehouse_id")
+    private int warehouseId;
+
     @Column(name = "name")
     @Size(min = 1, max = 255, message = "Lot name must be between 1 and 255 characters")
     private String name;

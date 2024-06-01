@@ -1,13 +1,8 @@
 package com.wms.wms.service.impl;
 
-import com.wms.wms.entity.AbstractPartner;
-import com.wms.wms.entity.Product;
-import com.wms.wms.entity.ProductCategory;
-import com.wms.wms.entity.Supplier;
+import com.wms.wms.entity.*;
 import com.wms.wms.exception.ResourceNotFoundException;
-import com.wms.wms.repository.ProductCategoryRepository;
-import com.wms.wms.repository.ProductRepository;
-import com.wms.wms.repository.SupplierRepository;
+import com.wms.wms.repository.*;
 import com.wms.wms.service.IEntityRetrievalService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -15,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -24,6 +20,18 @@ public class EntityRetrievalServiceImpl implements IEntityRetrievalService {
     private final SupplierRepository supplierRepository;
     private final ProductRepository productRepository;
     private final ProductCategoryRepository productCategoryRepository;
+    private final ProductPriceRepository productPriceRepository;
+    private final LotRepository lotRepository;
+    private final MaterialOrderRepository materialOrderRepository;
+    private final WarehouseRepository warehouseRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final AssignedOrderItemRepository assignedOrderItemRepository;
+
+    @Override
+    public Warehouse getWarehouseById(int warehouseId) {
+        return warehouseRepository.findById(warehouseId)
+                .orElseThrow(() -> new ResourceNotFoundException("No warehouse exists with the given Id: " + warehouseId));
+    }
 
     @Override
     public Supplier getSupplierById(int supplierId) {
@@ -50,5 +58,48 @@ public class EntityRetrievalServiceImpl implements IEntityRetrievalService {
             return supplier.get();
         }
         throw new EntityNotFoundException("Partner not exists");
+    }
+
+    /*
+      ------------Lot---------------
+     */
+    @Override
+    public Lot getLotById(int lotId) {
+        return lotRepository.findById(lotId)
+                .orElseThrow(() -> new ResourceNotFoundException ("No Lot exists with the given Id: " + lotId));
+    }
+
+    /*
+     ------------Order---------------
+    */
+    @Override
+    public AbstractOrder getOrderById(int orderId) {
+        Optional<MaterialOrder> materialOrder = materialOrderRepository.findById(orderId);
+        if (materialOrder.isPresent()) {
+            return materialOrder.get();
+        }
+        throw new EntityNotFoundException("Order not exists");
+    }
+
+    /*
+    ------------Order Item---------------
+    */
+    @Override
+    public OrderItem getOrderItemById(int orderItemId) {
+        return orderItemRepository.findById(orderItemId)
+                .orElseThrow(() -> new ResourceNotFoundException ("No Order Item exists with the given Id: " + orderItemId));
+    }
+
+    /*
+    ------------Assigned Order Item---------------
+    */
+    @Override
+    public List<AssignedOrderItem> getAssignedOrderItemByOrderItemId(int orderItemId) {
+        return assignedOrderItemRepository.findByOrderItemId(orderItemId);
+    }
+    @Override
+    public AssignedOrderItem getAssignedOrderItemById(int itemId) {
+        return assignedOrderItemRepository.findById(itemId)
+                .orElseThrow(() -> new ResourceNotFoundException ("No Assigned Order Item exists with the given Id: " + itemId));
     }
 }

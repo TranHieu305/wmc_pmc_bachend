@@ -89,4 +89,9 @@ public class ProductPriceServiceImpl implements IProductPriceService {
     public ProductPrice getCurrentPrice(Product product) {
         return productPriceRepository.findLatestPriceByProductId(product.getId());
     }
+
+    @Override
+    public List<ProductPrice> findPricesByProductId(int productId) {
+        return productPriceRepository.findByProductId(productId);
+    }
 }

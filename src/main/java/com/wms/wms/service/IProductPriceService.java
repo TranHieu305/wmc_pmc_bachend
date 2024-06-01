@@ -18,4 +18,7 @@ public interface IProductPriceService {
     ProductPrice getProductPriceById(int id);
 
     ProductPrice getCurrentPrice(Product product);
+
+    List<ProductPrice> findPricesByProductId(int productId);
+
 }

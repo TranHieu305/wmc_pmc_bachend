@@ -19,6 +19,9 @@ public class AssignedOrderItem extends AbstractEntity {
     @Column(name = "order_item_id", nullable = false)
     private int orderItemId;
 
+    @Column(name = "product_id", nullable = false)
+    private int productId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lot_id")
     @JsonBackReference

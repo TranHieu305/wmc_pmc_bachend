@@ -259,6 +259,7 @@ CREATE TABLE `lot` (
     `name` varchar(255) NOT NULL,
     `description` varchar(255) DEFAULT NULL,
     `order_id` int,
+    `warehouse_id` int,
     `date` DATE NULL,
     `status` varchar(45) DEFAULT NULL,
 
@@ -268,7 +269,8 @@ CREATE TABLE `lot` (
     PRIMARY KEY (`id`),
     KEY `FK_LOT_idx` (`order_id`),
 
-    CONSTRAINT `FK_LOT_ORDER` FOREIGN KEY (`order_id`) REFERENCES `abstract_order`(`id`)
+    CONSTRAINT `FK_LOT_ORDER` FOREIGN KEY (`order_id`) REFERENCES `abstract_order`(`id`),
+    CONSTRAINT `FK_LOT_WAREHOUSE` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse`(`id`)
 
     ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -281,6 +283,7 @@ CREATE TABLE `assigned_order_item` (
     `id` int AUTO_INCREMENT,
 
     `order_item_id` int,
+    `product_id` int,
     `lot_id` int,
     `assigned_to_id` int,
     `assigned_quantity` decimal(16,6),
@@ -295,7 +298,8 @@ CREATE TABLE `assigned_order_item` (
 
 
     CONSTRAINT `FK_AOI_LOT` FOREIGN KEY (`lot_id`) REFERENCES `lot`(`id`),
-    CONSTRAINT `FK_AOI_OO` FOREIGN KEY (`order_item_id`) REFERENCES `order_item`(`id`)
+    CONSTRAINT `FK_AOI_OO` FOREIGN KEY (`order_item_id`) REFERENCES `order_item`(`id`),
+    CONSTRAINT `FK_AOI_P` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`)
 
     ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

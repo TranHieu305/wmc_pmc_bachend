@@ -5,9 +5,6 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class ProductRequest {
     @Setter
     private int id;

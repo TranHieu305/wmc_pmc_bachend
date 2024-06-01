@@ -8,9 +8,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class ProductCategoryRequest {
     @Setter
     private int id;

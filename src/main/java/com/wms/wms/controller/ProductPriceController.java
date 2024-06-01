@@ -5,6 +5,7 @@ import com.wms.wms.dto.response.ResponseSuccess;
 import com.wms.wms.entity.ProductPrice;
 import com.wms.wms.service.IProductPriceService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,14 @@ public class ProductPriceController {
         log.info("Request get all product prices ");
         List<ProductPrice> response = productPriceService.findAll();
         return new ResponseSuccess(HttpStatus.OK, "Get all product prices successfully", response);
+    }
+
+    @GetMapping("price/{productId}")
+    public ResponseEntity findByProductId( @Min(value = 1, message = "Id must be greater than 0")
+                                           @PathVariable("productId") int productId) {
+        log.info("Request get prices of product ID: {}", productId);
+        List<ProductPrice> response = productPriceService.findPricesByProductId(productId);
+        return new ResponseSuccess(HttpStatus.OK, "Get product prices successfully", response );
+
     }
 }
