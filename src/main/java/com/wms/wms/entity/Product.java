@@ -30,8 +30,6 @@ public class Product extends AbstractEntity{
     @Size(max = 63, message = "Product code must be under 63 characters")
     private String code;
 
-    //TODO: Price Objects
-
     @Column(name = "uom")
     @NotBlank(message = "Product uom cannot be blank")
     @Size(max = 63, message = "Product uom must be under 63 characters")

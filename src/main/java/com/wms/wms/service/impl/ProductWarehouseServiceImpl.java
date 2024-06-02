@@ -1,6 +1,8 @@
 package com.wms.wms.service.impl;
 
 
+import com.wms.wms.dto.request.ProductWarehouseRequest;
+import com.wms.wms.dto.response.product.ProductWarehouseResponse;
 import com.wms.wms.entity.*;
 import com.wms.wms.entity.enumentity.AssignedOrderItemStatus;
 import com.wms.wms.repository.ProductWarehouseRepository;
@@ -23,6 +25,61 @@ import java.util.stream.Collectors;
 public class ProductWarehouseServiceImpl implements ProductWarehouseService {
     private final ProductWarehouseRepository productWarehouseRepository;
     private final EntityRetrievalService entityRetrievalService;
+
+    @Override
+    @Transactional
+    public ProductWarehouseResponse save(ProductWarehouseRequest request) {
+        ProductWarehouse productWarehouse;
+        if (request.getId() != 0) {
+            productWarehouse = entityRetrievalService.getProductWarehouseById(request.getId());
+        }
+        else {
+            productWarehouse = ProductWarehouse.builder().build();
+        }
+
+        // Validate
+        entityRetrievalService.getProductById(request.getProductId());
+        entityRetrievalService.getWarehouseById(request.getWarehouseId());
+
+        // Map field
+        productWarehouse.setWarehouseId(request.getWarehouseId());
+        productWarehouse.setProductId(request.getProductId());
+        productWarehouse.setQuantityOnHand(request.getQuantityOnHand());
+
+        ProductWarehouse dbProductWarehouse = productWarehouseRepository.save(productWarehouse);
+        log.info("Save Product warehouse successfully");
+
+        return this.convertToResponse(dbProductWarehouse);
+    }
+
+    @Override
+    public ProductWarehouseResponse findById(int id) {
+        ProductWarehouse productWarehouse = entityRetrievalService.getProductWarehouseById(id);
+        log.info("Get Product warehouse detail ID: {} successfully ", id);
+        return this.convertToResponse(productWarehouse);
+    }
+
+    @Override
+    public List<ProductWarehouseResponse> findAll() {
+        List<ProductWarehouse> productWarehouses = productWarehouseRepository.findAll();
+        List<ProductWarehouseResponse> responses = productWarehouses.stream()
+                .map(this::convertToResponse)
+                .toList();
+        log.info("Get All Product warehouse successfully");
+        return responses;
+    }
+
+    private ProductWarehouseResponse convertToResponse(ProductWarehouse productWarehouse) {
+        return ProductWarehouseResponse.builder()
+                .id(productWarehouse.getId())
+                .productId(productWarehouse.getWarehouseId())
+                .warehouseId(productWarehouse.getWarehouseId())
+                .quantityOnHand(productWarehouse.getQuantityOnHand())
+                .createdAt(productWarehouse.getCreatedAt())
+                .modifiedAt(productWarehouse.getModifiedAt())
+                .build();
+    }
+
 
     @Override
     @Transactional

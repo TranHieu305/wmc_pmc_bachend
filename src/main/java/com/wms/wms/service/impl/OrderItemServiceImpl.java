@@ -13,12 +13,4 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class OrderItemServiceImpl implements OrderItemService {
-    private final OrderItemRepository orderItemRepository;
-
-    @Override
-    public OrderItem getById(int orderItemId) {
-        log.info("Get Order Item ID: {}", orderItemId);
-        return orderItemRepository.findById(orderItemId)
-                .orElseThrow(() -> new ResourceNotFoundException("No Order Item exists with the given Id: " + orderItemId));
-    }
 }

@@ -45,10 +45,7 @@ public class Lot extends AbstractEntity {
     @Column(name = "date")
     private Date date;
 
-    @OneToMany(mappedBy = "lot",
-                cascade = CascadeType.ALL,
-                fetch = FetchType.EAGER,
-                orphanRemoval = true)
+    @OneToMany(mappedBy = "lot", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonManagedReference
     private List<AssignedOrderItem> assignedOrderItems = new ArrayList<>();
 

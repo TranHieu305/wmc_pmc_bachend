@@ -1,10 +1,8 @@
 package com.wms.wms.dto.response.warehouse;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -12,8 +10,6 @@ import java.sql.Timestamp;
 
 @Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class WarehouseDetailResponse  implements Serializable {
     private int id;
     private String name;

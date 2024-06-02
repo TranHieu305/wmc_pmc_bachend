@@ -18,10 +18,10 @@ public class LotRequest {
     @Setter
     private int id;
 
-    @Min(value = 1, message = "Order is not valid")
+    @Min(value = 1, message = "Order is invalid")
     private int orderId;
 
-    @Min(value = 1, message = "Warehouse is not valid")
+    @Min(value = 1, message = "Warehouse is invalid")
     private int warehouseId;
 
     @Size(min = 1, max = 255, message = "Lot name must be between 1 and 255 characters")

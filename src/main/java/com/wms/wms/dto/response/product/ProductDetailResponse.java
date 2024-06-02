@@ -8,8 +8,6 @@ import java.sql.Timestamp;
 
 @Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class ProductDetailResponse {
     private int id;
     private String name;

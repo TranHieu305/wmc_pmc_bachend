@@ -113,6 +113,13 @@ public class EntityRetrievalServiceImpl implements EntityRetrievalService {
     /*
     ------------Product Warehouse---------------
     */
+
+    @Override
+    public ProductWarehouse getProductWarehouseById(int id) {
+        return productWarehouseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException ("No Product Warehouse exists with the given Id: " + id));
+    }
+
     @Override
     public List<ProductWarehouse> getAllProductOfWarehouse(int warehouseId) {
         return productWarehouseRepository.findByWarehouseId(warehouseId);

@@ -10,8 +10,6 @@ import java.util.List;
 
 @Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class MaterialOrderDetailResponse {
     private int id;
     private int supplierId;

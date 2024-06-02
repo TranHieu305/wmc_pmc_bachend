@@ -28,10 +28,12 @@ public interface EntityRetrievalService {
     ProductCategory getProductCategoryById(int categoryId);
 
     /*
-    ------------Product---------------
+    ------------ProductWarehouse---------------
     */
+    ProductWarehouse getProductWarehouseById(int id);
     List<ProductWarehouse> getAllProductOfWarehouse(int warehouseId);
     List<ProductWarehouse> findByWarehouseIdAndProductIdIn(int warehouseId, Set<Integer> productIds);
+
 
     /*
      ------------Lot---------------

@@ -1,18 +1,19 @@
 package com.wms.wms.dto.response.product;
 
-import com.wms.wms.entity.enumentity.ProductType;
+
 import lombok.Builder;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-@Getter
 @Builder
-public class ProductCategoryDetailResponse {
+@Getter
+public class ProductWarehouseResponse {
     private int id;
-    private String name;
-    private String description;
-    private ProductType productType;
+    private int productId;
+    private int warehouseId;
+    private BigDecimal quantityOnHand;
     private Timestamp createdAt;
     private Timestamp modifiedAt;
 }

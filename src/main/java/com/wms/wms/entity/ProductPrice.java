@@ -2,6 +2,7 @@ package com.wms.wms.entity;
 
 import com.wms.wms.entity.enumentity.ProductType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class ProductPrice extends AbstractEntity {
     private int partnerId;
 
     @Column(name = "price")
+    @Digits(integer = 10, fraction = 6, message = "Product price must be decimal")
     private BigDecimal price;
 
     @Column(name = "start_date")

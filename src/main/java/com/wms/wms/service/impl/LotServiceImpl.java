@@ -157,7 +157,6 @@ public class LotServiceImpl implements LotService {
             // Convert lot items to inventory item
             inventoryItemService.processCompletedLot(lot);
         }
-
         // Add lot items to warehouse
         productWarehouseService.processCompletedLot(lot);
     }

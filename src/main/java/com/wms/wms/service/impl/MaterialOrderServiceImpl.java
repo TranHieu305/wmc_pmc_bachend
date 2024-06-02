@@ -12,10 +12,7 @@ import com.wms.wms.entity.enumentity.OrderItemType;
 import com.wms.wms.entity.enumentity.OrderStatus;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.repository.MaterialOrderRepository;
-import com.wms.wms.service.MaterialOrderService;
-import com.wms.wms.service.OrderItemService;
-import com.wms.wms.service.ProductService;
-import com.wms.wms.service.SupplierService;
+import com.wms.wms.service.*;
 import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -31,9 +28,7 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class MaterialOrderServiceImpl implements MaterialOrderService {
     private final MaterialOrderRepository materialOrderRepository;
-    private final SupplierService supplierService;
-    private final ProductService productService;
-    private final OrderItemService orderItemService;
+    private final EntityRetrievalService entityRetrievalService;
 
     @Transactional
     @Override
@@ -46,7 +41,7 @@ public class MaterialOrderServiceImpl implements MaterialOrderService {
             materialOrder = MaterialOrder.builder().build();
         }
         // Validate Supplier
-        Supplier supplier = supplierService.getSupplierById(requestDTO.getSupplierId());
+        Supplier supplier = entityRetrievalService.getSupplierById(requestDTO.getSupplierId());
         materialOrder.setSupplierId(supplier.getId());
         materialOrder.setName(StringHelper.preProcess(requestDTO.getName()));
         materialOrder.setOrderDate(requestDTO.getOrderDate());
@@ -74,12 +69,12 @@ public class MaterialOrderServiceImpl implements MaterialOrderService {
     private List<OrderItem> convertToOrderItems(List<OrderItemRequest> requestDTOList) {
         return  requestDTOList.stream().map(requestDTO -> {
             // Validate product
-            Product product = productService.getProductById(requestDTO.getProductId());
+            Product product = entityRetrievalService.getProductById(requestDTO.getProductId());
 
             // Map OrderItem
             OrderItem orderItem;
             if (requestDTO.getId() != 0) {
-                orderItem = orderItemService.getById(requestDTO.getId());
+                orderItem = entityRetrievalService.getOrderItemById(requestDTO.getId());
             }
             else {
                 orderItem = OrderItem.builder().build();
