@@ -6,7 +6,7 @@ import com.wms.wms.entity.ProductPrice;
 
 import java.util.List;
 
-public interface IProductPriceService {
+public interface ProductPriceService {
 
     // Save product price
     ProductPrice save(ProductPriceRequest request);

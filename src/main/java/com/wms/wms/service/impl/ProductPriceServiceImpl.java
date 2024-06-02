@@ -4,11 +4,10 @@ import com.wms.wms.dto.request.ProductPriceRequest;
 import com.wms.wms.entity.AbstractPartner;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductPrice;
-import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.repository.ProductPriceRepository;
-import com.wms.wms.service.IEntityRetrievalService;
-import com.wms.wms.service.IProductPriceService;
+import com.wms.wms.service.EntityRetrievalService;
+import com.wms.wms.service.ProductPriceService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,9 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class ProductPriceServiceImpl implements IProductPriceService {
+public class ProductPriceServiceImpl implements ProductPriceService {
     private final ProductPriceRepository productPriceRepository;
-    private final IEntityRetrievalService entityRetrievalService;
+    private final EntityRetrievalService entityRetrievalService;
 
     @Override
     public ProductPrice save(ProductPriceRequest request) {

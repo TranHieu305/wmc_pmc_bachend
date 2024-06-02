@@ -6,7 +6,7 @@ import com.wms.wms.entity.ProductCategory;
 
 import java.util.List;
 
-public interface IProductCategoryService {
+public interface ProductCategoryService {
 
     ProductCategoryDetailResponse save(ProductCategoryRequest requestDTO);
 

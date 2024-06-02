@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Digits;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 
 @Getter
 @Setter
@@ -26,6 +27,9 @@ public class AssignedOrderItem extends AbstractEntity {
     @JoinColumn(name = "lot_id")
     @JsonBackReference
     private Lot lot;
+
+    @Column(name = "delivered_date")
+    private Date deliveredDate;
 
     @Column(name = "assigned_to_id")
     private int assignedTo;

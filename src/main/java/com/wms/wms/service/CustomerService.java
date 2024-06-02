@@ -5,7 +5,7 @@ import com.wms.wms.exception.ResourceNotFoundException;
 
 import java.util.List;
 
-public interface ICustomerService {
+public interface CustomerService {
     // Get list of all Customers
     List<Customer> findAll();
 

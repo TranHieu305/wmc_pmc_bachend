@@ -3,7 +3,7 @@ package com.wms.wms.controller;
 import com.wms.wms.dto.request.SupplierRequest;
 import com.wms.wms.dto.response.*;
 import com.wms.wms.dto.response.supplier.SupplierDetailResponse;
-import com.wms.wms.service.ISupplierService;
+import com.wms.wms.service.SupplierService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +18,10 @@ import java.util.List;
 @RequestMapping("/api")
 public class SupplierController {
 
-    private final ISupplierService supplierService;
+    private final SupplierService supplierService;
     private static final String ERROR_MESSAGE = "errorMessage={}";
 
-    public SupplierController(ISupplierService supplierService) {
+    public SupplierController(SupplierService supplierService) {
         this.supplierService = supplierService;
     }
 

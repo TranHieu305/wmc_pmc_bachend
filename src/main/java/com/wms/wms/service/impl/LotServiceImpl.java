@@ -4,10 +4,11 @@ import com.wms.wms.dto.request.AssignedOrderItemRequest;
 import com.wms.wms.dto.request.LotRequest;
 import com.wms.wms.dto.response.lot.LotDetailResponse;
 import com.wms.wms.entity.*;
+import com.wms.wms.entity.enumentity.LotStatus;
+import com.wms.wms.entity.enumentity.LotType;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.repository.LotRepository;
-import com.wms.wms.service.IEntityRetrievalService;
-import com.wms.wms.service.ILotService;
+import com.wms.wms.service.*;
 import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -22,9 +23,12 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class LotServiceImpl implements ILotService {
+public class LotServiceImpl implements LotService {
     private final LotRepository lotRepository;
-    private final IEntityRetrievalService entityRetrievalService;
+    private final EntityRetrievalService entityRetrievalService;
+    private final ProductWarehouseService productWarehouseService;
+    private final InventoryItemService inventoryItemService;
+    private final AssignedOrderItemService assignedOrderItemService;
 
     @Override
     @Transactional
@@ -49,6 +53,12 @@ public class LotServiceImpl implements ILotService {
         lot.setDescription(request.getDescription());
         lot.setStatus(request.getStatus());
         lot.setDate(request.getDate());
+        if (order instanceof MaterialOrder) {
+            lot.setType(LotType.MATERIAL);
+        }
+        else {
+            lot.setType(LotType.PRODUCTION);
+        }
 
         // Remove Old AssignedItems
         if (!lot.getAssignedOrderItems().isEmpty()) {
@@ -133,4 +143,23 @@ public class LotServiceImpl implements ILotService {
         log.info("Get all lots successfully");
         return response;
     }
+
+    @Override
+    @Transactional
+    public void changeStatusToCompleted(int lotId) {
+        Lot lot = entityRetrievalService.getLotById(lotId);
+        lot.setStatus(LotStatus.COMPLETED);
+        // Change all not-completed to completed
+        // TODO:
+
+
+        if (lot.isMaterialLot()) {
+            // Convert lot items to inventory item
+            inventoryItemService.processCompletedLot(lot);
+        }
+
+        // Add lot items to warehouse
+        productWarehouseService.processCompletedLot(lot);
+    }
+
 }

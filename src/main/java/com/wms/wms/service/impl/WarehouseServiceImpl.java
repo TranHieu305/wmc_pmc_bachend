@@ -5,7 +5,7 @@ import com.wms.wms.dto.response.warehouse.WarehouseDetailResponse;
 import com.wms.wms.entity.Warehouse;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.repository.WarehouseRepository;
-import com.wms.wms.service.IWarehouseService;
+import com.wms.wms.service.WarehouseService;
 import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class WarehouseServiceImpl implements IWarehouseService {
+public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseRepository warehouseRepository;
 
     @Override

@@ -6,7 +6,7 @@ import com.wms.wms.dto.request.OrderStatusRequest;
 import com.wms.wms.dto.response.order.MaterialOrderDetailResponse;
 import com.wms.wms.dto.response.ResponseData;
 import com.wms.wms.dto.response.ResponseSuccess;
-import com.wms.wms.service.IMaterialOrderService;
+import com.wms.wms.service.MaterialOrderService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class MaterialOrderController {
-    private final IMaterialOrderService materialOrderService;
+    private final MaterialOrderService materialOrderService;
 
     @GetMapping("/material-orders")
     public ResponseEntity<ResponseData> findAll() {

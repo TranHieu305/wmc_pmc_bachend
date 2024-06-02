@@ -19,6 +19,9 @@ import java.sql.Date;
 @Table(name = "inventory_item")
 public class InventoryItem extends AbstractEntity {
 
+    @Column(name = "assigned_order_item_id")
+    private int assignedOrderItemId;
+
     @Column(name = "product_id")
     private int productId;
 

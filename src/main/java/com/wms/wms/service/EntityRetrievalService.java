@@ -3,8 +3,9 @@ package com.wms.wms.service;
 import com.wms.wms.entity.*;
 
 import java.util.List;
+import java.util.Set;
 
-public interface IEntityRetrievalService {
+public interface EntityRetrievalService {
     /*
     ------------Warehouse---------------
    */
@@ -27,6 +28,12 @@ public interface IEntityRetrievalService {
     ProductCategory getProductCategoryById(int categoryId);
 
     /*
+    ------------Product---------------
+    */
+    List<ProductWarehouse> getAllProductOfWarehouse(int warehouseId);
+    List<ProductWarehouse> findByWarehouseIdAndProductIdIn(int warehouseId, Set<Integer> productIds);
+
+    /*
      ------------Lot---------------
     */
     Lot getLotById(int lotId);
@@ -40,6 +47,7 @@ public interface IEntityRetrievalService {
     ------------Order Item---------------
     */
     OrderItem getOrderItemById(int orderItemId);
+    List<OrderItem> getOrderItemByIds(Set<Integer> ids);
 
     /*
     ------------Assigned Order Item---------------

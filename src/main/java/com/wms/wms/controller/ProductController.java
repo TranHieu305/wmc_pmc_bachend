@@ -4,7 +4,7 @@ import com.wms.wms.dto.request.ProductRequest;
 import com.wms.wms.dto.response.product.ProductDetailResponse;
 import com.wms.wms.dto.response.product.ProductGeneralResponse;
 import com.wms.wms.dto.response.ResponseSuccess;
-import com.wms.wms.service.IProductService;
+import com.wms.wms.service.ProductService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +18,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class ProductController {
-    private final IProductService productService;
+    private final ProductService productService;
 
-    public ProductController(IProductService productService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 

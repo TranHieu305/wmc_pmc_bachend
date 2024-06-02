@@ -6,7 +6,7 @@ import com.wms.wms.entity.Warehouse;
 
 import java.util.List;
 
-public interface IWarehouseService {
+public interface WarehouseService {
 
     // Get list of all warehouses
     List <WarehouseDetailResponse> findAll();

@@ -3,7 +3,7 @@ package com.wms.wms.service.impl;
 import com.wms.wms.entity.*;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.repository.*;
-import com.wms.wms.service.IEntityRetrievalService;
+import com.wms.wms.service.EntityRetrievalService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,15 +12,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class EntityRetrievalServiceImpl implements IEntityRetrievalService {
+public class EntityRetrievalServiceImpl implements EntityRetrievalService {
     private final SupplierRepository supplierRepository;
     private final ProductRepository productRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductPriceRepository productPriceRepository;
+    private final ProductWarehouseRepository productWarehouseRepository;
     private final LotRepository lotRepository;
     private final MaterialOrderRepository materialOrderRepository;
     private final WarehouseRepository warehouseRepository;
@@ -90,9 +92,14 @@ public class EntityRetrievalServiceImpl implements IEntityRetrievalService {
                 .orElseThrow(() -> new ResourceNotFoundException ("No Order Item exists with the given Id: " + orderItemId));
     }
 
+    @Override
+    public List<OrderItem> getOrderItemByIds(Set<Integer> ids) {
+        return orderItemRepository.findByIdIn(ids);
+    }
+
     /*
-    ------------Assigned Order Item---------------
-    */
+        ------------Assigned Order Item---------------
+        */
     @Override
     public List<AssignedOrderItem> getAssignedOrderItemByOrderItemId(int orderItemId) {
         return assignedOrderItemRepository.findByOrderItemId(orderItemId);
@@ -101,5 +108,18 @@ public class EntityRetrievalServiceImpl implements IEntityRetrievalService {
     public AssignedOrderItem getAssignedOrderItemById(int itemId) {
         return assignedOrderItemRepository.findById(itemId)
                 .orElseThrow(() -> new ResourceNotFoundException ("No Assigned Order Item exists with the given Id: " + itemId));
+    }
+
+    /*
+    ------------Product Warehouse---------------
+    */
+    @Override
+    public List<ProductWarehouse> getAllProductOfWarehouse(int warehouseId) {
+        return productWarehouseRepository.findByWarehouseId(warehouseId);
+    }
+
+    @Override
+    public List<ProductWarehouse> findByWarehouseIdAndProductIdIn(int warehouseId, Set<Integer> productIds) {
+        return productWarehouseRepository.findByWarehouseIdAndProductIdIn(warehouseId, productIds);
     }
 }

@@ -1,12 +1,10 @@
 package com.wms.wms.controller;
 
 import com.wms.wms.dto.request.LotRequest;
-import com.wms.wms.dto.request.MaterialOrderRequest;
 import com.wms.wms.dto.response.ResponseData;
 import com.wms.wms.dto.response.ResponseSuccess;
 import com.wms.wms.dto.response.lot.LotDetailResponse;
-import com.wms.wms.dto.response.order.MaterialOrderDetailResponse;
-import com.wms.wms.service.ILotService;
+import com.wms.wms.service.LotService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/lots")
 public class LotController {
-    private final ILotService lotService;
+    private final LotService lotService;
 
     @GetMapping("")
     public ResponseEntity<ResponseData> findAll() {
@@ -36,6 +34,4 @@ public class LotController {
         LotDetailResponse response = lotService.save(requestDTO);
         return new ResponseSuccess(HttpStatus.OK, "Create lot successfully",response);
     }
-
-
 }

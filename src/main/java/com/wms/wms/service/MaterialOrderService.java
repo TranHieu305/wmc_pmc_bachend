@@ -6,7 +6,7 @@ import com.wms.wms.dto.response.order.MaterialOrderDetailResponse;
 
 import java.util.List;
 
-public interface IMaterialOrderService {
+public interface MaterialOrderService {
 
     // Add new material order
     MaterialOrderDetailResponse save(MaterialOrderRequest order);

@@ -4,7 +4,7 @@ import com.wms.wms.dto.request.WarehouseRequest;
 import com.wms.wms.dto.response.ResponseData;
 import com.wms.wms.dto.response.warehouse.WarehouseDetailResponse;
 import com.wms.wms.dto.response.ResponseSuccess;
-import com.wms.wms.service.IWarehouseService;
+import com.wms.wms.service.WarehouseService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class WarehouseController {
 
-    private final IWarehouseService warehouseService;
+    private final WarehouseService warehouseService;
 
     private static final String ERROR_MESSAGE = "errorMessage={}";
 

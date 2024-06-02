@@ -3,7 +3,7 @@ package com.wms.wms.controller;
 import com.wms.wms.dto.request.ProductPriceRequest;
 import com.wms.wms.dto.response.ResponseSuccess;
 import com.wms.wms.entity.ProductPrice;
-import com.wms.wms.service.IProductPriceService;
+import com.wms.wms.service.ProductPriceService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/api/product-prices")
 public class ProductPriceController {
-    private final IProductPriceService productPriceService;
+    private final ProductPriceService productPriceService;
 
     @PostMapping("")
     public ResponseEntity addProductPrice(@RequestBody @Valid ProductPriceRequest request) {

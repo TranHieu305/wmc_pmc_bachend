@@ -11,14 +11,12 @@ import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.exception.UniqueConstraintViolationException;
 import com.wms.wms.repository.OrderItemRepository;
 import com.wms.wms.repository.ProductRepository;
-import com.wms.wms.service.IProductCategoryService;
-import com.wms.wms.service.IProductPriceService;
-import com.wms.wms.service.IProductService;
+import com.wms.wms.service.ProductCategoryService;
+import com.wms.wms.service.ProductPriceService;
+import com.wms.wms.service.ProductService;
 import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -26,16 +24,16 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class ProductServiceImpl implements IProductService {
+public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
-    private final IProductCategoryService productCategoryService;
+    private final ProductCategoryService productCategoryService;
     private final OrderItemRepository orderItemRepository;
-    private final IProductPriceService productPriceService;
+    private final ProductPriceService productPriceService;
 
     public ProductServiceImpl(ProductRepository productRepository,
-                              IProductCategoryService productCategoryService,
+                              ProductCategoryService productCategoryService,
                               OrderItemRepository orderItemRepository,
-                              @Lazy IProductPriceService productPriceService) {
+                              @Lazy ProductPriceService productPriceService) {
         this.productRepository = productRepository;
         this.productCategoryService = productCategoryService;
         this.orderItemRepository = orderItemRepository;

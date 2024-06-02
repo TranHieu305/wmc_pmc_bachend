@@ -12,10 +12,10 @@ import com.wms.wms.entity.enumentity.OrderItemType;
 import com.wms.wms.entity.enumentity.OrderStatus;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.repository.MaterialOrderRepository;
-import com.wms.wms.service.IMaterialOrderService;
-import com.wms.wms.service.IOrderItemService;
-import com.wms.wms.service.IProductService;
-import com.wms.wms.service.ISupplierService;
+import com.wms.wms.service.MaterialOrderService;
+import com.wms.wms.service.OrderItemService;
+import com.wms.wms.service.ProductService;
+import com.wms.wms.service.SupplierService;
 import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -29,11 +29,11 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class MaterialOrderServiceImpl implements IMaterialOrderService {
+public class MaterialOrderServiceImpl implements MaterialOrderService {
     private final MaterialOrderRepository materialOrderRepository;
-    private final ISupplierService supplierService;
-    private final IProductService productService;
-    private final IOrderItemService orderItemService;
+    private final SupplierService supplierService;
+    private final ProductService productService;
+    private final OrderItemService orderItemService;
 
     @Transactional
     @Override

@@ -7,7 +7,7 @@ import com.wms.wms.entity.Product;
 
 import java.util.List;
 
-public interface IProductService {
+public interface ProductService {
     // Create/ Update Product order
     ProductDetailResponse save(ProductRequest requestDTO);
 

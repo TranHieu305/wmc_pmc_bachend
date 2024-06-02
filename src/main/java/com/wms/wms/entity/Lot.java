@@ -2,6 +2,7 @@ package com.wms.wms.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wms.wms.entity.enumentity.LotStatus;
+import com.wms.wms.entity.enumentity.LotType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -33,6 +34,10 @@ public class Lot extends AbstractEntity {
     @Size(max = 255, message = "Lot description must be under 256 characters")
     private String description;
 
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private LotType type;
+
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private LotStatus status;
@@ -55,5 +60,17 @@ public class Lot extends AbstractEntity {
     public void removeAssignedOrderItem(AssignedOrderItem assignedOrderItem) {
         assignedOrderItems.remove(assignedOrderItem);
         assignedOrderItem.setLot(null);
+    }
+
+    public boolean isMaterialLot() {
+        return this.type.equals(LotType.MATERIAL);
+    }
+
+    public boolean isProductionLot() {
+        return this.type.equals(LotType.PRODUCTION);
+    }
+
+    public boolean canUpdate() {
+        return true;
     }
 }

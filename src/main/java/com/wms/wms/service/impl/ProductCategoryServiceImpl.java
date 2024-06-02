@@ -10,7 +10,7 @@ import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.exception.UniqueConstraintViolationException;
 import com.wms.wms.repository.ProductCategoryRepository;
 import com.wms.wms.repository.ProductRepository;
-import com.wms.wms.service.IProductCategoryService;
+import com.wms.wms.service.ProductCategoryService;
 import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class ProductCategoryServiceImpl implements IProductCategoryService {
+public class ProductCategoryServiceImpl implements ProductCategoryService {
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductRepository productRepository;
 

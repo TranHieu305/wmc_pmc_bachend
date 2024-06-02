@@ -7,7 +7,7 @@ import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.repository.MaterialOrderRepository;
 import com.wms.wms.repository.SupplierRepository;
-import com.wms.wms.service.ISupplierService;
+import com.wms.wms.service.SupplierService;
 import com.wms.wms.util.StringHelper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 @Slf4j
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class SupplierServiceImpl implements ISupplierService {
+public class SupplierServiceImpl implements SupplierService {
     private SupplierRepository supplierRepository;
     private MaterialOrderRepository materialOrderRepository;
 

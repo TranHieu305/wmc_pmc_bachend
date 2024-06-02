@@ -6,7 +6,7 @@ import com.wms.wms.entity.Supplier;
 
 import java.util.List;
 
-public interface ISupplierService {
+public interface SupplierService {
 
     // Get list of all suppliers
     List<SupplierDetailResponse> findAll();

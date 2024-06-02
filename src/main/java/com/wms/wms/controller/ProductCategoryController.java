@@ -3,7 +3,7 @@ package com.wms.wms.controller;
 import com.wms.wms.dto.request.ProductCategoryRequest;
 import com.wms.wms.dto.response.*;
 import com.wms.wms.dto.response.product.ProductCategoryDetailResponse;
-import com.wms.wms.service.IProductCategoryService;
+import com.wms.wms.service.ProductCategoryService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +17,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class ProductCategoryController {
-    private final IProductCategoryService categoryService;
+    private final ProductCategoryService categoryService;
 
-    public ProductCategoryController(IProductCategoryService categoryService) {
+    public ProductCategoryController(ProductCategoryService categoryService) {
         this.categoryService = categoryService;
     }
 

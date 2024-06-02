@@ -22,5 +22,6 @@ public class ProductWarehouse extends AbstractEntity{
     private int warehouseId;
 
     @Column(name = "quantity_on_hand")
-    private BigDecimal quantityOnHand;
+    @Builder.Default
+    private BigDecimal quantityOnHand = BigDecimal.ZERO;
 }
