@@ -40,13 +40,15 @@ public class Lot extends AbstractEntity {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private LotStatus status;
+    @Builder.Default
+    private LotStatus status = LotStatus.CREATED;
 
     @Column(name = "date")
     private Date date;
 
     @OneToMany(mappedBy = "lot", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonManagedReference
+    @Builder.Default
     private List<AssignedOrderItem> assignedOrderItems = new ArrayList<>();
 
     public void addAssignedOrderItem(AssignedOrderItem assignedOrderItem) {

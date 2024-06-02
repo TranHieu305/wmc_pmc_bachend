@@ -84,6 +84,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDetailResponse findById(int productId) {
         Product dbProduct = this.getProductById(productId);
+        ProductPrice productPrice = productPriceService.getCurrentPrice(dbProduct);
         log.info("Get Product detail ID: {} successfully ", productId);
         return ProductDetailResponse.builder()
                 .id(dbProduct.getId())
@@ -95,6 +96,9 @@ public class ProductServiceImpl implements ProductService {
                 .images(dbProduct.getImages())
                 .productCategoryId(dbProduct.getProductCategory().getId())
                 .productCategory(dbProduct.getProductCategory())
+                .currentPrice(productPrice)
+                .createdAt(dbProduct.getCreatedAt())
+                .modifiedAt(dbProduct.getModifiedAt())
                 .build();
     }
 

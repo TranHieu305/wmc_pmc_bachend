@@ -83,45 +83,39 @@ public class ProductWarehouseServiceImpl implements ProductWarehouseService {
 
     @Override
     @Transactional
-    public void processCompletedLot(Lot lot) {
-        if (lot.isMaterialLot()) {
-            this.importLotItemsToWarehouse(lot);
-        }
-        else {
-            this.exportLotItemsFromWarehouse(lot);
-        }
-    }
-
-    private void importLotItemsToWarehouse(Lot lot) {
+    public void importLotItemsToWarehouse(Lot lot) {
         Warehouse warehouse = entityRetrievalService.getWarehouseById(lot.getWarehouseId());
         List<AssignedOrderItem> assignedOrderItemList = lot.getAssignedOrderItems();
 
-        Set<Integer> productIds = assignedOrderItemList.stream()
+        List<AssignedOrderItem> deliveredItems = assignedOrderItemList.stream()
+                .filter(AssignedOrderItem::isDelivered)
+                .toList();
+
+        Set<Integer> productIds = deliveredItems.stream()
                 .map(AssignedOrderItem::getProductId)
                 .collect(Collectors.toSet());
 
         List<ProductWarehouse> products = entityRetrievalService.findByWarehouseIdAndProductIdIn(lot.getWarehouseId(), productIds);
 
-        for (AssignedOrderItem item : assignedOrderItemList) {
-            // Only import delivered item
-            if (!item.getStatus().equals(AssignedOrderItemStatus.DELIVERED)) {
-                continue;
-            }
+        for (AssignedOrderItem item : deliveredItems) {
             // Find existing product with the same product ID
-            ProductWarehouse product = products.stream()
+            ProductWarehouse productWarehouse = products.stream()
                     .filter(p -> p.getProductId() == item.getProductId())
                     .findFirst()
                     .orElse(null);
 
             // If not found, create new
-            if (product == null) {
-                product = ProductWarehouse.builder()
+            if (productWarehouse == null) {
+                productWarehouse = ProductWarehouse.builder()
                         .warehouseId(warehouse.getId())
+                        .productId(item.getProductId())
                         .build();
             }
             // Add quantity from item with status DELIVERED to product warehouse
-            BigDecimal sumQuantity = product.getQuantityOnHand().add(item.getAssignedQuantity());
-            product.setQuantityOnHand(sumQuantity);
+            BigDecimal sumQuantity = productWarehouse.getQuantityOnHand().add(item.getAssignedQuantity());
+            productWarehouse.setQuantityOnHand(sumQuantity);
+
+            products.add(productWarehouse);
         }
 
         productWarehouseRepository.saveAll(products);

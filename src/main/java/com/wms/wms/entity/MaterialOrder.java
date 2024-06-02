@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Getter
@@ -17,6 +19,7 @@ import java.util.Date;
 @DiscriminatorValue("MATERIAL_ORDER")
 @Table(name="material_order")
 public class MaterialOrder extends AbstractOrder{
+    public static BigDecimal IMPORT_TAX = new BigDecimal("0.1");
 
     @Column(name = "supplier_id")
     private int supplierId;

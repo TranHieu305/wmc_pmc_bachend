@@ -39,7 +39,7 @@ public class MaterialOrderController {
         log.info("Get Material order detail id: {}", orderId);
         MaterialOrderDetailResponse response = materialOrderService.findById(orderId);
         return new ResponseSuccess(HttpStatus.OK, "Get material order detail successfully", response);
-}
+    }
 
     // Create new Material Order
     @PostMapping("/material-orders")

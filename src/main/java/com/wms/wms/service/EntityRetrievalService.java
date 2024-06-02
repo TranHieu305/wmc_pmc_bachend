@@ -21,6 +21,7 @@ public interface EntityRetrievalService {
     ------------Product---------------
     */
     Product getProductById(int productId);
+    List<Product> getProductByIds(Set<Integer> productIds);
 
     /*
     ------------Product Category---------------
@@ -34,6 +35,10 @@ public interface EntityRetrievalService {
     List<ProductWarehouse> getAllProductOfWarehouse(int warehouseId);
     List<ProductWarehouse> findByWarehouseIdAndProductIdIn(int warehouseId, Set<Integer> productIds);
 
+    /*
+    ------------ProductWarehouse---------------
+    */
+    ProductPrice getCurrentProductPrice(Product product);
 
     /*
      ------------Lot---------------

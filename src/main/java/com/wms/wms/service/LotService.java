@@ -11,5 +11,9 @@ public interface LotService {
 
     List<LotDetailResponse> findAll();
 
+    LotDetailResponse findById(int id);
+
+    void deleteById(int lotId);
+
     void changeStatusToCompleted(int lotId);
 }

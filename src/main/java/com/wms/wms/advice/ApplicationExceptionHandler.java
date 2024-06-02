@@ -84,4 +84,9 @@ public class ApplicationExceptionHandler {
         return new ResponseError(HttpStatus.CONFLICT, "Validation error", errorMap);
     }
 
+    @ExceptionHandler(com.wms.wms.exception.ConstraintViolationException.class)
+    public ResponseEntity handleConstraintViolation2(com.wms.wms.exception.ConstraintViolationException exception) {
+        return new ResponseError(HttpStatus.CONFLICT, exception.getMessage());
+    }
+
 }

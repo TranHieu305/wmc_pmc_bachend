@@ -49,4 +49,8 @@ public class OrderItem extends AbstractEntity {
     @Column(name = "quantity")
     @Digits(integer = 10, fraction = 6, message = "Order item quantity must be decimal")
     private BigDecimal quantity;
+
+    public BigDecimal getTotalCost() {
+        return productPrice.multiply(quantity);
+    }
 }

@@ -14,5 +14,5 @@ public interface ProductWarehouseService {
 
     List<ProductWarehouseResponse> findAll();
 
-    void processCompletedLot(Lot lot);
+    void importLotItemsToWarehouse(Lot lot);
 }

@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Slf4j
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -32,6 +34,7 @@ public class AssignedOrderItemServiceImpl implements AssignedOrderItemService {
         AssignedOrderItem item = entityRetrievalService.getAssignedOrderItemById(id);
         this.checkCanUpdate(item);
         item.setStatus(AssignedOrderItemStatus.DELIVERED);
+        item.setDeliveredDate(new Date());
         assignedOrderItemRepository.save(item);
         log.info("Change status to delivered successfully");
     }

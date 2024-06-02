@@ -4,6 +4,7 @@ import com.wms.wms.dto.request.AssignedOrderItemRequest;
 import com.wms.wms.dto.request.LotRequest;
 import com.wms.wms.dto.response.lot.LotDetailResponse;
 import com.wms.wms.entity.*;
+import com.wms.wms.entity.enumentity.AssignedOrderItemStatus;
 import com.wms.wms.entity.enumentity.LotStatus;
 import com.wms.wms.entity.enumentity.LotType;
 import com.wms.wms.exception.ConstraintViolationException;
@@ -28,7 +29,6 @@ public class LotServiceImpl implements LotService {
     private final EntityRetrievalService entityRetrievalService;
     private final ProductWarehouseService productWarehouseService;
     private final InventoryItemService inventoryItemService;
-    private final AssignedOrderItemService assignedOrderItemService;
 
     @Override
     @Transactional
@@ -51,7 +51,9 @@ public class LotServiceImpl implements LotService {
         lot.setWarehouseId(warehouse.getId());
         lot.setName(StringHelper.preProcess(request.getName()));
         lot.setDescription(request.getDescription());
-        lot.setStatus(request.getStatus());
+        if (request.getStatus() != null) {
+            lot.setStatus(request.getStatus());
+        }
         lot.setDate(request.getDate());
         if (order instanceof MaterialOrder) {
             lot.setType(LotType.MATERIAL);
@@ -117,8 +119,9 @@ public class LotServiceImpl implements LotService {
             item.setProductId(orderItem.getProduct().getId());
             item.setAssignedTo(requestDTO.getAssignedTo());
             item.setAssignedQuantity(requestDTO.getAssignedQuantity());
-            item.setStatus(requestDTO.getStatus());
-
+            if (requestDTO.getStatus() != null) {
+                item.setStatus(requestDTO.getStatus());
+            }
             return item;
         }).toList();
     }
@@ -145,20 +148,49 @@ public class LotServiceImpl implements LotService {
     }
 
     @Override
+    public LotDetailResponse findById(int id) {
+        Lot lot = entityRetrievalService.getLotById(id);
+        log.info("Get Lot detail id: {} successfully", id);
+        return this.convertToDetailResponse(lot);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(int lotId) {
+        Lot lot = entityRetrievalService.getLotById(lotId);
+        lotRepository.delete(lot);
+        log.info("Delete lot ID: {} successfully", lotId);
+    }
+
+    @Override
     @Transactional
     public void changeStatusToCompleted(int lotId) {
         Lot lot = entityRetrievalService.getLotById(lotId);
         lot.setStatus(LotStatus.COMPLETED);
-        // Change all not-completed to completed
-        // TODO:
-
 
         if (lot.isMaterialLot()) {
-            // Convert lot items to inventory item
-            inventoryItemService.processCompletedLot(lot);
+            this.processCompletedMaterialLot(lot);
         }
         // Add lot items to warehouse
-        productWarehouseService.processCompletedLot(lot);
+
+        lotRepository.save(lot);
+        log.info("Change status lot ID:{} to completed successfully", lotId);
+
     }
 
+    private void processCompletedMaterialLot(Lot lot){
+        this.checkItemsToComplete(lot);
+        inventoryItemService.convertToInventoryItem(lot);
+        productWarehouseService.importLotItemsToWarehouse(lot);
+    }
+
+    private void checkItemsToComplete(Lot lot) {
+        // Change all pending items to completed
+        List<AssignedOrderItem> itemList = lot.getAssignedOrderItems();
+        for (AssignedOrderItem item : itemList) {
+            if (item.getStatus().equals(AssignedOrderItemStatus.PENDING)) {
+                throw new ConstraintViolationException("Please change status all items to Delivered or Returned");
+            }
+        }
+    }
 }

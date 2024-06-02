@@ -48,9 +48,19 @@ public class EntityRetrievalServiceImpl implements EntityRetrievalService {
     }
 
     @Override
+    public List<Product> getProductByIds(Set<Integer> productIds) {
+        return productRepository.findByIdIn(productIds);
+    }
+
+    @Override
     public ProductCategory getProductCategoryById(int categoryId) {
         return productCategoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException ("No Product category exists with the given Id: " + categoryId));
+    }
+
+    @Override
+    public ProductPrice getCurrentProductPrice(Product product) {
+        return productPriceRepository.findLatestPriceByProductId(product.getId());
     }
 
     @Override

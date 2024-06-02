@@ -4,12 +4,10 @@ import com.wms.wms.dto.request.MaterialOrderRequest;
 import com.wms.wms.dto.request.OrderItemRequest;
 import com.wms.wms.dto.request.OrderStatusRequest;
 import com.wms.wms.dto.response.order.MaterialOrderDetailResponse;
-import com.wms.wms.entity.MaterialOrder;
-import com.wms.wms.entity.OrderItem;
-import com.wms.wms.entity.Product;
-import com.wms.wms.entity.Supplier;
+import com.wms.wms.entity.*;
 import com.wms.wms.entity.enumentity.OrderItemType;
 import com.wms.wms.entity.enumentity.OrderStatus;
+import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.repository.MaterialOrderRepository;
 import com.wms.wms.service.*;
@@ -20,8 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -42,8 +43,10 @@ public class MaterialOrderServiceImpl implements MaterialOrderService {
         }
         // Validate Supplier
         Supplier supplier = entityRetrievalService.getSupplierById(requestDTO.getSupplierId());
-        materialOrder.setSupplierId(supplier.getId());
+        this.savePartnerInfo(materialOrder, supplier);
+
         materialOrder.setName(StringHelper.preProcess(requestDTO.getName()));
+
         materialOrder.setOrderDate(requestDTO.getOrderDate());
         materialOrder.setExpectedDate(requestDTO.getExpectedDate());
         materialOrder.setActualDate(requestDTO.getActualDate());
@@ -60,6 +63,8 @@ public class MaterialOrderServiceImpl implements MaterialOrderService {
             newItems.forEach(materialOrder::addOrderItem);
         }
 
+        this.saveTotalCost(materialOrder);
+
         MaterialOrder dbOrder = materialOrderRepository.save(materialOrder);
         log.info("Add material order successfully");
         return this.convertToDetailResponse(dbOrder);
@@ -67,9 +72,26 @@ public class MaterialOrderServiceImpl implements MaterialOrderService {
 
     // Map OrderItem request to OrderItem entity
     private List<OrderItem> convertToOrderItems(List<OrderItemRequest> requestDTOList) {
-        return  requestDTOList.stream().map(requestDTO -> {
+        // Get product list
+
+        Set<Integer> productIds = requestDTOList.stream()
+                .map(OrderItemRequest::getProductId)
+                .collect(Collectors.toSet());
+        List<Product> products = entityRetrievalService.getProductByIds(productIds);
+
+        return  requestDTOList.stream().map(requestDTO ->
+        {
             // Validate product
-            Product product = entityRetrievalService.getProductById(requestDTO.getProductId());
+            Product product = products.stream()
+                    .filter(p -> p.getId() == requestDTO.getProductId())
+                    .findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException("Product is not exist"));
+
+            // Validate price
+            ProductPrice currentPrice = entityRetrievalService.getCurrentProductPrice(product);
+            if (currentPrice == null) {
+                throw new ConstraintViolationException("Please add price of product: " + product.getName());
+            }
 
             // Map OrderItem
             OrderItem orderItem;
@@ -83,11 +105,29 @@ public class MaterialOrderServiceImpl implements MaterialOrderService {
             orderItem.setProduct(product);
             orderItem.setProductName(product.getName());
             orderItem.setProductUom(product.getUom());
-            //TODO: Set price
+            orderItem.setProductPrice(currentPrice.getPrice());
             orderItem.setQuantity(requestDTO.getQuantity());
             return orderItem;
         }).toList();
     }
+
+    private void saveTotalCost(MaterialOrder order) {
+        List<OrderItem> orderItems = order.getOrderItems();
+        BigDecimal totalCost = orderItems.stream()
+                .map(OrderItem::getTotalCost)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        order.setTotalOrderCost(totalCost);
+        order.setTax(MaterialOrder.IMPORT_TAX);
+    }
+
+    private void savePartnerInfo(MaterialOrder order, Supplier supplier) {
+        order.setSupplierId(supplier.getId());
+        order.setPartnerName(supplier.getName());
+        order.setPartnerEmail(supplier.getEmail());
+        order.setPartnerPhone(supplier.getPhone());
+        order.setPartnerAddress(supplier.getAddress());
+    }
+
 
     @Override
     @Transactional
@@ -141,6 +181,12 @@ public class MaterialOrderServiceImpl implements MaterialOrderService {
                 .id(materialOrder.getId())
                 .supplierId(materialOrder.getSupplierId())
                 .name(materialOrder.getName())
+                .partnerName(materialOrder.getPartnerName())
+                .partnerEmail(materialOrder.getPartnerEmail())
+                .partnerPhone(materialOrder.getPartnerPhone())
+                .partnerAddress(materialOrder.getPartnerAddress())
+                .totalOrderCost(materialOrder.getTotalOrderCost())
+                .tax(materialOrder.getTax())
                 .orderDate(materialOrder.getOrderDate())
                 .expectedDate(materialOrder.getExpectedDate())
                 .actualDate(materialOrder.getActualDate())

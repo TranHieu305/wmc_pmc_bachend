@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Digits;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -42,4 +42,9 @@ public class AssignedOrderItem extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private AssignedOrderItemStatus status = AssignedOrderItemStatus.PENDING;
+
+    public boolean isDelivered() {
+        return status.equals(AssignedOrderItemStatus.DELIVERED);
+    }
+
 }

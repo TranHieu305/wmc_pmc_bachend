@@ -50,6 +50,12 @@ DROP TABLE IF EXISTS `partner`;
 CREATE TABLE `partner` (
     `id` int AUTO_INCREMENT,
     `partner_type` varchar(31),
+    `name` varchar(255) NOT NULL,
+    `description` varchar(255) DEFAULT NULL,
+    `address` varchar(255) DEFAULT NULL,
+    `email` varchar(255) DEFAULT NULL,
+    `phone` varchar(255) DEFAULT NULL,
+
     `created_at` TIMESTAMP NULL,
     `modified_at` TIMESTAMP NULL,
     PRIMARY KEY (`id`)
@@ -62,24 +68,27 @@ CREATE TABLE `partner` (
 DROP TABLE IF EXISTS `supplier`;
 CREATE TABLE `supplier` (
     `id` int AUTO_INCREMENT,
-    `name` varchar(255) NOT NULL,
-    `description` varchar(255) DEFAULT NULL,
-    `address` varchar(255) DEFAULT NULL,
-    `email` varchar(255) DEFAULT NULL,
-    `phone` varchar(255) DEFAULT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `FK_SUP_ID` FOREIGN KEY (`id`) REFERENCES `partner`(`id`)
     ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Table structure for table `abstract_order`
+-- Table structure for table `order`
 --
-DROP TABLE IF EXISTS `abstract_order`;
-CREATE TABLE `abstract_order` (
+DROP TABLE IF EXISTS `order`;
+CREATE TABLE `order` (
     `id` int AUTO_INCREMENT,
     `created_at` TIMESTAMP NULL,
     `modified_at` TIMESTAMP NULL,
+
+    `partner_name` VARCHAR(255),
+    `partner_email`  VARCHAR(255),
+    `partner_phone` VARCHAR(255),
+    `partner_address` VARCHAR(255),
+    `total_order_cost` decimal(16,6),
+    `tax` decimal(16,6),
+
     `order_type` VARCHAR(31),
      PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -100,7 +109,7 @@ CREATE TABLE `material_order` (
     `created_at` TIMESTAMP NULL,
     `modified_at` TIMESTAMP NULL,
      PRIMARY KEY (`id`),
-     FOREIGN KEY (id) REFERENCES `abstract_order`(id),
+     FOREIGN KEY (id) REFERENCES `order`(id),
      KEY `FK_SUPPLIER_idx` (`supplier_id`),
      CONSTRAINT `FK_MATERIAL_ORDER` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`)
      ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -126,7 +135,7 @@ CREATE TABLE `order_item` (
      PRIMARY KEY (`id`),
 
      KEY `FK_ORDER_idx` (`order_id`),
-     CONSTRAINT `FK_ORDER` FOREIGN KEY (`order_id`) REFERENCES `abstract_order`(`id`)
+     CONSTRAINT `FK_ORDER` FOREIGN KEY (`order_id`) REFERENCES `order`(`id`)
      ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -273,7 +282,7 @@ CREATE TABLE `lot` (
     PRIMARY KEY (`id`),
     KEY `FK_LOT_idx` (`order_id`),
 
-    CONSTRAINT `FK_LOT_ORDER` FOREIGN KEY (`order_id`) REFERENCES `abstract_order`(`id`),
+    CONSTRAINT `FK_LOT_ORDER` FOREIGN KEY (`order_id`) REFERENCES `order`(`id`),
     CONSTRAINT `FK_LOT_WAREHOUSE` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse`(`id`)
 
     ON DELETE NO ACTION ON UPDATE NO ACTION
