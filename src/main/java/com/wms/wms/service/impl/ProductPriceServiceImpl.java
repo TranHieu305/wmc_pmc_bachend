@@ -25,31 +25,32 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
     @Override
     public ProductPrice save(ProductPriceRequest request) {
-        ProductPrice productPrice;
 
         // Get price
+        ProductPrice productPrice;
         if (request.getId() != 0) {
             productPrice = this.getProductPriceById(request.getId());
         } else {
-            productPrice = ProductPrice.builder().build();
-        }
+            // Only save product and partner when create
+            Product product = entityRetrievalService.getProductById(request.getProductId());
+            AbstractPartner partner = entityRetrievalService.getPartnerById(request.getPartnerId());
 
-        // Validate
-        Product product = entityRetrievalService.getProductById(request.getProductId());
-        AbstractPartner partner = entityRetrievalService.getPartnerById(request.getPartnerId());
+            productPrice = ProductPrice.builder()
+                    .productId(request.getProductId())
+                    .partnerId(request.getPartnerId())
+                    .build();
+        }
 
         // Check start Date
-        Date startDate;
-        if (request.getStartDate() != null) {
-            startDate = request.getStartDate();
+        Date dateApply;
+        if (request.getDateApply() != null) {
+            dateApply = request.getDateApply();
         }
         else {
-            startDate = new Date();
+            dateApply = new Date();
         }
-        productPrice.setProductId(product.getId());
-        productPrice.setPartnerId(partner.getId());
         productPrice.setPrice(request.getPrice());
-        productPrice.setStartDate(startDate);
+        productPrice.setDateApply(dateApply);
 
         // If currentPrice of product exists, update endDate of that price
 //        ProductPrice currentPrice = this.getCurrentPrice(product);
@@ -92,5 +93,10 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     @Override
     public List<ProductPrice> findPricesByProductId(int productId) {
         return productPriceRepository.findByProductId(productId);
+    }
+
+    @Override
+    public List<ProductPrice> findLatestPricesForAllProducts() {
+        return productPriceRepository.findLatestPricesForAllProducts();
     }
 }

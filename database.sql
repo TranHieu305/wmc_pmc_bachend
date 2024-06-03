@@ -243,8 +243,7 @@ CREATE TABLE `product_price` (
     `product_id` int NOT NULL,
     `partner_id` int NOT NULL,
     `price` decimal(16,6),
-    `start_date` DATE NULL,
-    `end_date` DATE NULL,
+    `date_apply` DATE NULL,
     `description` varchar(255) DEFAULT NULL,
 
     `created_at` TIMESTAMP NULL,

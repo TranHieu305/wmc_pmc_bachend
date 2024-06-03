@@ -21,4 +21,6 @@ public interface ProductPriceService {
 
     List<ProductPrice> findPricesByProductId(int productId);
 
+    List<ProductPrice> findLatestPricesForAllProducts();
+
 }

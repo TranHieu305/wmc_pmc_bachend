@@ -17,8 +17,7 @@ public class ProductPriceRequest {
     private int partnerId;
     private BigDecimal price;
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private Date startDate;
-    private Date endDate;
+    private Date dateApply;
     @Size(max = 255, message = "Product price description must be under 256 characters")
     private String description;
 }

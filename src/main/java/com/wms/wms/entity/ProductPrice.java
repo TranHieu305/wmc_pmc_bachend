@@ -26,11 +26,8 @@ public class ProductPrice extends AbstractEntity {
     @Digits(integer = 10, fraction = 6, message = "Product price must be decimal")
     private BigDecimal price;
 
-    @Column(name = "start_date")
-    private Date startDate;
-
-    @Column(name = "end_date")
-    private Date endDate;
+    @Column(name = "date_apply")
+    private Date dateApply;
 
     @Column(name = "description")
     @Size(max = 255, message = "Product price description must be under 256 characters")

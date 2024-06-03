@@ -37,12 +37,25 @@ public class ProductPriceController {
         return new ResponseSuccess(HttpStatus.OK, "Get all product prices successfully", response);
     }
 
+    @GetMapping("/current-prices")
+    public ResponseEntity findAllCurrentPrices() {
+        log.info("Request get all current product prices ");
+        List<ProductPrice> response = productPriceService.findLatestPricesForAllProducts();
+        return new ResponseSuccess(HttpStatus.OK, "Get all product current prices successfully", response);
+    }
+
     @GetMapping("price/{productId}")
     public ResponseEntity findByProductId( @Min(value = 1, message = "Id must be greater than 0")
                                            @PathVariable("productId") int productId) {
         log.info("Request get prices of product ID: {}", productId);
         List<ProductPrice> response = productPriceService.findPricesByProductId(productId);
         return new ResponseSuccess(HttpStatus.OK, "Get product prices successfully", response );
+    }
 
+    @PutMapping("")
+    public ResponseEntity update( @RequestBody @Valid ProductPriceRequest request) {
+        log.info("Request update price ID: {}", request.getId());
+        ProductPrice response = productPriceService.save(request);
+        return new ResponseSuccess(HttpStatus.OK, "Update successfully", response );
     }
 }
