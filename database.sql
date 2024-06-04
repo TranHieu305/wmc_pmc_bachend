@@ -212,6 +212,7 @@ DROP TABLE IF EXISTS `inventory_item`;
 CREATE TABLE `inventory_item` (
     `id` int AUTO_INCREMENT,
 
+    `lot_id` int NOT NULL,
     `assigned_order_item_id` int NOT NULL,
     `product_id` int NOT NULL,
     `warehouse_id` int NOT NULL,
@@ -228,7 +229,8 @@ CREATE TABLE `inventory_item` (
 
     CONSTRAINT `FK_II_PRODUCT` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`),
     CONSTRAINT `FK_II_WAREHOUSE` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse`(`id`),
-    CONSTRAINT `FK_II_AOI` FOREIGN KEY (`assigned_order_item_id`) REFERENCES `assigned_order_item`(`id`)
+    CONSTRAINT `FK_II_AOI` FOREIGN KEY (`assigned_order_item_id`) REFERENCES `assigned_order_item`(`id`),
+    CONSTRAINT `FK_II_LOT` FOREIGN KEY (`lot_id`) REFERENCES `lot`(`id`)
 
     ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

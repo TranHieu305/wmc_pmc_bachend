@@ -36,11 +36,12 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             category = this.getCategory(requestDTO.getId());
         }
         else {
-            category = ProductCategory.builder().build();
+            category = ProductCategory.builder()
+                    .productType(requestDTO.getProductType())
+                    .build();
         }
         category.setName(StringHelper.preProcess(requestDTO.getName()));
-        category.setDescription(requestDTO.getDescription());
-        category.setProductType(requestDTO.getProductType());
+        category.setDescription(StringHelper.preProcess(requestDTO.getDescription()));
 
         ProductCategory dbCategory = productCategoryRepository.save(category);
         log.info("Save Product category successfully with ID: {}", dbCategory.getId());

@@ -24,6 +24,11 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     private final InventoryItemRepository inventoryItemRepository;
     private final EntityRetrievalService entityRetrievalService;
 
+    @Override
+    public List<InventoryItem> findAll() {
+        return inventoryItemRepository.findAllByOrderByDatetimeReceivedDesc();
+    }
+
     /**
      * Convert DELIVERED assigned order item to Inventory item
      *
@@ -51,6 +56,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                      .orElseThrow(() -> new ResourceNotFoundException("Order Item not exists to covert to inventory item"));
 
              inventoryItems.add(InventoryItem.builder()
+                     .lotId(lot.getId())
                      .assignedOrderItemId(assignedOrderItem.getId())
                      .productId(assignedOrderItem.getProductId())
                      .warehouseId(warehouse.getId())

@@ -22,6 +22,9 @@ public class InventoryItem extends AbstractEntity {
     @Column(name = "assigned_order_item_id")
     private int assignedOrderItemId;
 
+    @Column(name = "lot_id")
+    private int lotId;
+
     @Column(name = "product_id")
     private int productId;
 

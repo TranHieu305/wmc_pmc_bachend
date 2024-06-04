@@ -15,7 +15,8 @@ public interface ProductPriceRepository extends JpaRepository<ProductPrice, Inte
     ProductPrice findLatestPriceByProductId(@Param("productId") int productId);
 
     @Query("SELECT pp FROM ProductPrice pp WHERE pp.productId IN :productIds AND pp.dateApply = (" +
-            "SELECT MAX(pp2.dateApply) FROM ProductPrice pp2 WHERE pp2.productId = pp.productId)")
+            "SELECT MAX(pp2.dateApply) FROM ProductPrice pp2 WHERE pp2.productId = pp.productId) "+
+            "GROUP BY pp.productId")
     List<ProductPrice> findLatestPricesByProductIds(@Param("productIds") List<Long> productIds);
 
     @Query("SELECT pp FROM ProductPrice pp WHERE pp.id IN (" +

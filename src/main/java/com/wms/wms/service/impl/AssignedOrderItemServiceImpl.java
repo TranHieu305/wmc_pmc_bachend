@@ -45,6 +45,7 @@ public class AssignedOrderItemServiceImpl implements AssignedOrderItemService {
         AssignedOrderItem item = entityRetrievalService.getAssignedOrderItemById(id);
         this.checkCanUpdate(item);
         item.setStatus(AssignedOrderItemStatus.RETURNED);
+        item.setDeliveredDate(new Date());
         assignedOrderItemRepository.save(item);
         log.info("Change status to returned successfully");
     }
