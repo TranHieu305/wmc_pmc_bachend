@@ -6,6 +6,7 @@ import com.wms.wms.dto.response.product.ProductGeneralResponse;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductCategory;
 import com.wms.wms.entity.ProductPrice;
+import com.wms.wms.entity.enumentity.ProductType;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.exception.UniqueConstraintViolationException;
@@ -19,7 +20,10 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -57,14 +61,23 @@ public class ProductServiceImpl implements ProductService {
         product.setUom(StringHelper.preProcess(requestDTO.getUom()));
         product.setDescription(requestDTO.getDescription());
         product.setCustomFields(requestDTO.getCustomFields());
-        product.setImages(requestDTO.getImages());
+        //Set image
+        if (requestDTO.getImage() != null) {
+            try {
+                MultipartFile image = requestDTO.getImage();
+                product.setImages(image.getBytes());
+                log.info("Set image success");
+            } catch (IOException ioe) {
+                log.error("Error when get image");
+                return null;
+            }
+        }
 
         ProductCategory category = productCategoryService.getCategory(requestDTO.getCategoryId());
         product.setProductCategory(category);
 
         Product dbProduct = productRepository.save(product);
         log.info("Save Product successfully with ID: {}", dbProduct.getId());
-        ProductPrice currentPrice = productPriceService.getCurrentPrice(dbProduct);
         return ProductDetailResponse.builder()
                 .id(dbProduct.getId())
                 .name(dbProduct.getName())
@@ -75,7 +88,7 @@ public class ProductServiceImpl implements ProductService {
                 .images(dbProduct.getImages())
                 .productCategoryId(dbProduct.getProductCategory().getId())
                 .productCategory(category)
-                .currentPrice(currentPrice)
+                .currentPrice(this.getCurrentPrice(dbProduct))
                 .createdAt(dbProduct.getCreatedAt())
                 .modifiedAt(dbProduct.getModifiedAt())
                 .build();
@@ -84,7 +97,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDetailResponse findById(int productId) {
         Product dbProduct = this.getProductById(productId);
-        ProductPrice productPrice = productPriceService.getCurrentPrice(dbProduct);
         log.info("Get Product detail ID: {} successfully ", productId);
         return ProductDetailResponse.builder()
                 .id(dbProduct.getId())
@@ -96,10 +108,16 @@ public class ProductServiceImpl implements ProductService {
                 .images(dbProduct.getImages())
                 .productCategoryId(dbProduct.getProductCategory().getId())
                 .productCategory(dbProduct.getProductCategory())
-                .currentPrice(productPrice)
+                .currentPrice(this.getCurrentPrice(dbProduct))
                 .createdAt(dbProduct.getCreatedAt())
                 .modifiedAt(dbProduct.getModifiedAt())
                 .build();
+    }
+
+    private List<ProductPrice> getCurrentPrice(Product product) {
+        List<ProductPrice> currentPrices = new ArrayList<>();
+
+        return currentPrices;
     }
 
     @Override
@@ -115,6 +133,7 @@ public class ProductServiceImpl implements ProductService {
                 .name(product.getName())
                 .uom(product.getUom())
                 .categoryName(product.getProductCategory().getName())
+                .categoryId(product.getProductCategory().getId())
                 .build()
         ).toList();
         log.info("Get Product list successfully");

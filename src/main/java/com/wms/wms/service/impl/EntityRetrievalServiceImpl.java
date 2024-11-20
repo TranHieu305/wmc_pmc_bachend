@@ -59,11 +59,6 @@ public class EntityRetrievalServiceImpl implements EntityRetrievalService {
     }
 
     @Override
-    public ProductPrice getCurrentProductPrice(Product product) {
-        return productPriceRepository.findLatestPriceByProductId(product.getId());
-    }
-
-    @Override
     public AbstractPartner getPartnerById(int partnerId) {
         Optional<Supplier> supplier = supplierRepository.findById(partnerId);
         if (supplier.isPresent()) {

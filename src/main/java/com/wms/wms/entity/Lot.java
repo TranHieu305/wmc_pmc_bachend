@@ -1,6 +1,7 @@
 package com.wms.wms.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.wms.wms.entity.baseentity.AbstractEntity;
 import com.wms.wms.entity.enumentity.LotStatus;
 import com.wms.wms.entity.enumentity.LotType;
 import jakarta.persistence.*;

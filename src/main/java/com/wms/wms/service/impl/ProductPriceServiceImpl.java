@@ -86,8 +86,20 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     }
 
     @Override
-    public ProductPrice getCurrentPrice(Product product) {
-        return productPriceRepository.findLatestPriceByProductId(product.getId());
+    public List<ProductPrice> findCurrentPricesByProductId(int productId) {
+        Product product = entityRetrievalService.getProductById(productId);
+        return this.getCurrentPricesOfProduct(product);
+    }
+
+    @Override
+    public List<ProductPrice> findCurrentPricesByPartnerId(int partnerId) {
+        AbstractPartner partner = entityRetrievalService.getPartnerById(partnerId);
+        return productPriceRepository.findLatestPricesByPartnerId(partner.getId());
+    }
+
+    @Override
+    public List<ProductPrice> getCurrentPricesOfProduct(Product product) {
+        return productPriceRepository.findLatestPricesByProductId(product.getId());
     }
 
     @Override
@@ -96,7 +108,12 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     }
 
     @Override
-    public List<ProductPrice> findLatestPricesForAllProducts() {
-        return productPriceRepository.findLatestPricesForAllProducts();
+    public List<ProductPrice> findAllCurrentPrices() {
+        return productPriceRepository.findAllCurrentPrices();
+    }
+
+    @Override
+    public ProductPrice getCurrentPriceByProductAndPartner(Product product, AbstractPartner partner) {
+        return productPriceRepository.findLatestByProductIdAndPartnerId(product.getId(), partner.getId());
     }
 }

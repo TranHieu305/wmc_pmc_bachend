@@ -3,6 +3,7 @@ package com.wms.wms.dto.request;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 public class ProductRequest {
@@ -24,8 +25,8 @@ public class ProductRequest {
 
     private String customFields;
 
-    @Lob
-    private byte[] images;
+    @Setter
+    private MultipartFile image;
 
     private int categoryId;
 }

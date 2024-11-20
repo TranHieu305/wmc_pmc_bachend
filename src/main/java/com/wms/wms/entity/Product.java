@@ -1,5 +1,6 @@
 package com.wms.wms.entity;
 
+import com.wms.wms.entity.baseentity.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "product")
-public class Product extends AbstractEntity{
+public class Product extends AbstractEntity {
 
     @Column(name = "name")
     @NotBlank(message = "Product name cannot be blank")

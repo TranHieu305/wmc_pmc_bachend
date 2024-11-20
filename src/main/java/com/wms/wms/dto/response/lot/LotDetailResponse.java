@@ -2,6 +2,7 @@ package com.wms.wms.dto.response.lot;
 
 import com.wms.wms.entity.AssignedOrderItem;
 import com.wms.wms.entity.enumentity.LotStatus;
+import com.wms.wms.entity.enumentity.LotType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,6 +18,7 @@ public class LotDetailResponse {
     private int warehouseId;
     private String name;
     private String description;
+    private LotType type;
     private LotStatus status;
     private Date date;
     List<AssignedOrderItem> assignedOrderItems;

@@ -36,9 +36,8 @@ public interface EntityRetrievalService {
     List<ProductWarehouse> findByWarehouseIdAndProductIdIn(int warehouseId, Set<Integer> productIds);
 
     /*
-    ------------ProductWarehouse---------------
+    ------------Product Price---------------
     */
-    ProductPrice getCurrentProductPrice(Product product);
 
     /*
      ------------Lot---------------

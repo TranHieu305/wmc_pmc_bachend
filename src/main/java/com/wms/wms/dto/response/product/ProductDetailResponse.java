@@ -5,6 +5,7 @@ import com.wms.wms.entity.ProductPrice;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Builder
@@ -20,5 +21,5 @@ public class ProductDetailResponse {
     private ProductCategory productCategory;
     private Timestamp createdAt;
     private Timestamp modifiedAt;
-    private ProductPrice currentPrice;
+    private List<ProductPrice> currentPrice;
 }

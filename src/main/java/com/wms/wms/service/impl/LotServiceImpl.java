@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -133,6 +134,7 @@ public class LotServiceImpl implements LotService {
                 .description(lot.getDescription())
                 .orderId(lot.getOrderId())
                 .warehouseId(lot.getWarehouseId())
+                .type(lot.getType())
                 .status(lot.getStatus())
                 .date(lot.getDate())
                 .assignedOrderItems(lot.getAssignedOrderItems())

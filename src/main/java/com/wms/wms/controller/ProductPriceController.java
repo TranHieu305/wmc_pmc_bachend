@@ -40,11 +40,27 @@ public class ProductPriceController {
     @GetMapping("/current-prices")
     public ResponseEntity findAllCurrentPrices() {
         log.info("Request get all current product prices ");
-        List<ProductPrice> response = productPriceService.findLatestPricesForAllProducts();
+        List<ProductPrice> response = productPriceService.findAllCurrentPrices();
         return new ResponseSuccess(HttpStatus.OK, "Get all product current prices successfully", response);
     }
 
-    @GetMapping("price/{productId}")
+    @GetMapping("/current-prices/product/{productId}")
+    public ResponseEntity findCurrentPricesOfProduct(@Min(value = 1, message = "Id must be greater than 0")
+                                                         @PathVariable("productId") int productId) {
+        log.info("Request get all current product prices of product ID: {} ", productId);
+        List<ProductPrice> response = productPriceService.findCurrentPricesByProductId(productId);
+        return new ResponseSuccess(HttpStatus.OK, "Get all product current prices successfully", response);
+    }
+
+    @GetMapping("/current-prices/partner/{partnerId}")
+    public ResponseEntity findCurrentPricesOfPartner(@Min(value = 1, message = "Id must be greater than 0")
+                                                     @PathVariable("partnerId") int partnerId) {
+        log.info("Request get all current product prices if partner ID: {} ", partnerId);
+        List<ProductPrice> response = productPriceService.findCurrentPricesByPartnerId(partnerId);
+        return new ResponseSuccess(HttpStatus.OK, "Get all product current prices successfully", response);
+    }
+
+    @GetMapping("product/{productId}")
     public ResponseEntity findByProductId( @Min(value = 1, message = "Id must be greater than 0")
                                            @PathVariable("productId") int productId) {
         log.info("Request get prices of product ID: {}", productId);
@@ -57,5 +73,13 @@ public class ProductPriceController {
         log.info("Request update price ID: {}", request.getId());
         ProductPrice response = productPriceService.save(request);
         return new ResponseSuccess(HttpStatus.OK, "Update successfully", response );
+    }
+
+    @DeleteMapping("/{priceId}")
+    public ResponseEntity deleteById( @Min(value = 1, message = "Id must be greater than 0")
+                                           @PathVariable("priceId") int priceId) {
+        log.info("Request delete price ID: {}", priceId);
+        productPriceService.deleteById(priceId);
+        return new ResponseSuccess(HttpStatus.OK, "Delete price successfully");
     }
 }

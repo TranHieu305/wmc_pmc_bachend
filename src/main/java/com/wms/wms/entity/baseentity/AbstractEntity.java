@@ -1,4 +1,4 @@
-package com.wms.wms.entity;
+package com.wms.wms.entity.baseentity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -1,9 +1,9 @@
 package com.wms.wms.entity;
 
+import com.wms.wms.entity.baseentity.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Entity
 @Table(name = "customer")
-public class Customer extends AbstractEntity{
+public class Customer extends AbstractEntity {
     // Define fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

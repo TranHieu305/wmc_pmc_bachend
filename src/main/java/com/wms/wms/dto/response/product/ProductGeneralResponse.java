@@ -10,4 +10,5 @@ public class ProductGeneralResponse {
     private String name;
     private String uom;
     private String categoryName;
+    private int categoryId;
 }

@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public class MaterialOrderServiceImpl implements MaterialOrderService {
     private final MaterialOrderRepository materialOrderRepository;
     private final EntityRetrievalService entityRetrievalService;
+    private final ProductPriceService productPriceService;
 
     @Transactional
     @Override
@@ -59,7 +60,7 @@ public class MaterialOrderServiceImpl implements MaterialOrderService {
 
         // Save new OrderItems
         if (!requestDTO.getOrderItems().isEmpty()) {
-            List<OrderItem> newItems = this.convertToOrderItems(requestDTO.getOrderItems());
+            List<OrderItem> newItems = this.convertToOrderItems(requestDTO.getOrderItems(), supplier);
             newItems.forEach(materialOrder::addOrderItem);
         }
 
@@ -71,7 +72,7 @@ public class MaterialOrderServiceImpl implements MaterialOrderService {
     }
 
     // Map OrderItem request to OrderItem entity
-    private List<OrderItem> convertToOrderItems(List<OrderItemRequest> requestDTOList) {
+    private List<OrderItem> convertToOrderItems(List<OrderItemRequest> requestDTOList, Supplier supplier) {
         // Get product list
 
         Set<Integer> productIds = requestDTOList.stream()
@@ -88,7 +89,7 @@ public class MaterialOrderServiceImpl implements MaterialOrderService {
                     .orElseThrow(() -> new ResourceNotFoundException("Product is not exist"));
 
             // Validate price
-            ProductPrice currentPrice = entityRetrievalService.getCurrentProductPrice(product);
+            ProductPrice currentPrice = productPriceService.getCurrentPriceByProductAndPartner(product, supplier);
             if (currentPrice == null) {
                 throw new ConstraintViolationException("Please add price of product: " + product.getName());
             }

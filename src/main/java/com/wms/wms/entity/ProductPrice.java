@@ -1,6 +1,6 @@
 package com.wms.wms.entity;
 
-import com.wms.wms.entity.enumentity.ProductType;
+import com.wms.wms.entity.baseentity.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Size;

@@ -1,5 +1,6 @@
 package com.wms.wms.entity;
 
+import com.wms.wms.entity.baseentity.AbstractEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

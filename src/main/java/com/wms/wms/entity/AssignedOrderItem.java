@@ -1,6 +1,7 @@
 package com.wms.wms.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.wms.wms.entity.baseentity.AbstractEntity;
 import com.wms.wms.entity.enumentity.AssignedOrderItemStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;

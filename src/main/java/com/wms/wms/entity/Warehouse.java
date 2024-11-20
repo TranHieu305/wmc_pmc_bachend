@@ -1,5 +1,6 @@
 package com.wms.wms.entity;
 
+import com.wms.wms.entity.baseentity.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -15,7 +16,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Entity
 @Table(name="warehouse")
-public class Warehouse extends AbstractEntity{
+public class Warehouse extends AbstractEntity {
     // Define constants
     public static String STATUS_ACTIVE = "active";
     public static String STATUS_INACTIVE = "inactive";

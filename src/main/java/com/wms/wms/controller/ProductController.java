@@ -1,5 +1,6 @@
 package com.wms.wms.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wms.wms.dto.request.ProductRequest;
 import com.wms.wms.dto.response.product.ProductDetailResponse;
 import com.wms.wms.dto.response.product.ProductGeneralResponse;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -33,18 +35,38 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public ResponseEntity addProduct(@RequestBody @Valid ProductRequest requestDTO) {
+    public ResponseEntity addProduct(@RequestParam(required = false, name = "image") MultipartFile image,
+                                     @RequestParam("model") String model) {
         log.info("Request add product ");
-        requestDTO.setId(0);
-        ProductDetailResponse response = productService.save(requestDTO);
-        return new ResponseSuccess(HttpStatus.OK, "Create product successfully",response);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ProductRequest request = mapper.readValue(model, ProductRequest.class);
+            request.setImage(image);
+            request.setId(0);
+            ProductDetailResponse response = productService.save(request);
+            return new ResponseSuccess(HttpStatus.OK, "Create product successfully",response);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/products")
-    public ResponseEntity updateProduct(@RequestBody @Valid ProductRequest requestDTO) {
-        log.info("Request update product id: {}", requestDTO.getId());
-        ProductDetailResponse response = productService.save(requestDTO);
-        return new ResponseSuccess(HttpStatus.OK, "Update product successfully",response);
+    public ResponseEntity updateProduct(@RequestParam(required = false, name = "image") MultipartFile image,
+                                        @RequestParam("model") String model) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ProductRequest request = mapper.readValue(model, ProductRequest.class);
+            request.setImage(image);
+            log.info("Request update product id: {}", request.getId());
+            ProductDetailResponse response = productService.save(request);
+            return new ResponseSuccess(HttpStatus.OK, "Update product successfully",response);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // Get product by id

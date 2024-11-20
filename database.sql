@@ -23,6 +23,24 @@ CREATE TABLE `customer` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
+-- Table structure for table `customer`
+--
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+    `id` int AUTO_INCREMENT,
+    `user_name` varchar(255) NOT NULL,
+    `password_hash` varchar(255) DEFAULT NULL,
+    `full_name` varchar(255) DEFAULT NULL,
+    `email` varchar(255) DEFAULT NULL,
+    `phone_number` varchar(255) DEFAULT NULL,
+    `status` varchar(255) DEFAULT NULL,
+    `role` varchar(255) DEFAULT NULL,
+    `created_at` TIMESTAMP NULL,
+    `modified_at` TIMESTAMP NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
 -- Table structure for table `warehouse`
 --
 DROP TABLE IF EXISTS `warehouse`;
