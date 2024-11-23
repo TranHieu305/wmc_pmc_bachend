@@ -1,6 +1,7 @@
 package com.wms.wms.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,7 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @AllArgsConstructor
-public class UserPrincipal implements UserDetails {
+public class CustomUserDetails implements UserDetails {
     private User user;
 
     @Override

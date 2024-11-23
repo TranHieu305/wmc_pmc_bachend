@@ -19,22 +19,5 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @PostConstruct
-    public void initAdmin(){
-        log.info("Getting all users");
-        List<User> userList = userRepository.findAll();
-        if (userList.isEmpty()) {
-            // Create admin
-            log.info("Init first admin");
-            User admin = User.builder()
-                    .username("admin")
-                    .email("admin@gmail.com")
-                    .role(1)
-                    .passwordHash(passwordEncoder.encode("admin"))
-                    .fullName("admin")
-                    .build();
 
-
-        }
-    }
 }
