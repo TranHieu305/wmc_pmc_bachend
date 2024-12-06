@@ -43,6 +43,8 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                     .passwordHash(passwordEncoder.encode("admin"))
                     .fullName("admin")
                     .build();
+            admin.setCreatedBy(0L);
+            admin.setModifiedBy(0L);
             userRepository.save(admin);
             log.info("Init first admin successfully");
         }
@@ -62,7 +64,11 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
         // Generate the JWT token
         String jwtToken = jwtService.generateToken(userDetails);
-
-        return new AuthResponse(jwtToken);
+        return AuthResponse.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .accessToken(jwtToken)
+                .authorities(userDetails.getAuthorities().toString())
+                .build();
     }
 }

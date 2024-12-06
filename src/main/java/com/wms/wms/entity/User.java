@@ -1,6 +1,6 @@
 package com.wms.wms.entity;
 
-import com.wms.wms.entity.baseentity.AbstractEntity;
+import com.wms.wms.entity.baseentity.BaseEntity;
 import com.wms.wms.entity.enumentity.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -14,7 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "user")
-public class User extends AbstractEntity {
+public class User extends BaseEntity {
     @Column(name = "user_name")
     @NotBlank(message = "Username entity cannot be blank")
     @Size(min = 1, max = 255, message = "Username entity must be between 1 and 255 characters")
@@ -29,7 +29,7 @@ public class User extends AbstractEntity {
     @Size(min = 1, max = 255, message = "User full name entity must be between 1 and 255 characters")
     private String fullName;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "phone_number")

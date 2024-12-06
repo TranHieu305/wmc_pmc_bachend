@@ -1,6 +1,6 @@
-package com.wms.wms.service;
-
-import com.wms.wms.entity.OrderItem;
-
-public interface OrderItemService {
-}
+//package com.wms.wms.service;
+//
+//import com.wms.wms.entity.OrderItem;
+//
+//public interface OrderItemService {
+//}
