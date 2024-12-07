@@ -1,44 +1,40 @@
-package com.wms.wms.dto.request;
+package com.wms.wms.dto.request.warehouse;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Getter
+@Setter
+@NoArgsConstructor
 public class WarehouseRequest implements Serializable {
-    private int id;
+    private Long id;
 
-    @Column(name = "name")
     @NotBlank(message = "Warehouse name cannot be blank")
     @Size(min = 1, max = 255, message = "Warehouse name must be between 1 and 255 characters")
     private String name;
 
-    @Column(name = "description")
     @NotBlank(message = "Warehouse description cannot be blank")
     @Size(min = 1, max = 255, message = "Warehouse description must be between 1 and 255 characters")
     private  String description;
 
-    @Column(name = "address")
     @NotBlank(message = "Warehouse address cannot be blank")
     @Size(min = 1, max = 255, message = "Warehouse address must be between 1 and 255 characters")
     private String address;
 
-    @Column(name = "longitude")
     @Digits(integer = 10, fraction = 6, message = "Warehouse longitude must be decimal")
     private BigDecimal longitude;
 
-    @Column(name = "latitude")
     @Digits(integer = 10, fraction = 6, message = "Warehouse latitude must be decimal")
     private BigDecimal latitude;
 
-    @Column(name = "supervisor")
-    private  String supervisor;
+    private  Long supervisorId;
 
-    @Column(name = "status")
-    private  String status;
+    private  boolean isActive;
 }

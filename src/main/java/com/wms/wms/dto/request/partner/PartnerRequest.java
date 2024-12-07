@@ -33,8 +33,8 @@ public class PartnerRequest {
 
     // Partner address section
     // Note: Manual match with partner_address entity
-    @NotBlank(message = "Partner address name cannot be blank")
-    @Size(min = 1, max = 255, message = "Partner address name must be between 1 and 255 characters")
+//    @NotBlank(message = "Partner address name cannot be blank")
+    @Size(max = 255, message = "Partner address name must be between 1 and 255 characters")
     private String addressName;
 
     @Size(max = 255, message = "Partner address must be between 1 and 255 characters")

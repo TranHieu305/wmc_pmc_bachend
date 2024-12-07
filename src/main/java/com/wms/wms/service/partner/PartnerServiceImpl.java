@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -26,14 +27,14 @@ public class PartnerServiceImpl implements PartnerService{
     @Override
     public List<PartnerResponse> findAll() {
         List<Partner> partners = partnerRepository.findAll();
-        log.info("Get all partners successfully");
+        log.info("Service Get all partners successfully");
         return PartnerResponseMapper.INSTANCE.toDtoList(partners);
     }
 
     @Override
     public PartnerResponse findById(Long entityId) {
         Partner partner = getPartnerById(entityId);
-        log.info("Get partner detail service id: {} successfully", entityId);
+        log.info("Service Get partner detail id: {} successfully", entityId);
         return PartnerResponseMapper.INSTANCE.toDto(partner);
     }
 
@@ -44,20 +45,23 @@ public class PartnerServiceImpl implements PartnerService{
 
         Partner partner = PartnerRequestMapper.INSTANCE.toEntity(partnerRequest);
         Partner dbPartner = partnerRepository.save(partner);
-        log.info("Save partner service successfully");
+        log.info("Service Save partner successfully");
 
         // Save partner address
         // TODO
-        PartnerAddress address = PartnerAddress.builder()
-                .partnerId(dbPartner.getId())
-                .name(partnerRequest.getAddressName())
-                .address(partnerRequest.getAddress())
-                .build();
-        PartnerAddress dbAddress = partnerAddressRepository.save(address);
-        log.info("Save partner address service successfully");
+        if (StringUtils.hasText(partnerRequest.getAddressName())
+            && StringUtils.hasText(partnerRequest.getAddress())) {
+            PartnerAddress address = PartnerAddress.builder()
+                    .partnerId(dbPartner.getId())
+                    .name(partnerRequest.getAddressName())
+                    .address(partnerRequest.getAddress())
+                    .build();
+            PartnerAddress dbAddress = partnerAddressRepository.save(address);
+            log.info("Service Save partner address successfully");
 
-        dbPartner.getPartnerAddresses().add(dbAddress);
-
+            dbPartner.getPartnerAddresses().add(dbAddress);
+        }
+       
         return PartnerResponseMapper.INSTANCE.toDto(dbPartner);
     }
 
@@ -66,7 +70,7 @@ public class PartnerServiceImpl implements PartnerService{
     public void deleteById(Long id) {
         Partner partner = getPartnerById(id);
         partnerRepository.delete(partner);
-        log.info("Delete partner by Id: {} successfully", id);
+        log.info("Service Delete partner by Id: {} successfully", id);
     }
 
     private Partner getPartnerById(Long partnerId) {
