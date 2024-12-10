@@ -36,15 +36,16 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         if (userList.isEmpty()) {
             // Create admin
             log.info("Init first admin");
-            User admin = User.builder()
-                    .username("admin")
-                    .email("admin@gmail.com")
-                    .role(1)
-                    .passwordHash(passwordEncoder.encode("admin"))
-                    .fullName("admin")
-                    .build();
+
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setEmail("admin@gmail.com");
+            admin.setRole(1);
+            admin.setPasswordHash(passwordEncoder.encode("admin"));
+            admin.setFullName("admin");
             admin.setCreatedBy(0L);
             admin.setModifiedBy(0L);
+
             userRepository.save(admin);
             log.info("Init first admin successfully");
         }

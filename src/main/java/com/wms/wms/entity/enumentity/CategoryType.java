@@ -1,6 +1,6 @@
 package com.wms.wms.entity.enumentity;
 
-public enum ProductType {
+public enum CategoryType {
     MATERIAL,
     PRODUCTION
 }

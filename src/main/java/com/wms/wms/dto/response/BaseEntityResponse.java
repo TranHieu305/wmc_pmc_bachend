@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BaseEntityResponse {
+public abstract class  BaseEntityResponse {
     private Long id;
 
     private Long createdBy;

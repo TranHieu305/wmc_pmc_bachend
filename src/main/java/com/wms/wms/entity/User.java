@@ -6,13 +6,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@SuperBuilder
 @Table(name = "user")
 public class User extends BaseEntity {
     @Column(name = "user_name")

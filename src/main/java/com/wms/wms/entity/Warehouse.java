@@ -6,15 +6,17 @@ import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.math.BigDecimal;
 
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@SuperBuilder
 @Table(name="warehouse")
 public class Warehouse extends BaseEntity {
 
@@ -43,5 +45,6 @@ public class Warehouse extends BaseEntity {
     private  Long supervisorId;
 
     @Column(name = "is_active")
-    private  boolean isActive;
+    @Builder.Default
+    private  boolean isActive = true;
 }

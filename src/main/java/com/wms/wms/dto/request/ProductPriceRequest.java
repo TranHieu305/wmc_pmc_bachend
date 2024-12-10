@@ -1,7 +1,6 @@
 package com.wms.wms.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wms.wms.entity.enumentity.ProductType;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;

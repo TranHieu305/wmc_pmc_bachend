@@ -51,12 +51,13 @@ public class PartnerServiceImpl implements PartnerService{
         // TODO
         if (StringUtils.hasText(partnerRequest.getAddressName())
             && StringUtils.hasText(partnerRequest.getAddress())) {
-            PartnerAddress address = PartnerAddress.builder()
-                    .partnerId(dbPartner.getId())
-                    .name(partnerRequest.getAddressName())
-                    .address(partnerRequest.getAddress())
-                    .build();
-            PartnerAddress dbAddress = partnerAddressRepository.save(address);
+
+            PartnerAddress address1 = new PartnerAddress();
+            address1.setPartnerId(dbPartner.getId());
+            address1.setName(partnerRequest.getAddressName());
+            address1.setAddress(partnerRequest.getAddress());
+
+            PartnerAddress dbAddress = partnerAddressRepository.save(address1);
             log.info("Service Save partner address successfully");
 
             dbPartner.getPartnerAddresses().add(dbAddress);

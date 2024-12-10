@@ -6,13 +6,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@SuperBuilder
 @Table(name="partner_contact")
 public class PartnerContact extends BaseEntity {
     @Column(name = "partner_id", nullable = false)

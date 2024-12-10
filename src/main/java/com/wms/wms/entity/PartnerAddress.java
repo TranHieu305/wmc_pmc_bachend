@@ -8,14 +8,15 @@ import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name="partner_address")
 public class PartnerAddress extends BaseEntity {
@@ -37,5 +38,6 @@ public class PartnerAddress extends BaseEntity {
 
     @Column(name = "latitude")
     @Digits(integer = 10, fraction = 6, message = "Partner address latitude must be decimal")
+    @Builder.Default
     private BigDecimal latitude = BigDecimal.ZERO;
 }
