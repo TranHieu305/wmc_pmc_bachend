@@ -21,7 +21,6 @@ import java.util.List;
 public class ProductCategoryController {
     private final ProductCategoryService categoryService;
 
-    // Get list of all product-categories
     @GetMapping("/product-categories")
     public ResponseEntity<?> findAllCategories() {
         log.info("Request get product-categories list");

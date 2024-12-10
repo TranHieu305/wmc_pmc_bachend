@@ -1,4 +1,4 @@
-package com.wms.wms.dto.request;
+package com.wms.wms.dto.request.product;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -6,9 +6,10 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
+@Setter
+@NoArgsConstructor
 public class ProductRequest {
-    @Setter
-    private int id;
+    private Long id;
 
     @NotBlank(message = "Product name cannot be blank")
     @Size(min = 1, max = 255, message = "Product name must be between 1 and 255 characters")
@@ -23,10 +24,5 @@ public class ProductRequest {
     @Size(max = 63, message = "Product uom must be under 63 characters")
     private String uom;
 
-    private String customFields;
-
-    @Setter
-    private MultipartFile image;
-
-    private int categoryId;
+    private Long categoryId;
 }
