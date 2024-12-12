@@ -4,6 +4,8 @@ import com.wms.wms.dto.response.BaseEntityResponse;
 import com.wms.wms.entity.ProductCategory;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 
 @Getter
 @Setter
@@ -14,4 +16,5 @@ public class ProductResponse extends BaseEntityResponse {
     private String code;
     private String uom;
     private ProductCategory productCategory;
+    private BigDecimal quantity = BigDecimal.ZERO;
 }

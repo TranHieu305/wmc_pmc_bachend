@@ -19,9 +19,11 @@ public class ProductRequest {
     private  String description;
 
     @Size(max = 63, message = "Product code must be under 63 characters")
+    @NotBlank(message = "Product code cannot be blank")
     private String code;
 
     @Size(max = 63, message = "Product uom must be under 63 characters")
+    @NotBlank(message = "Product uom cannot be blank")
     private String uom;
 
     private Long categoryId;
