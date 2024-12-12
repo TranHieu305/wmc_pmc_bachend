@@ -45,6 +45,20 @@ public class ProductWarehouseServiceImpl implements ProductWarehouseService {
         return ProductWarehouseResponseMapper.INSTANCE.toDtoList(productWarehouses);
     }
 
+    @Override
+    public List<ProductWarehouseResponse> findByWarehouseId(Long warehouseId) {
+        List<ProductWarehouse> productWarehouses = productWarehouseRepository.findByWarehouseId(warehouseId);
+        log.info("Service Get Product warehouse by warehouseID: {} successfully", warehouseId);
+        return ProductWarehouseResponseMapper.INSTANCE.toDtoList(productWarehouses);
+    }
+
+    @Override
+    public List<ProductWarehouseResponse> findByProductId(Long productId) {
+        List<ProductWarehouse> productWarehouses = productWarehouseRepository.findByProductId(productId);
+        log.info("Service Get Product warehouse by productId: {} successfully", productId);
+        return ProductWarehouseResponseMapper.INSTANCE.toDtoList(productWarehouses);
+    }
+
     private ProductWarehouse getProductWarehouseById(Long id) {
         return productWarehouseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No Product warehouse exists with the given Id: " + id));

@@ -11,8 +11,6 @@ import java.util.Set;
 @Repository
 public interface ProductWarehouseRepository extends JpaRepository<ProductWarehouse, Long> {
     List<ProductWarehouse> findByWarehouseId(Long warehouseId);
-
-    List<ProductWarehouse> findByWarehouseIdAndProductIdIn(int warehouseId, Set<Long> productIds);
-
+    List<ProductWarehouse> findByProductId(Long productId);
     Optional<ProductWarehouse> findByWarehouseIdAndProductId(Long warehouseId, Long productId);
 }
