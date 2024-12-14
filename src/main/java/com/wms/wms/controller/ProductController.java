@@ -17,12 +17,12 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/products")
 public class ProductController {
     private final ProductService productService;
 
     // Get list of all product
-    @GetMapping("/products")
+    @GetMapping("")
     public ResponseEntity<?> findAll() {
         log.info("Request get product list");
         List<ProductResponse> response = productService.findAll();
@@ -64,7 +64,7 @@ public class ProductController {
 //        }
 //    }
 
-    @PostMapping("/products")
+    @PostMapping("")
     public ResponseEntity<?> addProduct(@RequestBody @Valid ProductRequest requestDTO) {
         log.info("Request add product");
         requestDTO.setId(0L);
@@ -72,7 +72,7 @@ public class ProductController {
         return new ResponseSuccess(HttpStatus.OK, "Create product successfully",response);
     }
 
-    @PutMapping("/products")
+    @PutMapping("")
     public ResponseEntity<?> updateProductCategory(@RequestBody @Valid ProductRequest requestDTO) {
         log.info("Request update product category id: {}", requestDTO.getId());
         ProductResponse response = productService.save(requestDTO);
@@ -80,7 +80,7 @@ public class ProductController {
     }
 
     // Get product by id
-    @GetMapping("/products/{productId}")
+    @GetMapping("/{productId}")
     public ResponseEntity<?> findById(
             @Min(value = 1, message = "Id must be greater than 0")
             @PathVariable("productId") Long productId) {
@@ -91,7 +91,7 @@ public class ProductController {
     }
 
 
-    @DeleteMapping("/products/{productId}")
+    @DeleteMapping("/{productId}")
     public ResponseEntity<?> deleteById(
             @Min(value = 1, message = "Id must be greater than 0")
             @PathVariable("productId") Long productId) {

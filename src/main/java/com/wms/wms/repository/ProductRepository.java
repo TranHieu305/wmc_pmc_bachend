@@ -10,6 +10,5 @@ import java.util.Set;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    List<Product> findByIdIn(Set<Long> ids);
     List<Product> findByNameAndUom(String name, String uom);
 }

@@ -7,9 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(
-        componentModel = "spring",
-        uses = {PartnerAddressResponseMapper.class,
-                PartnerContactResponseMapper.class}
+        componentModel = "spring"
 )
 public interface PartnerResponseMapper extends BaseMapper<PartnerResponse, Partner> {
     PartnerResponseMapper INSTANCE = Mappers.getMapper(PartnerResponseMapper.class);

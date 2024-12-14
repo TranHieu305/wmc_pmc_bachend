@@ -11,6 +11,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -45,11 +46,13 @@ public class Partner extends BaseEntity {
     @NotBlank(message = "Phone number is required")
     private String phoneNumber;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "partner_id")
-    private List<PartnerAddress> partnerAddresses;
+    @Builder.Default
+    private List<PartnerAddress> partnerAddresses = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "partner_id")
-    private List<PartnerContact> partnerContacts;
+    @Builder.Default
+    private List<PartnerContact> partnerContacts = new ArrayList<>();
 }

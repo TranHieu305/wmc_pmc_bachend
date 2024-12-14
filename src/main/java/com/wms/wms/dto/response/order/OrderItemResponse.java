@@ -1,22 +1,15 @@
-//package com.wms.wms.dto.response.order;
-//
-//import com.wms.wms.entity.enumentity.OrderItemType;
-//import lombok.Builder;
-//import lombok.Getter;
-//
-//import java.math.BigDecimal;
-//import java.sql.Timestamp;
-//
-//@Getter
-//@Builder
-//public class OrderItemResponse {
-//    private int id;
-//    private String name;
-//    private OrderItemType orderType;
-//    private String uom;
-//    private BigDecimal quantity;
-//    private BigDecimal price;
-//    private Timestamp createdAt;
-//    private Timestamp modifiedAt;
-//    private int orderId;
-//}
+package com.wms.wms.dto.response.order;
+
+import com.wms.wms.dto.response.BaseLogisticItemResponse;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class OrderItemResponse extends BaseLogisticItemResponse {
+    private BigDecimal packedQuantity;
+}

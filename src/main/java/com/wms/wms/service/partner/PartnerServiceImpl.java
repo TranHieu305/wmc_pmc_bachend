@@ -45,7 +45,6 @@ public class PartnerServiceImpl implements PartnerService{
 
         Partner partner = PartnerRequestMapper.INSTANCE.toEntity(partnerRequest);
         Partner dbPartner = partnerRepository.save(partner);
-        log.info("Service Save partner successfully");
 
         // Save partner address
         // TODO
@@ -62,7 +61,8 @@ public class PartnerServiceImpl implements PartnerService{
 
             dbPartner.getPartnerAddresses().add(dbAddress);
         }
-       
+
+        log.info("Service Save partner successfully");
         return PartnerResponseMapper.INSTANCE.toDto(dbPartner);
     }
 
