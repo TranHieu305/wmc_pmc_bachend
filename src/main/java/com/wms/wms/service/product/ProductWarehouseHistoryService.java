@@ -21,4 +21,6 @@ public interface ProductWarehouseHistoryService extends
     void processImportBatchItem (BatchItem item, Warehouse warehouse);
 
     void processExportBatchItem (BatchItem item, Warehouse warehouse);
+
+    List <ProductWarehouseHistory> findByWarehouseId(Long warehouseId);
 }

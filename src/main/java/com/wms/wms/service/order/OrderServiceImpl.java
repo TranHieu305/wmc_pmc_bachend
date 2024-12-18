@@ -2,14 +2,14 @@ package com.wms.wms.service.order;
 
 import com.wms.wms.dto.request.order.OrderItemRequest;
 import com.wms.wms.dto.request.order.OrderRequest;
+import com.wms.wms.dto.request.order.OrderUpdateRequest;
 import com.wms.wms.dto.response.order.OrderResponse;
-import com.wms.wms.entity.Order;
-import com.wms.wms.entity.OrderItem;
-import com.wms.wms.entity.Partner;
-import com.wms.wms.entity.Product;
+import com.wms.wms.entity.*;
+import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.mapper.order.OrderRequestMapper;
 import com.wms.wms.mapper.order.OrderResponseMapper;
+import com.wms.wms.repository.BatchRepository;
 import com.wms.wms.repository.OrderRepository;
 import com.wms.wms.repository.PartnerRepository;
 import com.wms.wms.repository.ProductRepository;
@@ -30,6 +30,7 @@ public class OrderServiceImpl implements OrderService{
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final PartnerRepository partnerRepository;
+    private final BatchRepository batchRepository;
 
     @Override
     @Transactional
@@ -78,8 +79,15 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public OrderResponse update(OrderRequest request) {
-        return null;
+    public OrderResponse update(OrderUpdateRequest request) {
+        Order dbOrder = this.getOrderById(request.getId());
+        dbOrder.setName(request.getName());
+        dbOrder.setOrderDate(request.getOrderDate());
+        dbOrder.setExpectedDeliveryDate(request.getExpectedDeliveryDate());
+
+        Order newOrder = orderRepository.save(dbOrder);
+        log.info("Service order - Update Order successfully with ID: {}", dbOrder.getId());
+        return OrderResponseMapper.INSTANCE.toDto(newOrder);
     }
 
     private List<OrderItem> toOrderItems (List<OrderItemRequest> orderItemRequests) {
@@ -113,6 +121,11 @@ public class OrderServiceImpl implements OrderService{
     @Transactional
     public void deleteById(Long id) {
         Order order = this.getOrderById(id);
+
+        List<Batch> batches = batchRepository.findByOrderId(id);
+        if (!batches.isEmpty()) {
+            throw new ConstraintViolationException("Cannot delete an order that already has a batch. Please delete batch first");
+        }
         orderRepository.delete(order);
         log.info("Service Order - Delete order ID {} successfully", id);
     }

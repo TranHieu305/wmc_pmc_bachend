@@ -112,6 +112,15 @@ public class ProductWarehouseHistoryServiceImpl implements ProductWarehouseHisto
 
     @Override
     @Transactional
+    public List<ProductWarehouseHistory> findByWarehouseId(Long warehouseId) {
+        List<ProductWarehouseHistory> dbLists =
+                productWarehouseHistoryRepository.findByWarehouseIdOrderByCreatedAtDesc(warehouseId);
+        log.info("Service PWH - Find by warehouse ID: {} successfully", warehouseId);
+        return dbLists;
+    }
+
+    @Override
+    @Transactional
     public void processImportBatchItems(Batch batch) {
 
         // Create product warehouse history from Imported batch items

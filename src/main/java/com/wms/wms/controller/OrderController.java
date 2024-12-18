@@ -1,6 +1,7 @@
 package com.wms.wms.controller;
 
 import com.wms.wms.dto.request.order.OrderRequest;
+import com.wms.wms.dto.request.order.OrderUpdateRequest;
 import com.wms.wms.dto.response.ResponseSuccess;
 import com.wms.wms.dto.response.order.OrderResponse;
 import com.wms.wms.service.order.OrderService;
@@ -34,6 +35,13 @@ public class OrderController {
         requestDTO.setId(0L);
         OrderResponse response = orderService.create(requestDTO);
         return new ResponseSuccess(HttpStatus.OK, "Create order successfully",response);
+    }
+
+    @PutMapping("")
+    public ResponseEntity<?> update(@RequestBody @Valid OrderUpdateRequest request) {
+        log.info("Request update order");
+        OrderResponse response = orderService.update(request);
+        return new ResponseSuccess(HttpStatus.OK, "Order updated successfully", response);
     }
 
     @GetMapping("/{orderId}")
