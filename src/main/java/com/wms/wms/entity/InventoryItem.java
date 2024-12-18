@@ -1,43 +1,38 @@
-//package com.wms.wms.entity;
-//
-//import com.wms.wms.entity.baseentity.AbstractEntity;
-//import jakarta.persistence.Column;
-//import jakarta.persistence.Entity;
-//import jakarta.persistence.Table;
-//import lombok.AllArgsConstructor;
-//import lombok.Builder;
-//import lombok.Data;
-//import lombok.NoArgsConstructor;
-//
-//import java.math.BigDecimal;
-//import java.util.Date;
-//
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Builder
-//@Entity
-//@Table(name = "inventory_item")
-//public class InventoryItem extends AbstractEntity {
-//
-//    @Column(name = "assigned_order_item_id")
-//    private int assignedOrderItemId;
-//
-//    @Column(name = "lot_id")
-//    private int lotId;
-//
-//    @Column(name = "product_id")
-//    private int productId;
-//
-//    @Column(name = "warehouse_id")
-//    private int warehouseId;
-//
-//    @Column(name = "quantity_on_hand")
-//    private BigDecimal quantityOnHand;
-//
-//    @Column(name = "datetime_received")
-//    private Date datetimeReceived;
-//
-//    @Column(name = "unit_price")
-//    private BigDecimal unitPrice;
-//}
+package com.wms.wms.entity;
+
+import com.wms.wms.entity.baseentity.BaseLogisticItem;
+import com.wms.wms.entity.enumentity.InventoryAction;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+import java.math.BigDecimal;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+@Entity
+@Table(name = "inventory_item")
+public class InventoryItem extends BaseLogisticItem {
+
+    @Column(name = "batch_id", nullable = false)
+    private Long batchId;
+
+    @Column(name = "batch_name", nullable = false)
+    private String batchName;
+
+    @Column(name = "warehouse_id", nullable = false)
+    private Long warehouseId;
+
+    @Column(name = "warehouse_name", nullable = false)
+    private String warehouseName;
+
+    @Column(name = "quantity", nullable = false)
+    private BigDecimal quantity;
+
+    @Column(name = "inventory_action", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private InventoryAction inventoryAction;
+}

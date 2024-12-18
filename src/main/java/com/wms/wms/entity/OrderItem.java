@@ -16,11 +16,6 @@ import java.math.BigDecimal;
 @Entity
 @Table(name="order_item")
 public class OrderItem extends BaseLogisticItem {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
-    @JsonBackReference
-    private Order order;
-
     @Column(name = "packed_quantity")
     @Builder.Default
     private BigDecimal packedQuantity = BigDecimal.ZERO;

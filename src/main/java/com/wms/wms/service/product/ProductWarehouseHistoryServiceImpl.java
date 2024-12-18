@@ -2,10 +2,7 @@ package com.wms.wms.service.product;
 
 import com.wms.wms.dto.request.product.ProductWarehouseHistoryRequest;
 import com.wms.wms.dto.response.product.ProductWarehouseHistoryResponse;
-import com.wms.wms.entity.Product;
-import com.wms.wms.entity.ProductWarehouse;
-import com.wms.wms.entity.ProductWarehouseHistory;
-import com.wms.wms.entity.Warehouse;
+import com.wms.wms.entity.*;
 import com.wms.wms.entity.enumentity.InventoryAction;
 import com.wms.wms.entity.enumentity.ProcessType;
 import com.wms.wms.exception.ResourceNotFoundException;
@@ -15,6 +12,7 @@ import com.wms.wms.repository.ProductRepository;
 import com.wms.wms.repository.ProductWarehouseHistoryRepository;
 import com.wms.wms.repository.ProductWarehouseRepository;
 import com.wms.wms.repository.WarehouseRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +107,72 @@ public class ProductWarehouseHistoryServiceImpl implements ProductWarehouseHisto
 
     @Override
     public void deleteById(Long id) {
+
+    }
+
+    @Override
+    @Transactional
+    public void processImportBatchItems(Batch batch) {
+
+        // Create product warehouse history from Imported batch items
+        log.info("Service PWH - Start process import to pwh");
+        List<ProductWarehouseHistory> historyList = batch.getBatchItems().stream()
+                .map(batchItem -> (ProductWarehouseHistory) ProductWarehouseHistory.builder()
+                        .product(batchItem.getProduct())
+                        .warehouse(batch.getWarehouse())
+                        .inventoryAction(InventoryAction.IMPORT)
+                        .processType(ProcessType.AUTOMATIC)
+                        .quantity(batchItem.getQuantity())
+                        .description("Action automatically created by delivered batch ID:" + batch.getId())
+                        .build())
+                .toList();
+        productWarehouseHistoryRepository.saveAll(historyList);
+        log.info("Service PWH - Create product warehouse history successfully");
+
+        // Update exist product warehouse quantity
+        // If not exist, create new
+        List<ProductWarehouse> productWarehouseList =  historyList.stream().map(historyItem -> {
+            ProductWarehouse productWarehouse;
+
+            Optional<ProductWarehouse> existProductWarehouse =
+                    productWarehouseRepository.findByWarehouseIdAndProductId(
+                            historyItem.getProduct().getId(),
+                            historyItem.getWarehouse().getId()
+                    );
+
+            if (existProductWarehouse.isPresent()) {
+                productWarehouse = existProductWarehouse.get();
+                BigDecimal newQuantity =  productWarehouse.getQuantityOnHand().add(historyItem.getQuantity());
+                productWarehouse.setQuantityOnHand(newQuantity);
+            }
+            else {
+                productWarehouse = ProductWarehouse.builder()
+                        .product(historyItem.getProduct())
+                        .warehouse(historyItem.getWarehouse())
+                        .quantityOnHand(historyItem.getQuantity())
+                        .build();
+            }
+
+            return productWarehouse;
+        }).toList();
+
+        productWarehouseRepository.saveAll(productWarehouseList);
+        log.info("Service PWH - Update product warehouse successfully");
+    }
+
+    @Override
+    @Transactional
+    public void processExportBatchItems(Batch batch) {
+
+    }
+
+    @Override
+    public void processImportBatchItem(BatchItem item, Warehouse warehouse) {
+
+    }
+
+    @Override
+    public void processExportBatchItem(BatchItem item, Warehouse warehouse) {
 
     }
 

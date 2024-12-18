@@ -1,4 +1,4 @@
-package com.wms.wms.dto.request.order;
+package com.wms.wms.dto.request.batch;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wms.wms.entity.enumentity.InventoryAction;
@@ -15,22 +15,22 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderRequest {
+public class BatchRequest {
     private Long id;
 
     @NotBlank(message = "Order name cannot be blank")
     @Size(min = 1, max = 255, message = "Order name must be between 1 and 255 characters")
     private String name;
 
-    private Long partnerId;
+    private Long warehouseId;
+    private Long orderId;
 
     @NotNull(message = "Order inventory_action can not be null")
     private InventoryAction inventoryAction;
 
-    private Timestamp orderDate;
-    private Timestamp expectedDeliveryDate;
+    private Timestamp batchDate;
 
     // Note: Map manually
-    @JsonProperty("orderItems")
-    private List<OrderItemRequest> orderItemRequests;
+    @JsonProperty("batchItems")
+    private List<BatchItemRequest> batchItemRequests;
 }

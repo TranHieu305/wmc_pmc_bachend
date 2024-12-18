@@ -1,7 +1,6 @@
-package com.wms.wms.dto.response.order;
+package com.wms.wms.dto.response.batch;
 
 import com.wms.wms.dto.response.BaseLogisticItemResponse;
-import com.wms.wms.entity.Order;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderItemResponse extends BaseLogisticItemResponse {
-    private BigDecimal packedQuantity;
+public class BatchItemResponse extends BaseLogisticItemResponse {
+    private Long orderItemId;
+    private BigDecimal weight;
 }

@@ -1,4 +1,4 @@
-package com.wms.wms.dto.request.order;
+package com.wms.wms.dto.request.batch;
 
 import jakarta.validation.constraints.Digits;
 import lombok.Getter;
@@ -10,11 +10,11 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderItemRequest {
+public class BatchItemRequest {
     private Long id;
 
-    private Long productId;
-
-    @Digits(integer = 10, fraction = 6, message = "OrderItemRequest quantity must be decimal")
+    @Digits(integer = 10, fraction = 6, message = "BatchItemRequest quantity must be decimal")
     private BigDecimal quantity;
+    private Long orderItemId;
+    private BigDecimal weight;
 }

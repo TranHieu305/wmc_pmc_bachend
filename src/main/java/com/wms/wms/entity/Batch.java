@@ -2,8 +2,8 @@ package com.wms.wms.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wms.wms.entity.baseentity.BaseEntity;
+import com.wms.wms.entity.enumentity.BatchStatus;
 import com.wms.wms.entity.enumentity.InventoryAction;
-import com.wms.wms.entity.enumentity.OrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,50 +21,58 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "order_record")
-public class Order extends BaseEntity {
-
+@Table(name = "batch_record")
+public class Batch extends BaseEntity {
     @Column(name = "name", nullable = false)
-    @NotBlank(message = "Order name cannot be blank")
-    @Size(min = 1, max = 255, message = "Order name must be between 1 and 255 characters")
+    @NotBlank(message = "Batch name cannot be blank")
+    @Size(min = 1, max = 255, message = "Batch name must be between 1 and 255 characters")
     private String name;
 
     @Column(name = "inventory_action", nullable = false)
-    @NotNull(message = "Order inventory_action can not be null")
+    @NotNull(message = "Batch inventory_action can not be null")
     @Enumerated(EnumType.STRING)
     private InventoryAction inventoryAction;
+
+    @Column(name = "order_inventory_action", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private InventoryAction orderInventoryAction;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private OrderStatus status = OrderStatus.PENDING;
+    private BatchStatus status = BatchStatus.PENDING;
 
-    @Column(name = "order_date")
-    private Timestamp orderDate;
-
-    @Column(name = "expected_delivery_date")
-    private Timestamp expectedDeliveryDate;
+    @Column(name = "batch_date")
+    private Timestamp batchDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "partner_id", nullable = false)
     private Partner partner;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "warehouse_id", nullable = false)
+    private Warehouse warehouse;
 
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "batch_id")
     @Builder.Default
-    private List<OrderItem> orderItems = new ArrayList<>();
+    private List<BatchItem> batchItems = new ArrayList<>();
 
-    // Utility method to add an order item
-    public void addOrderItem(OrderItem orderItem) {
-        orderItems.add(orderItem);
+    // Utility method to add a batch item
+    public void addItem(BatchItem item) {
+        batchItems.add(item);
     }
 
-    // Utility method to remove an order item
-    public void removeOrderItem(OrderItem orderItem) {
-        orderItems.remove(orderItem);
+    // Utility method to remove a batch item
+    public void removeItem(BatchItem item) {
+        batchItems.remove(item);
     }
 }

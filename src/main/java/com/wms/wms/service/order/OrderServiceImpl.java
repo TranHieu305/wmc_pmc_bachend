@@ -4,6 +4,7 @@ import com.wms.wms.dto.request.order.OrderItemRequest;
 import com.wms.wms.dto.request.order.OrderRequest;
 import com.wms.wms.dto.response.order.OrderResponse;
 import com.wms.wms.entity.Order;
+import com.wms.wms.entity.OrderItem;
 import com.wms.wms.entity.Partner;
 import com.wms.wms.entity.Product;
 import com.wms.wms.exception.ResourceNotFoundException;
@@ -54,18 +55,22 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional
     public OrderResponse create(OrderRequest orderRequest) {
-        // Validate order_items
-        OrderRequest validatedRequest = validateOrderItem(orderRequest);
 
         // Map request to entity without validating order_items
-        Order order = OrderRequestMapper.INSTANCE.toEntity(validatedRequest);
+        Order order = OrderRequestMapper.INSTANCE.toEntity(orderRequest);
 
-        // Get partner
+        // Get and Set partner
         Partner orderPartner = partnerRepository.findById(orderRequest.getPartnerId())
                 .orElseThrow(() -> new ResourceNotFoundException("No Order partner exists with the given Id: " + orderRequest.getPartnerId()));
-        // Set partner
         order.setPartner(orderPartner);
 
+        // Set OrderItems to Order
+        List<OrderItem> orderItemList = this.toOrderItems(orderRequest.getOrderItemRequests());
+        for (OrderItem item : orderItemList) {
+            order.addOrderItem(item);
+        }
+
+        // Save to db
         Order dbOrder = orderRepository.save(order);
         log.info("Service order - Save Order successfully with ID: {}", dbOrder.getId());
 
@@ -77,11 +82,10 @@ public class OrderServiceImpl implements OrderService{
         return null;
     }
 
-    private OrderRequest validateOrderItem (OrderRequest request) {
-        List<OrderItemRequest> orderItemList = request.getOrderItems();
+    private List<OrderItem> toOrderItems (List<OrderItemRequest> orderItemRequests) {
 
         // Get product list ID
-        Set<Long> productIds = orderItemList.stream()
+        Set<Long> productIds = orderItemRequests.stream()
                 .map(OrderItemRequest::getProductId)
                 .collect(Collectors.toSet());
 
@@ -89,20 +93,20 @@ public class OrderServiceImpl implements OrderService{
         log.info("Service Order - Get products to validate request");
         List<Product> products = productRepository.findAllById(productIds);
 
-        // Set product to order_item_request
-        List<OrderItemRequest> OrderItemsWithProduct = orderItemList.stream().map(orderItemRequest -> {
+        // Validate and map to OrderItems list
+        return orderItemRequests.stream().map(itemRequest -> {
             // Validate product ID
-            Product product = products.stream().filter(p -> p.getId().equals(orderItemRequest.getProductId()))
+            Product product = products.stream().filter(p -> p.getId().equals(itemRequest.getProductId()))
                     .findFirst()
-                    .orElseThrow(() -> new ResourceNotFoundException("Product with ID" + orderItemRequest.getProductId() + "is not exist"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Product with ID" + itemRequest.getProductId() + "is not exist"));
 
-            // Set product
-            orderItemRequest.setProduct(product);
-            return orderItemRequest;
+            // Map to OrderItem
+            return (OrderItem) OrderItem.builder()
+                    .product(product)
+                    .uom(product.getUom())
+                    .quantity(itemRequest.getQuantity())
+                    .build();
         }).toList();
-
-        request.setOrderItems(OrderItemsWithProduct);
-        return request;
     }
 
     @Override

@@ -27,7 +27,7 @@ public class ProductWarehouseController {
 
     // Find by Warehouse ID
     @GetMapping("/warehouse/{warehouseId}")
-    public ResponseEntity<?> findByWarehouseId(@PathVariable Long warehouseId) {
+    public ResponseEntity<?> findByWarehouseId(@PathVariable("warehouseId") Long warehouseId) {
         log.info("Request to get all product warehouse in warehouse with warehouseId: {}", warehouseId);
         List<ProductWarehouseResponse> response = productWarehouseService.findByWarehouseId(warehouseId);
         return new ResponseSuccess(HttpStatus.OK, "Get all products in warehouse successfully", response);
@@ -35,7 +35,7 @@ public class ProductWarehouseController {
 
     // Find by Product ID
     @GetMapping("/product/{productId}")
-    public ResponseEntity<?> findByProductId(@PathVariable Long productId) {
+    public ResponseEntity<?> findByProductId(@PathVariable("productId") Long productId) {
         log.info("Request to get all product warehouse for product with productId: {}", productId);
         List<ProductWarehouseResponse> response = productWarehouseService.findByProductId(productId);
         return new ResponseSuccess(HttpStatus.OK, "Get all warehouses for product successfully", response);
