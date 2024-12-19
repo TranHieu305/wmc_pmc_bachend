@@ -19,7 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -128,6 +130,36 @@ public class OrderServiceImpl implements OrderService{
         }
         orderRepository.delete(order);
         log.info("Service Order - Delete order ID {} successfully", id);
+    }
+
+    @Override
+    @Transactional
+    public void addItem(Long orderId, OrderItemRequest itemRequest) {
+        Order order = this.getOrderById(orderId);
+
+        Optional<OrderItem> existItem = order.getOrderItems()
+                .stream()
+                .filter(orderItem -> orderItem.getProduct().getId().equals(itemRequest.getProductId()))
+                .findFirst();
+
+        if (existItem.isPresent()) {
+            OrderItem item = existItem.get();
+            BigDecimal newQuantity = item.getQuantity().add(itemRequest.getQuantity());
+            item.setQuantity(newQuantity);
+        }
+        else {
+            Product product = productRepository.findById(itemRequest.getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException("No Product exists"));
+            OrderItem newItem = OrderItem.builder()
+                    .product(product)
+                    .uom(product.getUom())
+                    .quantity(itemRequest.getQuantity())
+                    .build();
+
+            order.addOrderItem(newItem);
+        }
+        orderRepository.save(order);
+        log.info("Service Order - Update order ID {} successfully", orderId);
     }
 
     private Order getOrderById(Long id) {

@@ -1,5 +1,6 @@
 package com.wms.wms.controller;
 
+import com.wms.wms.dto.request.order.OrderItemRequest;
 import com.wms.wms.dto.request.order.OrderRequest;
 import com.wms.wms.dto.request.order.OrderUpdateRequest;
 import com.wms.wms.dto.response.ResponseSuccess;
@@ -62,5 +63,15 @@ public class OrderController {
         log.info("Request delete order Id={}", orderId);
         orderService.deleteById(orderId);
         return new ResponseSuccess(HttpStatus.OK, "Delete order successfully");
+    }
+
+    @PostMapping("/{orderId}")
+    public ResponseEntity<?> addItem (
+            @Min(value = 1, message = "Id must be greater than 0")
+            @PathVariable("orderId") Long orderId,
+            @RequestBody @Valid OrderItemRequest itemRequest) {
+        log.info("Request add item to order Id = {}", orderId);
+        orderService.addItem(orderId, itemRequest);
+        return new ResponseSuccess(HttpStatus.OK, "Update order successfully");
     }
 }
