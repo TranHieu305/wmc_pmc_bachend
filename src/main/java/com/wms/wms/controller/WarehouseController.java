@@ -43,14 +43,14 @@ public class WarehouseController {
     public ResponseEntity<?> addWarehouse(@RequestBody @Valid WarehouseRequest warehouseRequest) {
         log.info("Request add warehouse");
         WarehouseResponse response = warehouseService.save(warehouseRequest);
-        return new ResponseSuccess(HttpStatus.OK, "Add warehouses successfully", response);
+        return new ResponseSuccess(HttpStatus.OK, "Add warehouse successfully", response);
     }
 
     @PutMapping("/warehouses")
     public ResponseEntity<?> updateWarehouse(@RequestBody @Valid WarehouseRequest warehouseRequest) {
         log.info("Request update warehouseId={}", warehouseRequest.getId());
         WarehouseResponse response = warehouseService.save(warehouseRequest);
-        return new ResponseSuccess(HttpStatus.OK, "Update warehouses successfully", response);
+        return new ResponseSuccess(HttpStatus.OK, "Update warehouse successfully", response);
     }
 
     @DeleteMapping("/warehouses/{warehouseId}")
