@@ -1,6 +1,7 @@
 package com.wms.wms.controller;
 
 import com.wms.wms.dto.request.batch.BatchRequest;
+import com.wms.wms.dto.request.batch.BatchUpdateRequest;
 import com.wms.wms.dto.response.ResponseSuccess;
 import com.wms.wms.dto.response.batch.BatchResponse;
 import com.wms.wms.service.batch.BatchService;
@@ -63,5 +64,12 @@ public class BatchController {
         log.info("Request to mark batch as DELIVERED, Id={}", batchId);
         batchService.markAsDelivered(batchId);
         return new ResponseSuccess(HttpStatus.OK, "Batch marked as DELIVERED successfully");
+    }
+
+    @PutMapping("")
+    public ResponseEntity<?> update(@RequestBody @Valid BatchUpdateRequest request) {
+        log.info("Request update batch");
+        BatchResponse response = batchService.update(request);
+        return new ResponseSuccess(HttpStatus.OK, "Batch updated successfully", response);
     }
 }

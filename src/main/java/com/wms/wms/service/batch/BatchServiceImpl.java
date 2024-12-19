@@ -2,10 +2,13 @@ package com.wms.wms.service.batch;
 
 import com.wms.wms.dto.request.batch.BatchItemRequest;
 import com.wms.wms.dto.request.batch.BatchRequest;
+import com.wms.wms.dto.request.batch.BatchUpdateRequest;
 import com.wms.wms.dto.response.batch.BatchResponse;
 import com.wms.wms.entity.*;
 import com.wms.wms.entity.enumentity.BatchStatus;
 import com.wms.wms.entity.enumentity.InventoryAction;
+import com.wms.wms.entity.enumentity.ItemStatus;
+import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.mapper.batch.BatchResponseMapper;
 import com.wms.wms.repository.*;
@@ -17,7 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -28,6 +33,7 @@ public class BatchServiceImpl implements BatchService{
     private final WarehouseRepository warehouseRepository;
     private final ProductWarehouseHistoryService pwhService;
     private final InventoryItemService inventoryItemService;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     @Transactional
@@ -110,6 +116,12 @@ public class BatchServiceImpl implements BatchService{
     @Transactional
     public void deleteById(Long id) {
         Batch batch = this.getBatchById(id);
+        List<BatchItem> items = batch.getBatchItems();
+        for (BatchItem item : items) {
+            if (item.getStatus() == ItemStatus.COMPLETED) {
+                throw  new ConstraintViolationException("Cannot delete batch that have completed item");
+            }
+        }
         batchRepository.delete(batch);
         log.info("Service Batch - Delete batch ID {} successfully", id);
     }
@@ -131,6 +143,57 @@ public class BatchServiceImpl implements BatchService{
             inventoryItemService.processDeliveredBatchItems(updatedBatch);
             log.info("Service Batch - Process import batch items successfully");
         }
+    }
+
+    @Override
+    @Transactional
+    public BatchResponse update(BatchUpdateRequest request) {
+        Batch dbBatch = this.getBatchById(request.getId());
+        if (dbBatch.getStatus() == BatchStatus.DELIVERED) {
+            throw new ConstraintViolationException("Cannot update delivered batch");
+        }
+        dbBatch.setName(request.getName());
+        dbBatch.setBatchDate(request.getBatchDate());
+
+        Batch newBatch = batchRepository.save(dbBatch);
+        log.info("Service Batch - Save Batch successfully with ID: {}", newBatch.getId());
+
+        return BatchResponseMapper.INSTANCE.toDto(newBatch);
+    }
+
+    @Override
+    public void addItem(Long batchId, BatchItemRequest itemRequest) {
+        Batch batch = this.getBatchById(batchId);
+
+        Optional<BatchItem> existItem = batch.getBatchItems()
+                .stream()
+                .filter(item -> item.getOrderItemId().equals(itemRequest.getOrderItemId()))
+                .findFirst();
+
+        if (existItem.isPresent() && existItem.get().getStatus() != ItemStatus.COMPLETED) {
+            BatchItem item = existItem.get();
+            BigDecimal newQuantity = item.getQuantity().add(itemRequest.getQuantity());
+            BigDecimal newWeight = item.getWeight().add(itemRequest.getWeight());
+
+            item.setQuantity(newQuantity);
+            item.setWeight(newWeight);
+        }
+        else {
+            OrderItem orderItem = orderItemRepository.findById(itemRequest.getOrderItemId())
+                    .orElseThrow(() -> new ResourceNotFoundException("No order item exists"));
+            BatchItem newItem = BatchItem.builder()
+                    .orderItemId(orderItem.getId())
+                    .product(orderItem.getProduct())
+                    .uom(orderItem.getUom())
+                    .weight(itemRequest.getWeight())
+                    .quantity(itemRequest.getQuantity())
+                    .build();
+
+            batch.addItem(newItem);
+        }
+
+        batchRepository.save(batch);
+        log.info("Service Batch - Add item successfully");
     }
 
     private Batch getBatchById(Long id) {

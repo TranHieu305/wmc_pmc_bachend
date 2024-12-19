@@ -1,12 +1,9 @@
 package com.wms.wms.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.wms.wms.entity.baseentity.BaseLogisticItem;
+import com.wms.wms.entity.enumentity.ItemStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
@@ -25,4 +22,9 @@ public class BatchItem extends BaseLogisticItem {
 
     @Column(name = "weight")
     private BigDecimal weight;
+
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private ItemStatus status = ItemStatus.PENDING;
 }

@@ -138,6 +138,7 @@ public class ProductWarehouseHistoryServiceImpl implements ProductWarehouseHisto
         productWarehouseHistoryRepository.saveAll(historyList);
         log.info("Service PWH - Create product warehouse history successfully");
 
+        log.info("Service PWH - Start process update product-warehouse");
         // Update exist product warehouse quantity
         // If not exist, create new
         List<ProductWarehouse> productWarehouseList =  historyList.stream().map(historyItem -> {
@@ -176,8 +177,48 @@ public class ProductWarehouseHistoryServiceImpl implements ProductWarehouseHisto
     }
 
     @Override
+    @Transactional
     public void processImportBatchItem(BatchItem item, Warehouse warehouse) {
+        log.info("Service PWH - Start process import to pwh");
+        ProductWarehouseHistory historyItem = ProductWarehouseHistory.builder()
+                .product(item.getProduct())
+                .warehouse(warehouse)
+                .inventoryAction(InventoryAction.IMPORT)
+                .processType(ProcessType.AUTOMATIC)
+                .quantity(item.getQuantity())
+                .description("Action automatically created by completed batch item name: "
+                        + item.getProduct().getName()
+                        + ", id: {}"
+                        + item.getId())
+                .build();
 
+        productWarehouseHistoryRepository.save(historyItem);
+        log.info("Service PWH - Create product warehouse history successfully");
+
+        log.info("Service PWH - Start process update product-warehouse");
+        ProductWarehouse productWarehouse;
+
+        // Get exist ProductWarehouse
+        Optional<ProductWarehouse> existProductWarehouse =
+                productWarehouseRepository.findByWarehouseIdAndProductId(
+                        historyItem.getProduct().getId(),
+                        historyItem.getWarehouse().getId()
+                );
+        if (existProductWarehouse.isPresent()) {
+            productWarehouse = existProductWarehouse.get();
+            BigDecimal newQuantity =  productWarehouse.getQuantityOnHand().add(historyItem.getQuantity());
+            productWarehouse.setQuantityOnHand(newQuantity);
+        }
+        else {
+            productWarehouse = ProductWarehouse.builder()
+                    .product(historyItem.getProduct())
+                    .warehouse(historyItem.getWarehouse())
+                    .quantityOnHand(historyItem.getQuantity())
+                    .build();
+        }
+
+        productWarehouseRepository.save(productWarehouse);
+        log.info("Service PWH - Update product warehouse successfully");
     }
 
     @Override

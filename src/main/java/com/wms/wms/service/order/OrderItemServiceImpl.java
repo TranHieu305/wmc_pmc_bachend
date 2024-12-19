@@ -28,7 +28,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         OrderItem item = this.getItemById(request.getId());
         item.setQuantity(request.getQuantity());
         orderItemRepository.save(item);
-        log.info("Service Order - Get order item ID {} successfully", item.getId());
+        log.info("Service Order item - Update item ID {} successfully", item.getId());
 
     }
 
@@ -41,7 +41,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             throw new ConstraintViolationException("Cannot delete an order item that already has a batch item. Please delete batch item first");
         }
         orderItemRepository.delete(item);
-        log.info("Delete Order - Get order item ID {} successfully", item.getId());
+        log.info("Delete Order item - Delete item ID {} successfully", item.getId());
     }
 
     private OrderItem getItemById(Long id) {
