@@ -44,6 +44,14 @@ public class OrderItemServiceImpl implements OrderItemService {
         log.info("Delete Order item - Delete item ID {} successfully", item.getId());
     }
 
+    @Override
+    @Transactional
+    public List<OrderItem> findByProductId(Long productId) {
+        List<OrderItem> items = orderItemRepository.findByProductId(productId);
+        log.info("Service Order item - Find items by product ID: {} successfully", productId);
+        return items;
+    }
+
     private OrderItem getItemById(Long id) {
         return orderItemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No Order item exists with the given Id: " + id));

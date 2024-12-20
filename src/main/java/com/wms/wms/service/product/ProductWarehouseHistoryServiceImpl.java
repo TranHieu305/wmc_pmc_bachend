@@ -173,7 +173,51 @@ public class ProductWarehouseHistoryServiceImpl implements ProductWarehouseHisto
     @Override
     @Transactional
     public void processExportBatchItems(Batch batch) {
+        // Create product warehouse history from Imported batch items
+        log.info("Service PWH - Start process import to pwh");
+        List<ProductWarehouseHistory> historyList = batch.getBatchItems().stream()
+                .map(batchItem -> (ProductWarehouseHistory) ProductWarehouseHistory.builder()
+                        .product(batchItem.getProduct())
+                        .warehouse(batch.getWarehouse())
+                        .inventoryAction(InventoryAction.EXPORT)
+                        .processType(ProcessType.AUTOMATIC)
+                        .quantity(batchItem.getQuantity())
+                        .description("Action automatically created by delivered batch ID:" + batch.getId())
+                        .build())
+                .toList();
+        productWarehouseHistoryRepository.saveAll(historyList);
+        log.info("Service PWH - Create product warehouse history successfully");
 
+        log.info("Service PWH - Start process update product-warehouse");
+        // Update exist product warehouse quantity
+        // If not exist, create new
+        List<ProductWarehouse> productWarehouseList =  historyList.stream().map(historyItem -> {
+            ProductWarehouse productWarehouse;
+
+            Optional<ProductWarehouse> existProductWarehouse =
+                    productWarehouseRepository.findByWarehouseIdAndProductId(
+                            historyItem.getWarehouse().getId(),
+                            historyItem.getProduct().getId()
+                    );
+
+            if (existProductWarehouse.isPresent()) {
+                productWarehouse = existProductWarehouse.get();
+                BigDecimal newQuantity =  productWarehouse.getQuantityOnHand().subtract(historyItem.getQuantity());
+                productWarehouse.setQuantityOnHand(newQuantity);
+            }
+            else {
+                productWarehouse = ProductWarehouse.builder()
+                        .product(historyItem.getProduct())
+                        .warehouse(historyItem.getWarehouse())
+                        .quantityOnHand(historyItem.getQuantity())
+                        .build();
+            }
+
+            return productWarehouse;
+        }).toList();
+
+        productWarehouseRepository.saveAll(productWarehouseList);
+        log.info("Service PWH - Update product warehouse successfully");
     }
 
     @Override
@@ -188,7 +232,7 @@ public class ProductWarehouseHistoryServiceImpl implements ProductWarehouseHisto
                 .quantity(item.getQuantity())
                 .description("Action automatically created by completed batch item name: "
                         + item.getProduct().getName()
-                        + ", id: {}"
+                        + ", id: "
                         + item.getId())
                 .build();
 

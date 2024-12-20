@@ -20,6 +20,8 @@ public class PartnerResponse extends BaseEntityResponse {
 
     private String phoneNumber;
 
+    private String address;
+
     private List<PartnerAddressResponse> partnerAddresses;
 
     private List<PartnerContactResponse> partnerContacts;

@@ -4,17 +4,20 @@ import com.wms.wms.dto.request.product.ProductRequest;
 import com.wms.wms.dto.response.product.ProductResponse;
 import com.wms.wms.entity.Product;
 import com.wms.wms.entity.ProductCategory;
+import com.wms.wms.entity.ProductWarehouse;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.mapper.product.ProductRequestMapper;
 import com.wms.wms.mapper.product.ProductResponseMapper;
 import com.wms.wms.repository.ProductCategoryRepository;
 import com.wms.wms.repository.ProductRepository;
+import com.wms.wms.repository.ProductWarehouseRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -23,6 +26,7 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductCategoryRepository productCategoryRepository;
+    private final ProductWarehouseRepository productWarehouseRepository;
 
     @Override
     @Transactional
@@ -44,15 +48,38 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse findById(Long productId) {
         Product dbProduct = this.getProductById(productId);
+        ProductResponse response = ProductResponseMapper.INSTANCE.toDto(dbProduct);
+
+        BigDecimal quantity = BigDecimal.ZERO;
+        List<ProductWarehouse> productWarehouses = productWarehouseRepository.findByProductId(productId);
+        for (ProductWarehouse productWarehouse : productWarehouses) {
+            quantity = quantity.add(productWarehouse.getQuantityOnHand());
+        }
+        response.setQuantity(quantity);
+
         log.info("Service Get Product detail ID: {} successfully ", productId);
-        return ProductResponseMapper.INSTANCE.toDto(dbProduct);
+        return response;
     }
 
     @Override
     public List<ProductResponse> findAll() {
         List<Product> productList = productRepository.findAll();
+        List<ProductWarehouse> productWarehouses = productWarehouseRepository.findAll();
+        List<ProductResponse> responses = ProductResponseMapper.INSTANCE.toDtoList(productList);
+
+        for (ProductResponse response : responses) {
+            BigDecimal quantity = BigDecimal.ZERO;
+
+            for (ProductWarehouse productWarehouse : productWarehouses) {
+                if (productWarehouse.getProduct().getId().equals(response.getId())) {
+                    quantity = quantity.add(productWarehouse.getQuantityOnHand());
+                }
+            }
+            response.setQuantity(quantity);
+        }
+
         log.info("Service Get Product list successfully");
-        return ProductResponseMapper.INSTANCE.toDtoList(productList);
+        return responses;
     }
 
     @Override

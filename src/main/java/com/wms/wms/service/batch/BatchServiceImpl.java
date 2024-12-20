@@ -22,7 +22,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -55,9 +57,12 @@ public class BatchServiceImpl implements BatchService{
                 .orElseThrow(() -> new ResourceNotFoundException("No Batch warehouse exists with the given Id: " + batchRequest.getWarehouseId()));
         newBatch.setWarehouse(warehouse);
 
+        newBatch = batchRepository.save(newBatch);
+
         // Set BatchItems to Batch
         List<BatchItem> batchItemList = this.toBatchItems(batchRequest.getBatchItemRequests(), order);
         for (BatchItem item : batchItemList) {
+            item.setBatchId(newBatch.getId());
             newBatch.addItem(item);
         }
 
@@ -133,6 +138,9 @@ public class BatchServiceImpl implements BatchService{
 
         // Update the status
         batch.setStatus(BatchStatus.DELIVERED);
+        for (BatchItem batchItem : batch.getBatchItems()) {
+            batchItem.setStatus(ItemStatus.COMPLETED);
+        }
         Batch updatedBatch = batchRepository.save(batch);
         log.info("Service Batch - Mark as delivered batch ID {} successfully", batchId);
 
@@ -140,9 +148,40 @@ public class BatchServiceImpl implements BatchService{
         if (updatedBatch.getInventoryAction().equals(InventoryAction.IMPORT)) {
             log.info("Service Batch - Start process import batch items");
             pwhService.processImportBatchItems(updatedBatch);
-            inventoryItemService.processDeliveredBatchItems(updatedBatch);
+            inventoryItemService.processDeliveredBatchItems(updatedBatch, InventoryAction.IMPORT);
             log.info("Service Batch - Process import batch items successfully");
         }
+        else {
+            log.info("Service Batch - Start process export batch items");
+            pwhService.processExportBatchItems(updatedBatch);
+            inventoryItemService.processDeliveredBatchItems(updatedBatch, InventoryAction.EXPORT);
+            log.info("Service Batch - Process export batch items successfully");
+        }
+
+        // Update DELIVERED quantity to order
+        List<OrderItem> orderItems = batch.getOrder().getOrderItems();
+        Map<Long, BigDecimal> batchItemQuantities = batch.getBatchItems().stream()
+                .collect(Collectors.groupingBy(
+                        BatchItem::getOrderItemId,
+                        Collectors.reducing(BigDecimal.ZERO, BatchItem::getQuantity, BigDecimal::add)
+                ));
+
+        boolean isSameInventoryAction = batch.getInventoryAction() == batch.getOrderInventoryAction();
+
+        orderItems.forEach(orderItem -> {
+            BigDecimal batchQuantity = batchItemQuantities.getOrDefault(orderItem.getId(), BigDecimal.ZERO);
+            BigDecimal deliveredQuantity = orderItem.getDeliveredQuantity();
+
+            if (isSameInventoryAction) {
+                deliveredQuantity = deliveredQuantity.add(batchQuantity);
+            } else {
+                deliveredQuantity = deliveredQuantity.subtract(batchQuantity);
+            }
+
+            orderItem.setDeliveredQuantity(deliveredQuantity);
+        });
+        orderItemRepository.saveAll(orderItems);
+        log.info("Service Batch - Update quantity delivered order items successfully");
     }
 
     @Override
@@ -187,6 +226,7 @@ public class BatchServiceImpl implements BatchService{
                     .uom(orderItem.getUom())
                     .weight(itemRequest.getWeight())
                     .quantity(itemRequest.getQuantity())
+                    .batchId(batch.getId())
                     .build();
 
             batch.addItem(newItem);

@@ -1,6 +1,7 @@
 package com.wms.wms.service.batch;
 
 import com.wms.wms.dto.request.batch.BatchItemUpdateRequest;
+import com.wms.wms.dto.response.batch.BatchItemResponse;
 import com.wms.wms.entity.Batch;
 import com.wms.wms.entity.BatchItem;
 import com.wms.wms.entity.enumentity.BatchStatus;
@@ -18,15 +19,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Slf4j
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class BatchItemServiceImpl implements BatchItemService{
+public class BatchItemServiceImpl implements BatchItemService {
     private final BatchItemRepository batchItemRepository;
     private final ProductWarehouseHistoryService pwhService;
     private final BatchRepository batchRepository;
 
+    @Override
+    @Transactional
+    public List<BatchItem> findByProductId(Long productId) {
+        List<BatchItem> items = batchItemRepository.findByProductId(productId);
+        log.info("Service Batch item - Find items by product ID: {} successfully", productId);
+        return items;
+    }
 
     /**
      * Marks a specific batch item as complete and updates the associated batch status if necessary.

@@ -20,6 +20,9 @@ public class BatchItem extends BaseLogisticItem {
     @Column(name = "order_item_id", nullable = false)
     private Long orderItemId;
 
+    @Column(name = "batch_id", nullable = false)
+    private Long batchId;
+
     @Column(name = "weight")
     private BigDecimal weight;
 

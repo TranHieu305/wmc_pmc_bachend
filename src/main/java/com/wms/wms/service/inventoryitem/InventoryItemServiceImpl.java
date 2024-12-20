@@ -1,6 +1,7 @@
 package com.wms.wms.service.inventoryitem;
 
 import com.wms.wms.entity.*;
+import com.wms.wms.entity.enumentity.InventoryAction;
 import com.wms.wms.repository.InventoryItemRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @Override
     public List<InventoryItem> findAll() {
-        return inventoryItemRepository.findAll();
+        return inventoryItemRepository.findAllByOrderByCreatedAtDesc();
     }
 
     @Override
@@ -38,7 +39,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
     @Override
     @Transactional
-    public void processDeliveredBatchItems(Batch batch) {
+    public void processDeliveredBatchItems(Batch batch, InventoryAction action) {
         List<InventoryItem> itemList = batch.getBatchItems().stream().map(batchItem ->
                 (InventoryItem) InventoryItem.builder()
                         .batchId(batch.getId())
@@ -46,7 +47,9 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                         .warehouseId(batch.getWarehouse().getId())
                         .warehouseName(batch.getWarehouse().getName())
                         .product(batchItem.getProduct())
-                        .inventoryAction(batch.getInventoryAction())
+                        .quantity(batchItem.getQuantity())
+                        .uom(batchItem.getUom())
+                        .inventoryAction(action)
                         .build()
         ).toList();
         log.info("Service Inventory item - Process delivered Batch Items successfully");

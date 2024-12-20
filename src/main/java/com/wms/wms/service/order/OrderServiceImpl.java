@@ -5,6 +5,7 @@ import com.wms.wms.dto.request.order.OrderRequest;
 import com.wms.wms.dto.request.order.OrderUpdateRequest;
 import com.wms.wms.dto.response.order.OrderResponse;
 import com.wms.wms.entity.*;
+import com.wms.wms.entity.enumentity.OrderStatus;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.mapper.order.OrderRequestMapper;
@@ -67,9 +68,13 @@ public class OrderServiceImpl implements OrderService{
                 .orElseThrow(() -> new ResourceNotFoundException("No Order partner exists with the given Id: " + orderRequest.getPartnerId()));
         order.setPartner(orderPartner);
 
+        // Save to db to get ID for order_item
+        order = orderRepository.save(order);
+
         // Set OrderItems to Order
         List<OrderItem> orderItemList = this.toOrderItems(orderRequest.getOrderItemRequests());
         for (OrderItem item : orderItemList) {
+            item.setOrderId(order.getId());
             order.addOrderItem(item);
         }
 
@@ -83,6 +88,10 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderResponse update(OrderUpdateRequest request) {
         Order dbOrder = this.getOrderById(request.getId());
+        if (dbOrder.getStatus() == OrderStatus.COMPLETED) {
+            throw new ConstraintViolationException("Cannot update completed order");
+        }
+
         dbOrder.setName(request.getName());
         dbOrder.setOrderDate(request.getOrderDate());
         dbOrder.setExpectedDeliveryDate(request.getExpectedDeliveryDate());
@@ -137,6 +146,10 @@ public class OrderServiceImpl implements OrderService{
     public void addItem(Long orderId, OrderItemRequest itemRequest) {
         Order order = this.getOrderById(orderId);
 
+        if (order.getStatus() == OrderStatus.COMPLETED) {
+            throw new ConstraintViolationException("Cannot add item to completed order");
+        }
+
         Optional<OrderItem> existItem = order.getOrderItems()
                 .stream()
                 .filter(orderItem -> orderItem.getProduct().getId().equals(itemRequest.getProductId()))
@@ -154,12 +167,22 @@ public class OrderServiceImpl implements OrderService{
                     .product(product)
                     .uom(product.getUom())
                     .quantity(itemRequest.getQuantity())
+                    .orderId(order.getId())
                     .build();
 
             order.addOrderItem(newItem);
         }
         orderRepository.save(order);
         log.info("Service Order - Update order ID {} successfully", orderId);
+    }
+
+    @Override
+    @Transactional
+    public void markAsCompleted(Long orderId) {
+        Order order = getOrderById(orderId);
+        order.setStatus(OrderStatus.COMPLETED);
+        orderRepository.save(order);
+        log.info("Service Order - Mark status order ID {} as COMPLETED successfully", orderId);
     }
 
     private Order getOrderById(Long id) {

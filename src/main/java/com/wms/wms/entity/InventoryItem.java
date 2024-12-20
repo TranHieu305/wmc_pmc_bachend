@@ -6,8 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,9 +26,6 @@ public class InventoryItem extends BaseLogisticItem {
 
     @Column(name = "warehouse_name", nullable = false)
     private String warehouseName;
-
-    @Column(name = "quantity", nullable = false)
-    private BigDecimal quantity;
 
     @Column(name = "inventory_action", nullable = false)
     @Enumerated(EnumType.STRING)

@@ -74,4 +74,13 @@ public class OrderController {
         orderService.addItem(orderId, itemRequest);
         return new ResponseSuccess(HttpStatus.OK, "Update order successfully");
     }
+
+    @PatchMapping("/{orderId}/status/completed")
+    public ResponseEntity<?> markAsDelivered(
+            @Min(value = 1, message = "Id must be greater than 0")
+            @PathVariable("orderId") Long orderId) {
+        log.info("Request to mark order as COMPLETED, Id={}", orderId);
+        orderService.markAsCompleted(orderId);
+        return new ResponseSuccess(HttpStatus.OK, "Order marked as DELIVERED successfully");
+    }
 }

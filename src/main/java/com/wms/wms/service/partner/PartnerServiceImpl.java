@@ -28,7 +28,11 @@ public class PartnerServiceImpl implements PartnerService{
     public List<PartnerResponse> findAll() {
         List<Partner> partners = partnerRepository.findAll();
         log.info("Service Get all partners successfully");
-        return PartnerResponseMapper.INSTANCE.toDtoList(partners);
+        List<PartnerResponse> responses = PartnerResponseMapper.INSTANCE.toDtoList(partners);
+        for (PartnerResponse response : responses) {
+            response.setAddress(response.getPartnerAddresses().get(0).getAddress());
+        }
+        return responses;
     }
 
     @Override

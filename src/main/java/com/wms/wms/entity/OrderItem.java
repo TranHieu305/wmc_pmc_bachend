@@ -1,6 +1,5 @@
 package com.wms.wms.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.wms.wms.entity.baseentity.BaseLogisticItem;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,4 +18,11 @@ public class OrderItem extends BaseLogisticItem {
     @Column(name = "packed_quantity")
     @Builder.Default
     private BigDecimal packedQuantity = BigDecimal.ZERO;
+
+    @Column(name = "delivered_quantity")
+    @Builder.Default
+    private BigDecimal deliveredQuantity = BigDecimal.ZERO;
+
+    @Column(name = "order_id", nullable = false)
+    private Long orderId;
 }

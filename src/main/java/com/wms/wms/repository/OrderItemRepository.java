@@ -10,4 +10,7 @@ import java.util.Set;
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     List<OrderItem> findByIdIn(Set<Integer> ids);
+
+    List<OrderItem> findByProductId(Long productId);
+
 }
