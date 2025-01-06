@@ -2,6 +2,7 @@ package com.wms.wms.controller;
 
 import com.wms.wms.dto.request.user.UserCreateRequest;
 import com.wms.wms.dto.response.ResponseSuccess;
+import com.wms.wms.dto.response.User.UserGeneral;
 import com.wms.wms.dto.response.User.UserInfoResponse;
 import com.wms.wms.service.user.UserService;
 import jakarta.validation.Valid;
@@ -41,6 +42,13 @@ public class UserController {
         log.info("Request get user list");
         List<UserInfoResponse> responses = userService.findAll();
         return new ResponseSuccess(HttpStatus.OK, "Get all users successfully", responses);
+    }
+
+    @GetMapping("/general")
+    public ResponseEntity<?> findAllGeneral() {
+        log.info("Request get user general info list");
+        List<UserGeneral> responses = userService.findAllGeneral();
+        return new ResponseSuccess(HttpStatus.OK, "Get all general users successfully", responses);
     }
 
     @DeleteMapping("/{userId}")

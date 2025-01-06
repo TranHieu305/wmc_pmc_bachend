@@ -1,6 +1,7 @@
 package com.wms.wms.service.user;
 
 import com.wms.wms.dto.request.user.UserCreateRequest;
+import com.wms.wms.dto.response.User.UserGeneral;
 import com.wms.wms.dto.response.User.UserInfoResponse;
 import com.wms.wms.entity.User;
 
@@ -15,4 +16,7 @@ public interface UserService {
 
     void deleteById(Long userId);
 
+    List<UserGeneral> findAllGeneral();
+
+    User getCurrentUser();
 }

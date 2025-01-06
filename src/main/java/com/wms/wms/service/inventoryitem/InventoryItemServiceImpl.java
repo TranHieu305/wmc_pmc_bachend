@@ -1,7 +1,7 @@
 package com.wms.wms.service.inventoryitem;
 
 import com.wms.wms.entity.*;
-import com.wms.wms.entity.enumentity.InventoryAction;
+import com.wms.wms.entity.enumentity.type.InventoryAction;
 import com.wms.wms.repository.InventoryItemRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -54,5 +54,22 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         ).toList();
         log.info("Service Inventory item - Process delivered Batch Items successfully");
         inventoryItemRepository.saveAll(itemList);
+    }
+
+    @Override
+    @Transactional
+    public void processCompletedBatchItem(Batch batch, BatchItem item) {
+        InventoryItem inventoryItem = InventoryItem.builder()
+                .batchId(batch.getId())
+                .batchName(batch.getName())
+                .warehouseId(batch.getWarehouse().getId())
+                .warehouseName(batch.getWarehouse().getName())
+                .product(item.getProduct())
+                .quantity(item.getQuantity())
+                .uom(item.getUom())
+                .inventoryAction(InventoryAction.IMPORT)
+                .build();
+        log.info("Service Inventory item - Process completed Batch Items successfully");
+        inventoryItemRepository.save(inventoryItem);
     }
 }

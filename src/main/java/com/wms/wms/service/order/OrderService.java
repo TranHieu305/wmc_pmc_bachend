@@ -14,4 +14,8 @@ public interface OrderService extends BaseService<OrderRequest, OrderResponse> {
     void addItem (Long orderId, OrderItemRequest itemRequest);
 
     void markAsCompleted(Long orderId);
+
+    void approve(Long orderId);
+
+    void reject(Long orderId);
 }

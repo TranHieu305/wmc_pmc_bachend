@@ -1,7 +1,7 @@
 package com.wms.wms.dto.response.partner;
 
 import com.wms.wms.dto.response.BaseEntityResponse;
-import com.wms.wms.entity.enumentity.PartnerType;
+import com.wms.wms.entity.enumentity.type.PartnerType;
 import lombok.*;
 
 import java.util.List;

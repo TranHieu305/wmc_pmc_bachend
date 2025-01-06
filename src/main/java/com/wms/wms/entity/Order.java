@@ -1,9 +1,8 @@
 package com.wms.wms.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wms.wms.entity.baseentity.BaseEntity;
-import com.wms.wms.entity.enumentity.InventoryAction;
-import com.wms.wms.entity.enumentity.OrderStatus;
+import com.wms.wms.entity.enumentity.type.InventoryAction;
+import com.wms.wms.entity.enumentity.status.OrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +13,7 @@ import lombok.experimental.SuperBuilder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -37,7 +37,7 @@ public class Order extends BaseEntity {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private OrderStatus status = OrderStatus.PENDING;
+    private OrderStatus status = OrderStatus.PENDING_APPROVAL;
 
     @Column(name = "order_date")
     private Timestamp orderDate;
@@ -57,6 +57,15 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "order_id")
     @Builder.Default
     private List<OrderItem> orderItems = new ArrayList<>();
+
+    @Column(name = "approver_ids")
+    private Set<Long> approverIds;
+
+    @Column(name = "pending_approver_ids")
+    private Set<Long> pendingApproverIds;
+
+    @Column(name = "participants_id")
+    private Set<Long> participantIds;
 
     // Utility method to add an order item
     public void addOrderItem(OrderItem orderItem) {

@@ -1,9 +1,8 @@
 package com.wms.wms.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wms.wms.entity.baseentity.BaseEntity;
-import com.wms.wms.entity.enumentity.BatchStatus;
-import com.wms.wms.entity.enumentity.InventoryAction;
+import com.wms.wms.entity.enumentity.status.BatchStatus;
+import com.wms.wms.entity.enumentity.type.InventoryAction;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +13,7 @@ import lombok.experimental.SuperBuilder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -40,7 +40,7 @@ public class Batch extends BaseEntity {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private BatchStatus status = BatchStatus.PENDING;
+    private BatchStatus status = BatchStatus.PENDING_APPROVAL;
 
     @Column(name = "batch_date")
     private Timestamp batchDate;
@@ -65,6 +65,15 @@ public class Batch extends BaseEntity {
     @JoinColumn(name = "batch_id")
     @Builder.Default
     private List<BatchItem> batchItems = new ArrayList<>();
+
+    @Column(name = "approver_ids")
+    private Set<Long> approverIds;
+
+    @Column(name = "pending_approver_ids")
+    private Set<Long> pendingApproverIds;
+
+    @Column(name = "participants_id")
+    private Set<Long> participantIds;
 
     // Utility method to add a batch item
     public void addItem(BatchItem item) {

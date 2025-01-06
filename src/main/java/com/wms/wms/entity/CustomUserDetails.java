@@ -1,6 +1,6 @@
 package com.wms.wms.entity;
 
-import com.wms.wms.entity.enumentity.UserRole;
+import com.wms.wms.entity.enumentity.base.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.userdetails.UserDetails;

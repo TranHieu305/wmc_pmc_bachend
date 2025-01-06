@@ -1,4 +1,4 @@
-package com.wms.wms.entity.enumentity;
+package com.wms.wms.entity.enumentity.type;
 
 public enum PartnerType {
     SUPPLIER,

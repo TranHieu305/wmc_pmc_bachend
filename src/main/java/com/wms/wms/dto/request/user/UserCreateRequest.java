@@ -1,6 +1,6 @@
 package com.wms.wms.dto.request.user;
 
-import com.wms.wms.entity.enumentity.UserRole;
+import com.wms.wms.entity.enumentity.base.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.wms.wms.dto.request.partner;
 
-import com.wms.wms.entity.enumentity.PartnerType;
+import com.wms.wms.entity.enumentity.type.PartnerType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;

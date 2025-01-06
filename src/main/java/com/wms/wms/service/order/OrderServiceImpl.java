@@ -5,15 +5,14 @@ import com.wms.wms.dto.request.order.OrderRequest;
 import com.wms.wms.dto.request.order.OrderUpdateRequest;
 import com.wms.wms.dto.response.order.OrderResponse;
 import com.wms.wms.entity.*;
-import com.wms.wms.entity.enumentity.OrderStatus;
+import com.wms.wms.entity.enumentity.status.OrderStatus;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.mapper.order.OrderRequestMapper;
 import com.wms.wms.mapper.order.OrderResponseMapper;
-import com.wms.wms.repository.BatchRepository;
-import com.wms.wms.repository.OrderRepository;
-import com.wms.wms.repository.PartnerRepository;
-import com.wms.wms.repository.ProductRepository;
+import com.wms.wms.repository.*;
+import com.wms.wms.service.approval.ApprovalService;
+import com.wms.wms.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -34,6 +34,8 @@ public class OrderServiceImpl implements OrderService{
     private final ProductRepository productRepository;
     private final PartnerRepository partnerRepository;
     private final BatchRepository batchRepository;
+    private final ApprovalService approvalService;
+    private final UserService userService;
 
     @Override
     @Transactional
@@ -78,9 +80,23 @@ public class OrderServiceImpl implements OrderService{
             order.addOrderItem(item);
         }
 
+        //Set approvers
+        Set<Long> approverIds = new HashSet<>(orderRequest.getApproverIds());
+        order.setApproverIds(approverIds);
+        order.setPendingApproverIds(approverIds);
+
+        //Set participants
+        Set<Long> participantIds = new HashSet<>(orderRequest.getParticipantIds());
+        User curentUser = userService.getCurrentUser();
+        participantIds.add(curentUser.getId());
+        order.setParticipantIds(participantIds);
+
         // Save to db
         Order dbOrder = orderRepository.save(order);
         log.info("Service order - Save Order successfully with ID: {}", dbOrder.getId());
+
+        // Save approvals
+        approvalService.saveApprovals(order.getId(), Order.class.getSimpleName(), orderRequest.getApproverIds());
 
         return OrderResponseMapper.INSTANCE.toDto(dbOrder);
     }
@@ -183,6 +199,55 @@ public class OrderServiceImpl implements OrderService{
         order.setStatus(OrderStatus.COMPLETED);
         orderRepository.save(order);
         log.info("Service Order - Mark status order ID {} as COMPLETED successfully", orderId);
+    }
+
+    @Override
+    @Transactional
+    public void approve(Long orderId) {
+        Order order = getOrderById(orderId);
+        // Check constraint
+        User currentUser = userService.getCurrentUser();
+        checkConstraintToApprove(order, currentUser);
+
+        // Process approve
+        // Remove from pending approver
+        order.getPendingApproverIds().remove(currentUser.getId());
+        // If all approvers approved, change status
+        if (order.getPendingApproverIds().isEmpty() &&
+                order.getStatus() == OrderStatus.PENDING_APPROVAL) {
+            order.setStatus(OrderStatus.PENDING);
+        }
+
+        orderRepository.save(order);
+        log.info("Service Order - Approve order ID {} successfully", orderId);
+    }
+
+    @Override
+    @Transactional
+    public void reject(Long orderId) {
+        Order order = getOrderById(orderId);
+        // Check constraint
+        User currentUser = userService.getCurrentUser();
+        checkConstraintToApprove(order, currentUser);
+
+        // Process approve
+        // Remove from pending approver
+        order.getPendingApproverIds().remove(currentUser.getId());
+        order.setStatus(OrderStatus.REJECTED);
+        orderRepository.save(order);
+        log.info("Service Order - Reject order ID {} successfully", orderId);
+    }
+
+    private void checkConstraintToApprove(Order order, User currentUser) {
+        if (order.getStatus() != OrderStatus.PENDING_APPROVAL) {
+            throw new ConstraintViolationException("Cannot approve order does not have pending approval status");
+        }
+        if (!order.getApproverIds().contains(currentUser.getId())) {
+            throw new ConstraintViolationException("You are not approver");
+        }
+        if (!order.getPendingApproverIds().contains(currentUser.getId())) {
+            throw new ConstraintViolationException("You had already approved");
+        }
     }
 
     private Order getOrderById(Long id) {

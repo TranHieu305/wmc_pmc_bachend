@@ -72,4 +72,22 @@ public class BatchController {
         BatchResponse response = batchService.update(request);
         return new ResponseSuccess(HttpStatus.OK, "Batch updated successfully", response);
     }
+
+    @PatchMapping("/{batchId}/approve")
+    public ResponseEntity<?> approve(
+            @Min(value = 1, message = "Id must be greater than 0")
+            @PathVariable("batchId") Long batchId) {
+        log.info("Request to approve batch Id={}", batchId);
+        batchService.approve(batchId);
+        return new ResponseSuccess(HttpStatus.OK, "Approved batch successfully");
+    }
+
+    @PatchMapping("/{batchId}/reject")
+    public ResponseEntity<?> reject(
+            @Min(value = 1, message = "Id must be greater than 0")
+            @PathVariable("batchId") Long batchId) {
+        log.info("Request to reject batch Id={}", batchId);
+        batchService.reject(batchId);
+        return new ResponseSuccess(HttpStatus.OK, "Rejected batch successfully");
+    }
 }

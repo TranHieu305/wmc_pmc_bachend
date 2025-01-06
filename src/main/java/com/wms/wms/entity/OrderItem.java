@@ -23,6 +23,6 @@ public class OrderItem extends BaseLogisticItem {
     @Builder.Default
     private BigDecimal deliveredQuantity = BigDecimal.ZERO;
 
-    @Column(name = "order_id", nullable = false)
+    @Column(name = "order_id")
     private Long orderId;
 }

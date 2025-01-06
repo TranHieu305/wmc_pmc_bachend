@@ -1,8 +1,6 @@
 package com.wms.wms.dto.request.product;
 
-import com.wms.wms.entity.enumentity.InventoryAction;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.wms.wms.entity.enumentity.type.InventoryAction;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

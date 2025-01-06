@@ -1,7 +1,7 @@
 package com.wms.wms.entity;
 
 import com.wms.wms.entity.baseentity.BaseEntity;
-import com.wms.wms.entity.enumentity.CategoryType;
+import com.wms.wms.entity.enumentity.type.CategoryType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

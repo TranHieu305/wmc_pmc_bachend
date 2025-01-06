@@ -1,6 +1,8 @@
-package com.wms.wms.entity.enumentity;
+package com.wms.wms.entity.enumentity.status;
 
 public enum BatchStatus {
+    PENDING_APPROVAL,
+    REJECTED,
     PENDING,
     PACKING,
     COMPLETED,

@@ -5,7 +5,7 @@ import com.wms.wms.dto.request.auth.AuthRequest;
 import com.wms.wms.dto.response.auth.AuthResponse;
 import com.wms.wms.entity.CustomUserDetails;
 import com.wms.wms.entity.User;
-import com.wms.wms.entity.enumentity.UserRole;
+import com.wms.wms.entity.enumentity.base.UserRole;
 import com.wms.wms.repository.UserRepository;
 import com.wms.wms.service.jwt.JwtService;
 import jakarta.annotation.PostConstruct;

@@ -1,8 +1,8 @@
 package com.wms.wms.dto.response.User;
 
 import com.wms.wms.dto.response.BaseEntityResponse;
-import com.wms.wms.entity.enumentity.UserRole;
-import com.wms.wms.entity.enumentity.UserStatus;
+import com.wms.wms.entity.enumentity.base.UserRole;
+import com.wms.wms.entity.enumentity.status.UserStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

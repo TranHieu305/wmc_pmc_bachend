@@ -5,25 +5,25 @@ import com.wms.wms.dto.request.batch.BatchRequest;
 import com.wms.wms.dto.request.batch.BatchUpdateRequest;
 import com.wms.wms.dto.response.batch.BatchResponse;
 import com.wms.wms.entity.*;
-import com.wms.wms.entity.enumentity.BatchStatus;
-import com.wms.wms.entity.enumentity.InventoryAction;
-import com.wms.wms.entity.enumentity.ItemStatus;
+import com.wms.wms.entity.enumentity.status.BatchStatus;
+import com.wms.wms.entity.enumentity.type.InventoryAction;
+import com.wms.wms.entity.enumentity.status.ItemStatus;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.mapper.batch.BatchResponseMapper;
 import com.wms.wms.repository.*;
 import com.wms.wms.service.inventoryitem.InventoryItemService;
 import com.wms.wms.service.product.ProductWarehouseHistoryService;
+import com.wms.wms.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,6 +36,7 @@ public class BatchServiceImpl implements BatchService{
     private final ProductWarehouseHistoryService pwhService;
     private final InventoryItemService inventoryItemService;
     private final OrderItemRepository orderItemRepository;
+    private final UserService userService;
 
     @Override
     @Transactional
@@ -65,6 +66,17 @@ public class BatchServiceImpl implements BatchService{
             item.setBatchId(newBatch.getId());
             newBatch.addItem(item);
         }
+
+        //Set approvers
+        Set<Long> approverIds = new HashSet<>(batchRequest.getApproverIds());
+        newBatch.setApproverIds(approverIds);
+        newBatch.setPendingApproverIds(approverIds);
+
+        //Set participants
+        Set<Long> participantIds = new HashSet<>(batchRequest.getParticipantIds());
+        User curentUser = userService.getCurrentUser();
+        participantIds.add(curentUser.getId());
+        newBatch.setParticipantIds(participantIds);
 
         // Save to db
         Batch dbBatch = batchRepository.save(newBatch);
@@ -151,6 +163,7 @@ public class BatchServiceImpl implements BatchService{
             inventoryItemService.processDeliveredBatchItems(updatedBatch, InventoryAction.IMPORT);
             log.info("Service Batch - Process import batch items successfully");
         }
+        //TODO
         else {
             log.info("Service Batch - Start process export batch items");
             pwhService.processExportBatchItems(updatedBatch);
@@ -235,6 +248,55 @@ public class BatchServiceImpl implements BatchService{
         batchRepository.save(batch);
         log.info("Service Batch - Add item successfully");
     }
+    @Override
+    @Transactional
+    public void approve(Long batchId) {
+        Batch batch = getBatchById(batchId);
+        // Check constraint
+        User currentUser = userService.getCurrentUser();
+        checkConstraintToApprove(batch, currentUser);
+
+        // Process approve
+        // Remove from pending approver
+        batch.getPendingApproverIds().remove(currentUser.getId());
+        // If all approvers approved, change status
+        if (batch.getPendingApproverIds().isEmpty() &&
+                batch.getStatus() == BatchStatus.PENDING_APPROVAL) {
+            batch.setStatus(BatchStatus.PENDING);
+        }
+
+        batchRepository.save(batch);
+        log.info("Service Batch - Approve batch ID {} successfully", batchId);
+    }
+
+    @Override
+    @Transactional
+    public void reject(Long batchId) {
+        Batch batch = getBatchById(batchId);
+        // Check constraint
+        User currentUser = userService.getCurrentUser();
+        checkConstraintToApprove(batch, currentUser);
+
+        // Process approve
+        // Remove from pending approver
+        batch.getPendingApproverIds().remove(currentUser.getId());
+        batch.setStatus(BatchStatus.REJECTED);
+        batchRepository.save(batch);
+        log.info("Service Batch - Reject batch ID {} successfully", batchId);
+    }
+
+    private void checkConstraintToApprove(Batch batch, User currentUser) {
+        if (batch.getStatus() != BatchStatus.PENDING_APPROVAL) {
+            throw new ConstraintViolationException("Cannot approve batch does not have pending approval status");
+        }
+        if (!batch.getApproverIds().contains(currentUser.getId())) {
+            throw new ConstraintViolationException("You are not approver");
+        }
+        if (!batch.getPendingApproverIds().contains(currentUser.getId())) {
+            throw new ConstraintViolationException("You had already approved");
+        }
+    }
+
 
     private Batch getBatchById(Long id) {
         return batchRepository.findById(id)

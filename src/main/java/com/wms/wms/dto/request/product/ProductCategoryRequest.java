@@ -1,6 +1,6 @@
 package com.wms.wms.dto.request.product;
 
-import com.wms.wms.entity.enumentity.CategoryType;
+import com.wms.wms.entity.enumentity.type.CategoryType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;

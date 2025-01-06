@@ -1,8 +1,8 @@
 package com.wms.wms.entity;
 
 import com.wms.wms.entity.baseentity.BaseEntity;
-import com.wms.wms.entity.enumentity.UserRole;
-import com.wms.wms.entity.enumentity.UserStatus;
+import com.wms.wms.entity.enumentity.base.UserRole;
+import com.wms.wms.entity.enumentity.status.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

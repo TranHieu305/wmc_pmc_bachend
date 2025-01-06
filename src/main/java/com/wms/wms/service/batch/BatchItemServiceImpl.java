@@ -1,16 +1,16 @@
 package com.wms.wms.service.batch;
 
 import com.wms.wms.dto.request.batch.BatchItemUpdateRequest;
-import com.wms.wms.dto.response.batch.BatchItemResponse;
 import com.wms.wms.entity.Batch;
 import com.wms.wms.entity.BatchItem;
-import com.wms.wms.entity.enumentity.BatchStatus;
-import com.wms.wms.entity.enumentity.InventoryAction;
-import com.wms.wms.entity.enumentity.ItemStatus;
+import com.wms.wms.entity.enumentity.status.BatchStatus;
+import com.wms.wms.entity.enumentity.type.InventoryAction;
+import com.wms.wms.entity.enumentity.status.ItemStatus;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.repository.BatchItemRepository;
 import com.wms.wms.repository.BatchRepository;
+import com.wms.wms.service.inventoryitem.InventoryItemService;
 import com.wms.wms.service.product.ProductWarehouseHistoryService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -28,6 +28,7 @@ public class BatchItemServiceImpl implements BatchItemService {
     private final BatchItemRepository batchItemRepository;
     private final ProductWarehouseHistoryService pwhService;
     private final BatchRepository batchRepository;
+    private final InventoryItemService inventoryItemService;
 
     @Override
     @Transactional
@@ -100,6 +101,9 @@ public class BatchItemServiceImpl implements BatchItemService {
             batch.setStatus(BatchStatus.COMPLETED);
             log.info("Service Batch item - Change batch status to COMPLETED successfully");
         }
+
+        // Update Inventory item
+        inventoryItemService.processCompletedBatchItem(batch, item);
     }
 
     @Override

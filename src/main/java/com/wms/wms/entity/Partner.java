@@ -1,16 +1,12 @@
 package com.wms.wms.entity;
 
 import com.wms.wms.entity.baseentity.BaseEntity;
-import com.wms.wms.entity.enumentity.PartnerType;
+import com.wms.wms.entity.enumentity.type.PartnerType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 

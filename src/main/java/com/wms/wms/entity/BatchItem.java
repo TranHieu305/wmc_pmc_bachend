@@ -1,7 +1,7 @@
 package com.wms.wms.entity;
 
 import com.wms.wms.entity.baseentity.BaseLogisticItem;
-import com.wms.wms.entity.enumentity.ItemStatus;
+import com.wms.wms.entity.enumentity.status.ItemStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -20,7 +20,7 @@ public class BatchItem extends BaseLogisticItem {
     @Column(name = "order_item_id", nullable = false)
     private Long orderItemId;
 
-    @Column(name = "batch_id", nullable = false)
+    @Column(name = "batch_id")
     private Long batchId;
 
     @Column(name = "weight")

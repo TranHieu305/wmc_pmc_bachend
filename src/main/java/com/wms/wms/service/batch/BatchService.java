@@ -14,4 +14,8 @@ public interface BatchService extends BaseService<BatchRequest, BatchResponse> {
     void addItem (Long batchId, BatchItemRequest itemRequest);
 
     void markAsDelivered(Long batchId);
+
+    void approve(Long batchId);
+
+    void reject(Long batchId);
 }

@@ -1,7 +1,7 @@
 package com.wms.wms.entity;
 
 import com.wms.wms.entity.baseentity.BaseLogisticItem;
-import com.wms.wms.entity.enumentity.InventoryAction;
+import com.wms.wms.entity.enumentity.type.InventoryAction;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

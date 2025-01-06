@@ -1,7 +1,7 @@
 package com.wms.wms.dto.request.order;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wms.wms.entity.enumentity.InventoryAction;
+import com.wms.wms.entity.enumentity.type.InventoryAction;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -33,4 +33,7 @@ public class OrderRequest {
     // Note: Map manually
     @JsonProperty("orderItems")
     private List<OrderItemRequest> orderItemRequests;
+
+    private List<Long> approverIds;
+    private List<Long> participantIds;
 }

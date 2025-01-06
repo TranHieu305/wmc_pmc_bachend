@@ -1,8 +1,8 @@
 package com.wms.wms.entity;
 
 import com.wms.wms.entity.baseentity.BaseEntity;
-import com.wms.wms.entity.enumentity.InventoryAction;
-import com.wms.wms.entity.enumentity.ProcessType;
+import com.wms.wms.entity.enumentity.type.InventoryAction;
+import com.wms.wms.entity.enumentity.type.ProcessType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;

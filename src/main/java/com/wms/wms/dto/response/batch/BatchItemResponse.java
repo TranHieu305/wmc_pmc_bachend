@@ -1,7 +1,7 @@
 package com.wms.wms.dto.response.batch;
 
 import com.wms.wms.dto.response.BaseLogisticItemResponse;
-import com.wms.wms.entity.enumentity.ItemStatus;
+import com.wms.wms.entity.enumentity.status.ItemStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
