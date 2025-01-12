@@ -4,6 +4,7 @@ import com.wms.wms.dto.request.batch.BatchItemUpdateRequest;
 import com.wms.wms.dto.response.batch.BatchItemResponse;
 import com.wms.wms.entity.Batch;
 import com.wms.wms.entity.BatchItem;
+import com.wms.wms.entity.ProducedItem;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface BatchItemService {
     void updateItem (BatchItemUpdateRequest request);
 
     void deleteItem (Long itemId);
+
+    void updateProducedQuantity(ProducedItem item);
 }

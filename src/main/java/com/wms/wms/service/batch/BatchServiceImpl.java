@@ -19,7 +19,6 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -297,6 +296,31 @@ public class BatchServiceImpl implements BatchService{
         }
     }
 
+    /**
+     * If first item completed, change status batch to PACKING
+     * If all item completed, change status to COMPLETED
+     * @param {Batch} batch
+     */
+    @Override
+    @Transactional
+    public void updateStatusBasedOnItems(Batch batch) {
+        if (batch.getStatus() == BatchStatus.PENDING) {
+            batch.setStatus(BatchStatus.PACKING);
+        }
+
+        boolean isCompletedBatch = true;
+        for (BatchItem item1 : batch.getBatchItems()) {
+            if (item1.getStatus() != ItemStatus.COMPLETED) {
+                isCompletedBatch = false;
+                break;
+            }
+        }
+        if (isCompletedBatch) {
+            batch.setStatus(BatchStatus.COMPLETED);
+        }
+        batchRepository.save(batch);
+        log.info("Service Batch - Change batch status to {} successfully", batch.getStatus());
+    }
 
     private Batch getBatchById(Long id) {
         return batchRepository.findById(id)

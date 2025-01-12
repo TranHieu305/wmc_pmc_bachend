@@ -16,4 +16,5 @@ public class BatchItemResponse extends BaseLogisticItemResponse {
     private BigDecimal weight;
     private Long batchId;
     private ItemStatus status;
+    private BigDecimal producedQuantity;
 }

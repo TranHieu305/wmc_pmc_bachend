@@ -73,8 +73,8 @@ public class ProductController {
     }
 
     @PutMapping("")
-    public ResponseEntity<?> updateProductCategory(@RequestBody @Valid ProductRequest requestDTO) {
-        log.info("Request update product category id: {}", requestDTO.getId());
+    public ResponseEntity<?> updateProduct(@RequestBody @Valid ProductRequest requestDTO) {
+        log.info("Request update product id: {}", requestDTO.getId());
         ProductResponse response = productService.save(requestDTO);
         return new ResponseSuccess(HttpStatus.OK, "Update product successfully",response);
     }

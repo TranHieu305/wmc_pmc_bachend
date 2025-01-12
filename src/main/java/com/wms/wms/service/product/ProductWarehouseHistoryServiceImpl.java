@@ -8,10 +8,7 @@ import com.wms.wms.entity.enumentity.type.ProcessType;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.mapper.product.ProductWarehouseHistoryRequestMapper;
 import com.wms.wms.mapper.product.ProductWarehouseHistoryResponseMapper;
-import com.wms.wms.repository.ProductRepository;
-import com.wms.wms.repository.ProductWarehouseHistoryRepository;
-import com.wms.wms.repository.ProductWarehouseRepository;
-import com.wms.wms.repository.WarehouseRepository;
+import com.wms.wms.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +27,7 @@ public class ProductWarehouseHistoryServiceImpl implements ProductWarehouseHisto
     private final ProductRepository productRepository;
     private final WarehouseRepository warehouseRepository;
     private final ProductWarehouseRepository productWarehouseRepository;
+    private final BatchRepository batchRepository;
 
     @Override
     public List<ProductWarehouseHistoryResponse> findAll() {
@@ -268,6 +266,56 @@ public class ProductWarehouseHistoryServiceImpl implements ProductWarehouseHisto
     @Override
     public void processExportBatchItem(BatchItem item, Warehouse warehouse) {
 
+    }
+
+    @Override
+    @Transactional
+    public void importProducedItem(ProducedItem producedItem) {
+        Batch batch = batchRepository.findById(producedItem.getBatchId())
+                .orElseThrow(() -> new ResourceNotFoundException("No Batch exists with the given Id: " + producedItem.getBatchId()));
+        Warehouse warehouse = batch.getWarehouse();
+        log.info("Service PWH - Start process import to pwh");
+
+        ProductWarehouseHistory historyItem = ProductWarehouseHistory.builder()
+                .product(producedItem.getProduct())
+                .warehouse(warehouse)
+                .inventoryAction(InventoryAction.IMPORT)
+                .processType(ProcessType.AUTOMATIC)
+                .quantity(producedItem.getQuantity())
+                .description("Action automatically created by approved produced item name: "
+                        + producedItem.getProduct().getName()
+                        + ", id: "
+                        + producedItem.getId())
+                .build();
+
+        productWarehouseHistoryRepository.save(historyItem);
+        log.info("Service PWH - Create product warehouse history successfully");
+
+        // Update history to product warehouse
+        log.info("Service PWH - Start process update product-warehouse");
+        ProductWarehouse productWarehouse;
+
+        // Get exist ProductWarehouse
+        Optional<ProductWarehouse> existProductWarehouse =
+                productWarehouseRepository.findByWarehouseIdAndProductId(
+                        historyItem.getWarehouse().getId(),
+                        historyItem.getProduct().getId()
+                );
+        if (existProductWarehouse.isPresent()) {
+            productWarehouse = existProductWarehouse.get();
+            BigDecimal newQuantity =  productWarehouse.getQuantityOnHand().add(historyItem.getQuantity());
+            productWarehouse.setQuantityOnHand(newQuantity);
+        }
+        else {
+            productWarehouse = ProductWarehouse.builder()
+                    .product(historyItem.getProduct())
+                    .warehouse(historyItem.getWarehouse())
+                    .quantityOnHand(historyItem.getQuantity())
+                    .build();
+        }
+
+        productWarehouseRepository.save(productWarehouse);
+        log.info("Service PWH - Update product warehouse successfully");
     }
 
     private ProductWarehouseHistory getPWAById(Long id) {

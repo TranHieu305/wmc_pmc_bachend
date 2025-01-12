@@ -26,6 +26,10 @@ public class BatchItem extends BaseLogisticItem {
     @Column(name = "weight")
     private BigDecimal weight;
 
+    @Column(name = "produced_quantity")
+    @Builder.Default
+    private BigDecimal producedQuantity = BigDecimal.ZERO;
+
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     @Builder.Default
