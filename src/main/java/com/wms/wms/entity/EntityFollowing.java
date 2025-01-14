@@ -1,8 +1,9 @@
 package com.wms.wms.entity;
 
 import com.wms.wms.entity.baseentity.BaseEntity;
-import com.wms.wms.entity.enumentity.base.ParticipantRole;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "entity_participant")
-public class EntityParticipant extends BaseEntity {
+@Table(name = "entity_following")
+public class EntityFollowing extends BaseEntity {
     @Column(name = "entity_name", nullable = false)
     private String entityName;
 
@@ -25,8 +26,4 @@ public class EntityParticipant extends BaseEntity {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
-
-    @Column(name = "participant_role", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ParticipantRole participantRole;
 }

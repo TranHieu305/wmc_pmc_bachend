@@ -34,6 +34,7 @@ public class VehicleServiceImpl implements VehicleService{
     }
 
     @Override
+    @Transactional
     public VehicleResponse save(VehicleRequest vehicleRequest) {
         Vehicle vehicle;
 

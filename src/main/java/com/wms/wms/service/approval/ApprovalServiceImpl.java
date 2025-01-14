@@ -40,7 +40,7 @@ public class ApprovalServiceImpl implements ApprovalService{
         });
 
         approvalRepository.saveAll(approvals);
-        log.info("Approval service - save successfully entity name {}, id {}", entityType, entityId);
+        log.info("Service approval - save successfully entity name {}, id {}", entityType, entityId);
     }
 
     private UserGeneral validateApprover(List<UserGeneral> users, Long approverId) {

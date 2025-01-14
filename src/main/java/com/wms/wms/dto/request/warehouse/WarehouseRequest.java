@@ -28,10 +28,10 @@ public class WarehouseRequest implements Serializable {
     @Size(min = 1, max = 255, message = "Warehouse address must be between 1 and 255 characters")
     private String address;
 
-    @Digits(integer = 10, fraction = 6, message = "Warehouse longitude must be decimal")
+    @Digits(integer = 3, fraction = 7, message = "Warehouse longitude must be decimal")
     private BigDecimal longitude;
 
-    @Digits(integer = 10, fraction = 6, message = "Warehouse latitude must be decimal")
+    @Digits(integer = 3, fraction = 7, message = "Warehouse latitude must be decimal")
     private BigDecimal latitude;
 
     private  Long supervisorId;

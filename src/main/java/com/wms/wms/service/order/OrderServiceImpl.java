@@ -5,13 +5,14 @@ import com.wms.wms.dto.request.order.OrderRequest;
 import com.wms.wms.dto.request.order.OrderUpdateRequest;
 import com.wms.wms.dto.response.order.OrderResponse;
 import com.wms.wms.entity.*;
+import com.wms.wms.entity.enumentity.base.UserRole;
 import com.wms.wms.entity.enumentity.status.OrderStatus;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.mapper.order.OrderRequestMapper;
 import com.wms.wms.mapper.order.OrderResponseMapper;
 import com.wms.wms.repository.*;
-import com.wms.wms.service.approval.ApprovalService;
+import com.wms.wms.service.entityfollowing.EntityFollowingService;
 import com.wms.wms.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -34,14 +36,26 @@ public class OrderServiceImpl implements OrderService{
     private final ProductRepository productRepository;
     private final PartnerRepository partnerRepository;
     private final BatchRepository batchRepository;
-    private final ApprovalService approvalService;
     private final UserService userService;
+    private final EntityFollowingService entityFollowingService;
 
     @Override
     @Transactional
     public List<OrderResponse> findAll() {
-        List<Order> dbOrder = orderRepository.findAll();
-        log.info("Service Order - Get all orders successfully");
+        User currentUser = userService.getCurrentUser();
+        List<Order> dbOrder;
+        if (currentUser.getRole() == UserRole.ADMIN) {
+            dbOrder = orderRepository.findAllByOrderByCreatedAtDesc();
+            log.info("Service Order - Get all orders successfully");
+        } else {
+            List<EntityFollowing> followings = entityFollowingService.getFollowings(currentUser.getId(), Order.class.getSimpleName());
+            List<Long> orderIds = followings.stream()
+                    .map(EntityFollowing::getEntityId)
+                    .toList();
+            dbOrder = orderRepository.findAllByIdInOrderByCreatedAtDesc(orderIds);
+            log.info("Service Order - Get all following orders successfully");
+        }
+
         return OrderResponseMapper.INSTANCE.toDtoList(dbOrder);
     }
 
@@ -95,8 +109,10 @@ public class OrderServiceImpl implements OrderService{
         Order dbOrder = orderRepository.save(order);
         log.info("Service order - Save Order successfully with ID: {}", dbOrder.getId());
 
-        // Save approvals
-        approvalService.saveApprovals(order.getId(), Order.class.getSimpleName(), orderRequest.getApproverIds());
+        // Save following
+        Set<Long> followerIds = Stream.concat(dbOrder.getApproverIds().stream(), dbOrder.getParticipantIds().stream())
+                .collect(Collectors.toSet());
+        entityFollowingService.addFollowingUsersToEntity(followerIds, Order.class.getSimpleName(), dbOrder.getId());
 
         return OrderResponseMapper.INSTANCE.toDto(dbOrder);
     }

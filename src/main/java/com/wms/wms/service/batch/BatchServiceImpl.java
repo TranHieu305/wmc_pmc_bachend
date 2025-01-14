@@ -5,6 +5,7 @@ import com.wms.wms.dto.request.batch.BatchRequest;
 import com.wms.wms.dto.request.batch.BatchUpdateRequest;
 import com.wms.wms.dto.response.batch.BatchResponse;
 import com.wms.wms.entity.*;
+import com.wms.wms.entity.enumentity.base.UserRole;
 import com.wms.wms.entity.enumentity.status.BatchStatus;
 import com.wms.wms.entity.enumentity.type.InventoryAction;
 import com.wms.wms.entity.enumentity.status.ItemStatus;
@@ -12,6 +13,7 @@ import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.mapper.batch.BatchResponseMapper;
 import com.wms.wms.repository.*;
+import com.wms.wms.service.entityfollowing.EntityFollowingService;
 import com.wms.wms.service.inventoryitem.InventoryItemService;
 import com.wms.wms.service.product.ProductWarehouseHistoryService;
 import com.wms.wms.service.user.UserService;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -36,6 +39,8 @@ public class BatchServiceImpl implements BatchService{
     private final InventoryItemService inventoryItemService;
     private final OrderItemRepository orderItemRepository;
     private final UserService userService;
+    private final EntityFollowingService entityFollowingService;
+
 
     @Override
     @Transactional
@@ -57,12 +62,9 @@ public class BatchServiceImpl implements BatchService{
                 .orElseThrow(() -> new ResourceNotFoundException("No Batch warehouse exists with the given Id: " + batchRequest.getWarehouseId()));
         newBatch.setWarehouse(warehouse);
 
-        newBatch = batchRepository.save(newBatch);
-
         // Set BatchItems to Batch
         List<BatchItem> batchItemList = this.toBatchItems(batchRequest.getBatchItemRequests(), order);
         for (BatchItem item : batchItemList) {
-            item.setBatchId(newBatch.getId());
             newBatch.addItem(item);
         }
 
@@ -80,6 +82,11 @@ public class BatchServiceImpl implements BatchService{
         // Save to db
         Batch dbBatch = batchRepository.save(newBatch);
         log.info("Service Batch - Save Batch successfully with ID: {}", dbBatch.getId());
+
+        // Save following
+        Set<Long> followerIds = Stream.concat(dbBatch.getApproverIds().stream(), dbBatch.getParticipantIds().stream())
+                .collect(Collectors.toSet());
+        entityFollowingService.addFollowingUsersToEntity(followerIds, Batch.class.getSimpleName(), dbBatch.getId());
 
         return BatchResponseMapper.INSTANCE.toDto(dbBatch);
     }
@@ -110,8 +117,19 @@ public class BatchServiceImpl implements BatchService{
     @Override
     @Transactional
     public List<BatchResponse> findAll() {
-        List<Batch> dbBatch = batchRepository.findAll();
-        log.info("Service Batch - Get all batches successfully");
+        User currentUser = userService.getCurrentUser();
+        List<Batch> dbBatch;
+        if (currentUser.getRole() == UserRole.ADMIN) {
+            dbBatch = batchRepository.findAllByOrderByCreatedAtDesc();
+            log.info("Service Batch - Get all batches successfully");
+        } else {
+            List<EntityFollowing> followings = entityFollowingService.getFollowings(currentUser.getId(), Batch.class.getSimpleName());
+            List<Long> batchIds = followings.stream()
+                    .map(EntityFollowing::getEntityId)
+                    .toList();
+            dbBatch = batchRepository.findAllByIdInOrderByCreatedAtDesc(batchIds);
+            log.info("Service Batch - Get all following batches successfully");
+        }
         return BatchResponseMapper.INSTANCE.toDtoList(dbBatch);
     }
 
@@ -299,27 +317,39 @@ public class BatchServiceImpl implements BatchService{
     /**
      * If first item completed, change status batch to PACKING
      * If all item completed, change status to COMPLETED
-     * @param {Batch} batch
      */
     @Override
     @Transactional
     public void updateStatusBasedOnItems(Batch batch) {
+        boolean statusChange = false;
         if (batch.getStatus() == BatchStatus.PENDING) {
             batch.setStatus(BatchStatus.PACKING);
+            statusChange = true;
         }
 
-        boolean isCompletedBatch = true;
+        boolean isPackedBatch = true;
         for (BatchItem item1 : batch.getBatchItems()) {
             if (item1.getStatus() != ItemStatus.COMPLETED) {
-                isCompletedBatch = false;
+                isPackedBatch = false;
                 break;
             }
         }
-        if (isCompletedBatch) {
-            batch.setStatus(BatchStatus.COMPLETED);
+        if (isPackedBatch) {
+            batch.setStatus(BatchStatus.PACKED);
+            statusChange = true;
+        }
+        if (!statusChange) {
+            return;
         }
         batchRepository.save(batch);
         log.info("Service Batch - Change batch status to {} successfully", batch.getStatus());
+    }
+
+    @Override
+    public List<BatchResponse> findByStatus(BatchStatus status) {
+        List<Batch> dbBatch = batchRepository.findByStatus(status);
+        log.info("Service Batch - Get batches by status {} successfully", status);
+        return BatchResponseMapper.INSTANCE.toDtoList(dbBatch);
     }
 
     private Batch getBatchById(Long id) {

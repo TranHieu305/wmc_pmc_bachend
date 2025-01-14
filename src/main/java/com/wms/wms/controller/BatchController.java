@@ -4,6 +4,7 @@ import com.wms.wms.dto.request.batch.BatchRequest;
 import com.wms.wms.dto.request.batch.BatchUpdateRequest;
 import com.wms.wms.dto.response.ResponseSuccess;
 import com.wms.wms.dto.response.batch.BatchResponse;
+import com.wms.wms.entity.enumentity.status.BatchStatus;
 import com.wms.wms.service.batch.BatchService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -27,6 +28,15 @@ public class BatchController {
         log.info("Request get batch list");
         List<BatchResponse> response = batchService.findAll();
         return new ResponseSuccess(HttpStatus.OK, "Get batch list successfully", response);
+    }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<?> findByStatus(
+            @PathVariable("status") BatchStatus status
+    ) {
+        log.info("Request get batch list by status {}", status);
+        List<BatchResponse> response = batchService.findByStatus(status);
+        return new ResponseSuccess(HttpStatus.OK, "Get batch list by status successfully", response);
     }
 
     @GetMapping("/{batchId}")

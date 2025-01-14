@@ -1,12 +1,9 @@
 package com.wms.wms.entity.enumentity.status;
 
-public enum BatchStatus {
+public enum ShipmentStatus {
     PENDING_APPROVAL,
     REJECTED,
     PENDING,
-    PACKING,
-    PACKED,
     COMPLETED,
     IN_TRANSIT,
-    DELIVERED
 }
