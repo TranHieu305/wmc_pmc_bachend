@@ -12,13 +12,6 @@ import java.util.List;
 public interface BatchItemService {
     List<BatchItem> findByProductId(Long productId);
 
-    /**
-     * Change status of item to COMPLETED, then call productWarehouseHistory
-     * to create IMPORT history
-     *
-     * @param itemId ID of the item
-     * @param batchId ID of the batch
-     */
     void markAsComplete (Long itemId, Long batchId);
 
     void markAsCompleteAll (Batch batch);

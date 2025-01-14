@@ -84,4 +84,41 @@ public class Batch extends BaseEntity {
     public void removeItem(BatchItem item) {
         batchItems.remove(item);
     }
+
+    /**
+     * Determines if this batch represents an **import batch**.
+     * This occurs when products are being brought into the warehouse as part of an import order.
+     * Example: Receiving goods from a supplier.
+     */
+    public boolean isImportBatch() {
+        return (orderInventoryAction == InventoryAction.IMPORT && inventoryAction == InventoryAction.IMPORT);
+    }
+
+    /**
+     * Determines if this batch represents an **export return batch**.
+     * This occurs when products that were previously imported are being returned to the supplier.
+     * Example: Returning defective or excess products from an import order.
+     */
+    public boolean isExportReturnBatch() {
+        return (orderInventoryAction == InventoryAction.IMPORT && inventoryAction == InventoryAction.EXPORT);
+    }
+
+    /**
+     * Determines if this batch represents an **export batch**.
+     * This occurs when products are being sent out of the warehouse as part of an export order.
+     * Example: Shipping goods to a customer or another facility.
+     */
+    public boolean isExportBatch() {
+        return (orderInventoryAction == InventoryAction.EXPORT && inventoryAction == InventoryAction.EXPORT);
+    }
+
+    /**
+     * Determines if this batch represents an **import return batch**.
+     * This occurs when products that were previously exported are being returned to the warehouse.
+     * Example: A customer or recipient returning goods that were part of an export order.
+     */
+    public boolean isImportReturnBatch() {
+        return (orderInventoryAction == InventoryAction.EXPORT && inventoryAction == InventoryAction.IMPORT);
+    }
+
 }

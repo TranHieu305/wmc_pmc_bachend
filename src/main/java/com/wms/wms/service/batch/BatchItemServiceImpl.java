@@ -46,7 +46,7 @@ public class BatchItemServiceImpl implements BatchItemService {
                 .findAny()
                 .orElseThrow(() -> new ResourceNotFoundException("No Batch item exists with the given Id: " + itemId));
 
-        if (item.getWeight().equals(BigDecimal.ZERO)) {
+        if (item.getWeight().compareTo(BigDecimal.ZERO) == 0) {
             throw new ConstraintViolationException("Cannot mark an item as completed if it does not have a weight assigned");
         }
         item.setStatus(ItemStatus.COMPLETED);

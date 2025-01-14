@@ -17,14 +17,16 @@ public class ShipmentBatch extends BaseEntity {
     @Column(name = "shipment_id")
     private Long shipmentId;
 
-    @Column(name = "batch_id", nullable = false)
-    private Long batchId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "batch_id", nullable = false)
+    private Batch batch;
 
     @Column(name = "partner_id", nullable = false)
     private Long partnerId;
 
-    @Column(name = "partner_address_id", nullable = false)
-    private Long partnerAddressId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "partner_address_id", nullable = false)
+    private PartnerAddress partnerAddress;
 
     @Column(name = "shipment_order", nullable = false)
     private Long shipmentOrder;

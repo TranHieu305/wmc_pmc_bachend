@@ -136,7 +136,7 @@ public class ProductWarehouseHistoryServiceImpl implements ProductWarehouseHisto
         productWarehouseHistoryRepository.saveAll(historyList);
         log.info("Service PWH - Create product warehouse history successfully");
 
-        log.info("Service PWH - Start process update product-warehouse");
+        log.info("Service PWH - Start process import product-warehouse");
         // Update exist product warehouse quantity
         // If not exist, create new
         List<ProductWarehouse> productWarehouseList =  historyList.stream().map(historyItem -> {
@@ -165,7 +165,7 @@ public class ProductWarehouseHistoryServiceImpl implements ProductWarehouseHisto
         }).toList();
 
         productWarehouseRepository.saveAll(productWarehouseList);
-        log.info("Service PWH - Update product warehouse successfully");
+        log.info("Service PWH - Import to product warehouse successfully");
     }
 
     @Override
@@ -186,7 +186,7 @@ public class ProductWarehouseHistoryServiceImpl implements ProductWarehouseHisto
         productWarehouseHistoryRepository.saveAll(historyList);
         log.info("Service PWH - Create product warehouse history successfully");
 
-        log.info("Service PWH - Start process update product-warehouse");
+        log.info("Service PWH - Start process export product-warehouse");
         // Update exist product warehouse quantity
         // If not exist, create new
         List<ProductWarehouse> productWarehouseList =  historyList.stream().map(historyItem -> {
@@ -215,7 +215,7 @@ public class ProductWarehouseHistoryServiceImpl implements ProductWarehouseHisto
         }).toList();
 
         productWarehouseRepository.saveAll(productWarehouseList);
-        log.info("Service PWH - Update product warehouse successfully");
+        log.info("Service PWH - Export product warehouse successfully");
     }
 
     @Override

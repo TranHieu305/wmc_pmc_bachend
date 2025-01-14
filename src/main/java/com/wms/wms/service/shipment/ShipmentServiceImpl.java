@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -91,6 +93,12 @@ public class ShipmentServiceImpl implements ShipmentService {
 
         Shipment dbShipment = shipmentRepository.save(shipment);
         log.info("Service Shipment - create shipment ID {} successfully", dbShipment.getId());
+
+        // Save following
+        Set<Long> followerIds = Stream.concat(dbShipment.getApproverIds().stream(), dbShipment.getParticipantIds().stream())
+                .collect(Collectors.toSet());
+        entityFollowingService.addFollowingUsersToEntity(followerIds, Shipment.class.getSimpleName(), dbShipment.getId());
+
         return dbShipment;
     }
 
@@ -106,9 +114,9 @@ public class ShipmentServiceImpl implements ShipmentService {
                             .orElseThrow(() -> new ResourceNotFoundException("No address exists with the given Id: " + partnerAddressId));
 
                     return (ShipmentBatch) ShipmentBatch.builder()
-                            .batchId(batchId)
+                            .batch(batch)
                             .partnerId(batch.getPartner().getId())
-                            .partnerAddressId(partnerAddress.getId())
+                            .partnerAddress(partnerAddress)
                             .shipmentOrder(shipmentBatchRequest.getShipmentOrder())
                             .build();
                 }

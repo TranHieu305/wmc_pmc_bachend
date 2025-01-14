@@ -13,7 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -50,6 +53,42 @@ public class OrderItemServiceImpl implements OrderItemService {
         List<OrderItem> items = orderItemRepository.findByProductId(productId);
         log.info("Service Order item - Find items by product ID: {} successfully", productId);
         return items;
+    }
+
+    @Override
+    @Transactional
+    public void addQuantityDelivered(List<OrderItem> orderItems, List<BatchItem> batchItems) {
+        Map<Long, BigDecimal> batchItemQuantities = batchItems.stream()
+                .collect(Collectors.groupingBy(
+                        BatchItem::getOrderItemId,
+                        Collectors.reducing(BigDecimal.ZERO, BatchItem::getQuantity, BigDecimal::add)
+                ));
+        orderItems.forEach(orderItem -> {
+            BigDecimal batchQuantity = batchItemQuantities.getOrDefault(orderItem.getId(), BigDecimal.ZERO);
+            BigDecimal deliveredQuantity = orderItem.getDeliveredQuantity();
+            BigDecimal newDeliveredQuantity = deliveredQuantity.add(batchQuantity);
+            orderItem.setDeliveredQuantity(newDeliveredQuantity);
+        });
+        orderItemRepository.saveAll(orderItems);
+        log.info("Service Order item - Add quantity delivered successfully");
+    }
+
+    @Override
+    @Transactional
+    public void subtractQuantityDelivered(List<OrderItem> orderItems, List<BatchItem> batchItems) {
+        Map<Long, BigDecimal> batchItemQuantities = batchItems.stream()
+                .collect(Collectors.groupingBy(
+                        BatchItem::getOrderItemId,
+                        Collectors.reducing(BigDecimal.ZERO, BatchItem::getQuantity, BigDecimal::add)
+                ));
+        orderItems.forEach(orderItem -> {
+            BigDecimal batchQuantity = batchItemQuantities.getOrDefault(orderItem.getId(), BigDecimal.ZERO);
+            BigDecimal deliveredQuantity = orderItem.getDeliveredQuantity();
+            BigDecimal newDeliveredQuantity = deliveredQuantity.subtract(batchQuantity);
+            orderItem.setDeliveredQuantity(newDeliveredQuantity);
+        });
+        orderItemRepository.saveAll(orderItems);
+        log.info("Service Order item - Add quantity delivered successfully");
     }
 
     private OrderItem getItemById(Long id) {

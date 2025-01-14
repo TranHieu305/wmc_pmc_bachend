@@ -15,6 +15,7 @@ import com.wms.wms.mapper.batch.BatchResponseMapper;
 import com.wms.wms.repository.*;
 import com.wms.wms.service.entityfollowing.EntityFollowingService;
 import com.wms.wms.service.inventoryitem.InventoryItemService;
+import com.wms.wms.service.order.OrderItemService;
 import com.wms.wms.service.product.ProductWarehouseHistoryService;
 import com.wms.wms.service.user.UserService;
 import jakarta.transaction.Transactional;
@@ -38,6 +39,7 @@ public class BatchServiceImpl implements BatchService{
     private final ProductWarehouseHistoryService pwhService;
     private final InventoryItemService inventoryItemService;
     private final OrderItemRepository orderItemRepository;
+    private final OrderItemService orderItemService;
     private final UserService userService;
     private final EntityFollowingService entityFollowingService;
 
@@ -162,7 +164,7 @@ public class BatchServiceImpl implements BatchService{
 
     @Override
     @Transactional
-    public void markAsDelivered(Long batchId) {
+    public void markAsDeliveredWithoutShipment(Long batchId) {
         Batch batch = this.getBatchById(batchId);
 
         // Update the status
@@ -173,45 +175,39 @@ public class BatchServiceImpl implements BatchService{
         Batch updatedBatch = batchRepository.save(batch);
         log.info("Service Batch - Mark as delivered batch ID {} successfully", batchId);
 
-        // Process DELIVERED batch items
-        if (updatedBatch.getInventoryAction().equals(InventoryAction.IMPORT)) {
+
+        if (updatedBatch.isImportBatch()) {
             log.info("Service Batch - Start process import batch items");
             pwhService.processImportBatchItems(updatedBatch);
             inventoryItemService.processDeliveredBatchItems(updatedBatch, InventoryAction.IMPORT);
+            orderItemService.addQuantityDelivered(updatedBatch.getOrder().getOrderItems(), updatedBatch.getBatchItems());
             log.info("Service Batch - Process import batch items successfully");
+            return;
         }
-        //TODO
-        else {
+        if (updatedBatch.isExportReturnBatch()) {
             log.info("Service Batch - Start process export batch items");
             pwhService.processExportBatchItems(updatedBatch);
             inventoryItemService.processDeliveredBatchItems(updatedBatch, InventoryAction.EXPORT);
+            orderItemService.subtractQuantityDelivered(updatedBatch.getOrder().getOrderItems(), updatedBatch.getBatchItems());
             log.info("Service Batch - Process export batch items successfully");
+            return;
         }
-
-        // Update DELIVERED quantity to order
-        List<OrderItem> orderItems = batch.getOrder().getOrderItems();
-        Map<Long, BigDecimal> batchItemQuantities = batch.getBatchItems().stream()
-                .collect(Collectors.groupingBy(
-                        BatchItem::getOrderItemId,
-                        Collectors.reducing(BigDecimal.ZERO, BatchItem::getQuantity, BigDecimal::add)
-                ));
-
-        boolean isSameInventoryAction = batch.getInventoryAction() == batch.getOrderInventoryAction();
-
-        orderItems.forEach(orderItem -> {
-            BigDecimal batchQuantity = batchItemQuantities.getOrDefault(orderItem.getId(), BigDecimal.ZERO);
-            BigDecimal deliveredQuantity = orderItem.getDeliveredQuantity();
-
-            if (isSameInventoryAction) {
-                deliveredQuantity = deliveredQuantity.add(batchQuantity);
-            } else {
-                deliveredQuantity = deliveredQuantity.subtract(batchQuantity);
-            }
-
-            orderItem.setDeliveredQuantity(deliveredQuantity);
-        });
-        orderItemRepository.saveAll(orderItems);
-        log.info("Service Batch - Update quantity delivered order items successfully");
+        if (updatedBatch.isExportBatch()) {
+            log.info("Service Batch - Start process export batch items");
+            pwhService.processExportBatchItems(updatedBatch);
+            inventoryItemService.processDeliveredBatchItems(updatedBatch, InventoryAction.EXPORT);
+            orderItemService.addQuantityDelivered(updatedBatch.getOrder().getOrderItems(), updatedBatch.getBatchItems());
+            log.info("Service Batch - Process export batch items successfully");
+            return;
+        }
+        if (updatedBatch.isImportReturnBatch()) {
+            log.info("Service Batch - Start process import batch items");
+            pwhService.processImportBatchItems(updatedBatch);
+            inventoryItemService.processDeliveredBatchItems(updatedBatch, InventoryAction.IMPORT);
+            orderItemService.subtractQuantityDelivered(updatedBatch.getOrder().getOrderItems(), updatedBatch.getBatchItems());
+            log.info("Service Batch - Process import batch items successfully");
+            return;
+        }
     }
 
     @Override

@@ -72,7 +72,7 @@ public class BatchController {
             @Min(value = 1, message = "Id must be greater than 0")
             @PathVariable("batchId") Long batchId) {
         log.info("Request to mark batch as DELIVERED, Id={}", batchId);
-        batchService.markAsDelivered(batchId);
+        batchService.markAsDeliveredWithoutShipment(batchId);
         return new ResponseSuccess(HttpStatus.OK, "Batch marked as DELIVERED successfully");
     }
 
