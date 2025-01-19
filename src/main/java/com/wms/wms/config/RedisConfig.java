@@ -11,7 +11,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration.LettuceClientConfigurationBuilder;
 
 import java.net.URI;
 
@@ -22,27 +21,38 @@ public class RedisConfig {
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
-        URI redisUri = URI.create(redisUrl);
+        try {
+            URI redisUri = URI.create(redisUrl);
 
-        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
-        redisConfig.setHostName(redisUri.getHost());
-        redisConfig.setPort(redisUri.getPort());
+            RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
+            redisConfig.setHostName(redisUri.getHost());
+            redisConfig.setPort(redisUri.getPort());
 
-        if (redisUri.getUserInfo() != null) {
-            String[] userInfo = redisUri.getUserInfo().split(":", 2);
-            redisConfig.setPassword(userInfo[1]); // Extract password
+            // Extract password if present
+            if (redisUri.getUserInfo() != null) {
+                String[] userInfo = redisUri.getUserInfo().split(":", 2);
+                if (userInfo.length == 2) {
+                    redisConfig.setPassword(userInfo[1]);
+                }
 
-            System.out.println("Connecting to Redis:");
-            System.out.println("Host: " + redisUri.getHost());
-            System.out.println("Port: " + redisUri.getPort());
-            System.out.println("Password: " + (redisUri.getUserInfo() != null ? userInfo[1] : "No Password"));
+                System.out.println("Connecting to Redis:");
+                System.out.println("Host: " + redisUri.getHost());
+                System.out.println("Port: " + redisUri.getPort());
+                System.out.println("Password: " + (redisUri.getUserInfo() != null ? userInfo[1] : "No Password"));
+            }
+
+
+            // Configure SSL based on URI scheme
+            LettuceClientConfiguration.LettuceClientConfigurationBuilder clientConfig = LettuceClientConfiguration.builder();
+            if ("rediss".equals(redisUri.getScheme())) {
+                clientConfig.useSsl(); // Enable SSL for "rediss://" URLs
+            }
+
+            return new LettuceConnectionFactory(redisConfig, clientConfig.build());
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid Redis URL: " + redisUrl, e);
         }
 
-        // Enable SSL
-        LettuceClientConfigurationBuilder clientConfig = LettuceClientConfiguration.builder();
-        clientConfig.useSsl().disablePeerVerification();
-
-        return new LettuceConnectionFactory(redisConfig, clientConfig.build());
     }
 
     @Bean
