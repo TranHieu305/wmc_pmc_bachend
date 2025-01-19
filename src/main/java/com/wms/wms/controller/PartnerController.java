@@ -1,6 +1,7 @@
 package com.wms.wms.controller;
 
 import com.wms.wms.dto.request.partner.PartnerRequest;
+import com.wms.wms.dto.request.partner.PartnerUpdateRequest;
 import com.wms.wms.dto.response.ResponseSuccess;
 import com.wms.wms.dto.response.partner.PartnerResponse;
 import com.wms.wms.service.partner.PartnerService;
@@ -35,16 +36,16 @@ public class PartnerController {
     }
 
     @PutMapping("")
-    public ResponseSuccess updatePartner(@RequestBody @Valid PartnerRequest request) {
+    public ResponseSuccess updatePartner(@RequestBody @Valid PartnerUpdateRequest request) {
         log.info("Request update partner");
-        PartnerResponse response = partnerService.save(request);
+        PartnerResponse response = partnerService.update(request);
         return new ResponseSuccess(HttpStatus.ACCEPTED, "Partner updated successfully", response);
     }
 
     // Get warehouse by id
     @GetMapping("/{partnerId}")
     public ResponseSuccess findById(
-            @Min(value = 1, message = "Id must be greater than 0") @PathVariable Long partnerId) {
+            @Min(value = 1, message = "Id must be greater than 0") @PathVariable("partnerId") Long partnerId) {
         log.info("Get partner detail id: {}", partnerId);
         PartnerResponse response = partnerService.findById(partnerId);
         return new ResponseSuccess(HttpStatus.OK, "Get the partner id " + partnerId + " successfully", response);
@@ -52,7 +53,7 @@ public class PartnerController {
 
     @DeleteMapping("/{partnerId}")
     public ResponseSuccess deleteById(
-            @Min(value = 1, message = "Id must be greater than 0") @PathVariable Long partnerId) {
+            @Min(value = 1, message = "Id must be greater than 0") @PathVariable("partnerId") Long partnerId) {
         log.info("Request delete partner Id={}", partnerId);
         partnerService.deleteById(partnerId);
         return new ResponseSuccess(HttpStatus.NO_CONTENT, "Successfully deleted partner id: " + partnerId);

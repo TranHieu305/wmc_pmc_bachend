@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name="partner_address")
 public class PartnerAddress extends BaseEntity {
-    @Column(name = "partner_id", nullable = false)
+    @Column(name = "partner_id")
     private Long partnerId;
 
     @Column(name = "name", nullable = false)
@@ -33,11 +33,12 @@ public class PartnerAddress extends BaseEntity {
     private String address;
 
     @Column(name = "longitude")
-    @Digits(integer = 10, fraction = 6, message = "Partner address longitude must be decimal")
+    @Digits(integer = 3, fraction = 16, message = "Partner address longitude must be decimal")
+    @Builder.Default
     private BigDecimal longitude = BigDecimal.ZERO;
 
     @Column(name = "latitude")
-    @Digits(integer = 10, fraction = 6, message = "Partner address latitude must be decimal")
+    @Digits(integer = 3, fraction = 16, message = "Partner address latitude must be decimal")
     @Builder.Default
     private BigDecimal latitude = BigDecimal.ZERO;
 }

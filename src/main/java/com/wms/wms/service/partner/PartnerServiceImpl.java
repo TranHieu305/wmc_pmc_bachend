@@ -1,12 +1,16 @@
 package com.wms.wms.service.partner;
 
 import com.wms.wms.dto.request.partner.PartnerRequest;
+import com.wms.wms.dto.request.partner.PartnerUpdateRequest;
 import com.wms.wms.dto.response.partner.PartnerResponse;
+import com.wms.wms.entity.Order;
 import com.wms.wms.entity.Partner;
 import com.wms.wms.entity.PartnerAddress;
+import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.mapper.partner.PartnerRequestMapper;
 import com.wms.wms.mapper.partner.PartnerResponseMapper;
+import com.wms.wms.repository.OrderRepository;
 import com.wms.wms.repository.PartnerAddressRepository;
 import com.wms.wms.repository.PartnerRepository;
 import jakarta.transaction.Transactional;
@@ -23,6 +27,7 @@ import java.util.List;
 public class PartnerServiceImpl implements PartnerService{
     private final PartnerRepository partnerRepository;
     private final PartnerAddressRepository partnerAddressRepository;
+    private final OrderRepository orderRepository;
 
     @Override
     public List<PartnerResponse> findAll() {
@@ -51,7 +56,6 @@ public class PartnerServiceImpl implements PartnerService{
         Partner dbPartner = partnerRepository.save(partner);
 
         // Save partner address
-        // TODO
         if (StringUtils.hasText(partnerRequest.getAddressName())
             && StringUtils.hasText(partnerRequest.getAddress())) {
 
@@ -59,14 +63,29 @@ public class PartnerServiceImpl implements PartnerService{
             address1.setPartnerId(dbPartner.getId());
             address1.setName(partnerRequest.getAddressName());
             address1.setAddress(partnerRequest.getAddress());
+            address1.setLongitude(partnerRequest.getLongitude());
+            address1.setLatitude(partnerRequest.getLatitude());
 
             PartnerAddress dbAddress = partnerAddressRepository.save(address1);
             log.info("Service Save partner address successfully");
-
-            dbPartner.getPartnerAddresses().add(dbAddress);
+            partner.getPartnerAddresses().add(dbAddress);
         }
 
         log.info("Service Save partner successfully");
+        return PartnerResponseMapper.INSTANCE.toDto(dbPartner);
+    }
+
+    @Override
+    @Transactional
+    public PartnerResponse update(PartnerUpdateRequest request) {
+        Partner dbPartner = getPartnerById(request.getId());
+        dbPartner.setName(request.getName());
+        dbPartner.setType(request.getType());
+        dbPartner.setDescription(request.getDescription());
+        dbPartner.setEmail(request.getEmail());
+        dbPartner.setPhoneNumber(request.getPhoneNumber());
+        partnerRepository.save(dbPartner);
+        log.info("Service Partner - update partner Id: {} successfully", request.getId());
         return PartnerResponseMapper.INSTANCE.toDto(dbPartner);
     }
 
@@ -74,6 +93,10 @@ public class PartnerServiceImpl implements PartnerService{
     @Override
     public void deleteById(Long id) {
         Partner partner = getPartnerById(id);
+        List<Order> orders = orderRepository.findAllByPartnerId(partner.getId());
+        if (!orders.isEmpty()) {
+            throw new ConstraintViolationException("Cannot delete a partner that already has associated orders");
+        }
         partnerRepository.delete(partner);
         log.info("Service Delete partner by Id: {} successfully", id);
     }

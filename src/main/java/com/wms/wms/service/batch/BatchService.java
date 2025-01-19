@@ -26,4 +26,8 @@ public interface BatchService extends BaseService<BatchRequest, BatchResponse> {
     void updateStatusBasedOnItems(Batch batch);
 
     List<BatchResponse> findByStatus(BatchStatus status);
+
+    void processInTransit(Batch batch);
+
+    void processDelivered(Batch batch);
 }

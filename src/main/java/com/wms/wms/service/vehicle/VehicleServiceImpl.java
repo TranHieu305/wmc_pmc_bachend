@@ -3,6 +3,7 @@ package com.wms.wms.service.vehicle;
 import com.wms.wms.dto.request.vehicle.VehicleRequest;
 import com.wms.wms.dto.response.vehicle.VehicleResponse;
 import com.wms.wms.entity.Vehicle;
+import com.wms.wms.entity.enumentity.status.VehicleStatus;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.mapper.vehicle.VehicleRequestMapper;
 import com.wms.wms.mapper.vehicle.VehicleResponseMapper;
@@ -54,7 +55,14 @@ public class VehicleServiceImpl implements VehicleService{
         Vehicle vehicle = getById(id);
         vehicleRepository.delete(vehicle);
         log.info("Service Vehicle - Delete vehicle by Id: {} successfully", id);
+    }
 
+    @Override
+    @Transactional
+    public void changeStatus(Vehicle vehicle, VehicleStatus status) {
+        vehicle.setStatus(status);
+        vehicleRepository.save(vehicle);
+        log.info("Service Vehicle - update status vehicle by Id: {} to {} successfully", vehicle.getId(), status);
     }
 
     private Vehicle getById(Long vehicleId) {

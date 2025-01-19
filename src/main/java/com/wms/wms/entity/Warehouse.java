@@ -34,11 +34,11 @@ public class Warehouse extends BaseEntity {
     private String address;
 
     @Column(name = "longitude")
-    @Digits(integer = 3, fraction = 7, message = "Warehouse longitude must be decimal")
+    @Digits(integer = 3, fraction = 16, message = "Warehouse longitude must be decimal")
     private BigDecimal longitude = BigDecimal.ZERO;
 
     @Column(name = "latitude")
-    @Digits(integer = 3, fraction = 7, message = "Warehouse latitude must be decimal")
+    @Digits(integer = 3, fraction = 16, message = "Warehouse latitude must be decimal")
     private BigDecimal latitude = BigDecimal.ZERO;
 
     @Column(name = "supervisor_id")

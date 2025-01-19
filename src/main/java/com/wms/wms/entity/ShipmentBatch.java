@@ -34,5 +34,5 @@ public class ShipmentBatch extends BaseEntity {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private ShipmentBatchStatus status = ShipmentBatchStatus.PENDING;
+    private ShipmentBatchStatus status = ShipmentBatchStatus.PACKED;
 }

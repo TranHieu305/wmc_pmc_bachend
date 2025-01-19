@@ -206,7 +206,34 @@ public class BatchServiceImpl implements BatchService{
             inventoryItemService.processDeliveredBatchItems(updatedBatch, InventoryAction.IMPORT);
             orderItemService.subtractQuantityDelivered(updatedBatch.getOrder().getOrderItems(), updatedBatch.getBatchItems());
             log.info("Service Batch - Process import batch items successfully");
-            return;
+        }
+    }
+
+    @Override
+    @Transactional
+    public void processInTransit(Batch batch) {
+        batch.setStatus(BatchStatus.IN_TRANSIT);
+        Batch updatedBatch = batchRepository.save(batch);
+        log.info("Service Batch - Mark as in_transit batch ID {} successfully", updatedBatch.getId());
+
+        log.info("Service Batch - Start process export batch items");
+        pwhService.processExportBatchItems(updatedBatch);
+        inventoryItemService.processDeliveredBatchItems(updatedBatch, InventoryAction.EXPORT);
+        log.info("Service Batch - Process export batch items successfully");
+    }
+
+    @Override
+    @Transactional
+    public void processDelivered(Batch batch) {
+        batch.setStatus(BatchStatus.DELIVERED);
+        Batch updatedBatch = batchRepository.save(batch);
+        log.info("Service Batch - update status delivered batch ID {} successfully", updatedBatch.getId());
+
+        if (batch.isExportBatch()) {
+            orderItemService.addQuantityDelivered(updatedBatch.getOrder().getOrderItems(), updatedBatch.getBatchItems());
+        }
+        else if (batch.isExportReturnBatch()) {
+            orderItemService.subtractQuantityDelivered(updatedBatch.getOrder().getOrderItems(), updatedBatch.getBatchItems());
         }
     }
 
@@ -343,8 +370,20 @@ public class BatchServiceImpl implements BatchService{
 
     @Override
     public List<BatchResponse> findByStatus(BatchStatus status) {
-        List<Batch> dbBatch = batchRepository.findByStatus(status);
-        log.info("Service Batch - Get batches by status {} successfully", status);
+        User currentUser = userService.getCurrentUser();
+        List<Batch> dbBatch;
+        if (currentUser.getRole() == UserRole.ADMIN) {
+            dbBatch = batchRepository.findByStatus(status);
+            log.info("Service Batch - Get all batches by status {} successfully", status);
+        } else {
+            List<EntityFollowing> followings = entityFollowingService.getFollowings(currentUser.getId(), Batch.class.getSimpleName());
+            List<Long> batchIds = followings.stream()
+                    .map(EntityFollowing::getEntityId)
+                    .toList();
+            dbBatch = batchRepository.findAllByIdInOrderByCreatedAtDesc(batchIds);
+            dbBatch = dbBatch.stream().filter(batch -> batch.getStatus() == status).toList();
+            log.info("Service Batch - Get following batches  by status {} successfully", status);
+        }
         return BatchResponseMapper.INSTANCE.toDtoList(dbBatch);
     }
 

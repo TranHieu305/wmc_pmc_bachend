@@ -1,7 +1,7 @@
 package com.wms.wms.entity.enumentity.status;
 
 public enum ShipmentBatchStatus {
-    PENDING,
+    PACKED,
     IN_TRANSIT,
     DELIVERED
 }

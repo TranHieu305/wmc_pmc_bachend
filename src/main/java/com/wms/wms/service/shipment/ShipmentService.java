@@ -8,4 +8,8 @@ public interface ShipmentService extends BaseService<ShipmentRequest, Shipment> 
     void approve(Long shipmentId);
 
     void reject(Long shipmentId);
+
+    void markAsInTransit(Long shipmentId);
+
+    void markAsCompleted(Long shipmentId);
 }

@@ -5,14 +5,17 @@ import com.wms.wms.dto.request.shipment.ShipmentRequest;
 import com.wms.wms.entity.*;
 import com.wms.wms.entity.enumentity.base.UserRole;
 import com.wms.wms.entity.enumentity.status.ShipmentStatus;
+import com.wms.wms.entity.enumentity.status.VehicleStatus;
 import com.wms.wms.exception.ConstraintViolationException;
 import com.wms.wms.exception.ResourceNotFoundException;
 import com.wms.wms.repository.BatchRepository;
 import com.wms.wms.repository.PartnerAddressRepository;
 import com.wms.wms.repository.ShipmentRepository;
 import com.wms.wms.repository.VehicleRepository;
+import com.wms.wms.service.batch.BatchService;
 import com.wms.wms.service.entityfollowing.EntityFollowingService;
 import com.wms.wms.service.user.UserService;
+import com.wms.wms.service.vehicle.VehicleService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +38,9 @@ public class ShipmentServiceImpl implements ShipmentService {
     private final BatchRepository batchRepository;
     private final PartnerAddressRepository partnerAddressRepository;
     private final EntityFollowingService entityFollowingService;
+    private final VehicleService vehicleService;
+    private final ShipmentBatchService shipmentBatchService;
+    private final BatchService batchService;
 
     @Override
     public List<Shipment> findAll() {
@@ -135,11 +141,6 @@ public class ShipmentServiceImpl implements ShipmentService {
         log.info("Service Shipment - delete shipment ID {} successfully", id);
     }
 
-    private Shipment getById(Long shipmentId) {
-        return shipmentRepository.findById(shipmentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Shipment not found with id : " + shipmentId));
-    }
-
     @Override
     @Transactional
     public void approve(Long shipmentId) {
@@ -174,7 +175,52 @@ public class ShipmentServiceImpl implements ShipmentService {
         shipment.getPendingApproverIds().remove(currentUser.getId());
         shipment.setStatus(ShipmentStatus.REJECTED);
         shipmentRepository.save(shipment);
-        log.info("Service Batch - Reject batch ID {} successfully", shipmentId);
+        log.info("Service Shipment - Reject shipment ID {} successfully", shipmentId);
+    }
+
+    @Override
+    @Transactional
+    public void markAsInTransit(Long shipmentId) {
+        Shipment shipment = getById(shipmentId);
+        if (shipment.getStatus() != ShipmentStatus.PENDING) {
+            throw new ConstraintViolationException("Only 'pending' shipments can be marked as in transit");
+        }
+
+        if (shipment.getVehicle().getStatus() == VehicleStatus.IN_TRANSIT) {
+            throw new ConstraintViolationException("Vehicle is not available");
+        }
+
+        shipment.setStatus(ShipmentStatus.IN_TRANSIT);
+        shipmentRepository.save(shipment);
+        log.info("Service Shipment - Mark as in_transit shipment ID {} successfully", shipmentId);
+
+        // Update status shipment vehicle
+        vehicleService.changeStatus(shipment.getVehicle(), VehicleStatus.IN_TRANSIT);
+
+        //Update status of all shipment batches to IN_TRANSIT
+        shipmentBatchService.processInTransitShipment(shipment);
+
+        //Update status of all batch and process export
+        for (ShipmentBatch shipmentBatch : shipment.getShipmentBatches()) {
+            Batch batch = shipmentBatch.getBatch();
+            batchService.processInTransit(batch);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void markAsCompleted(Long shipmentId) {
+        Shipment shipment = getById(shipmentId);
+        if (shipment.getStatus() != ShipmentStatus.IN_TRANSIT) {
+            throw new ConstraintViolationException("Only 'In Transit' shipments can be marked as completed");
+        }
+
+        shipment.setStatus(ShipmentStatus.COMPLETED);
+        shipmentRepository.save(shipment);
+        log.info("Service Shipment - Mark as completed shipment ID {} successfully", shipmentId);
+
+        // Update status shipment vehicle
+        vehicleService.changeStatus(shipment.getVehicle(), VehicleStatus.AVAILABLE);
     }
 
     private void checkConstraintToApprove(Shipment shipment, User currentUser) {
@@ -187,5 +233,10 @@ public class ShipmentServiceImpl implements ShipmentService {
         if (!shipment.getPendingApproverIds().contains(currentUser.getId())) {
             throw new ConstraintViolationException("You had already approved");
         }
+    }
+
+    private Shipment getById(Long shipmentId) {
+        return shipmentRepository.findById(shipmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Shipment not found with id : " + shipmentId));
     }
 }

@@ -59,7 +59,7 @@ public class ShipmentController {
     public ResponseEntity<?> approve(
             @Min(value = 1, message = "Id must be greater than 0")
             @PathVariable("shipmentId") Long shipmentId) {
-        log.info("Request to approve shipment Id={}", shipmentId);
+        log.info("Controller Shipment - Request to approve shipment Id={}", shipmentId);
         shipmentService.approve(shipmentId);
         return new ResponseSuccess(HttpStatus.OK, "Approved shipment successfully");
     }
@@ -68,8 +68,26 @@ public class ShipmentController {
     public ResponseEntity<?> reject(
             @Min(value = 1, message = "Id must be greater than 0")
             @PathVariable("shipmentId") Long shipmentId) {
-        log.info("Request to reject shipment Id={}", shipmentId);
+        log.info("Controller Shipment - Request to reject shipment Id={}", shipmentId);
         shipmentService.reject(shipmentId);
         return new ResponseSuccess(HttpStatus.OK, "Rejected shipment successfully");
+    }
+
+    @PatchMapping("/{shipmentId}/status/inTransit")
+    public ResponseEntity<?> markAsInTransit(
+            @Min(value = 1, message = "Id must be greater than 0")
+            @PathVariable("shipmentId") Long shipmentId) {
+        log.info("Controller Shipment - Request to mark shipment as IN_TRANSIT, Id={}", shipmentId);
+        shipmentService.markAsInTransit(shipmentId);
+        return new ResponseSuccess(HttpStatus.OK, "Shipment marked as IN_TRANSIT successfully");
+    }
+
+    @PatchMapping("/{shipmentId}/status/completed")
+    public ResponseEntity<?> markAsCompleted(
+            @Min(value = 1, message = "Id must be greater than 0")
+            @PathVariable("shipmentId") Long shipmentId) {
+        log.info("Controller Shipment - Request to mark shipment as COMPLETED, Id={}", shipmentId);
+        shipmentService.markAsCompleted(shipmentId);
+        return new ResponseSuccess(HttpStatus.OK, "Shipment marked as COMPLETED successfully");
     }
 }
