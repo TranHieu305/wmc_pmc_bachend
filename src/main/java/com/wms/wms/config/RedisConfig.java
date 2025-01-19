@@ -45,7 +45,7 @@ public class RedisConfig {
             // Configure SSL based on URI scheme
             LettuceClientConfiguration.LettuceClientConfigurationBuilder clientConfig = LettuceClientConfiguration.builder();
             if ("rediss".equals(redisUri.getScheme())) {
-                clientConfig.useSsl(); // Enable SSL for "rediss://" URLs
+                clientConfig.useSsl().disablePeerVerification();; // Enable SSL for "rediss://" URLs
             }
 
             return new LettuceConnectionFactory(redisConfig, clientConfig.build());
