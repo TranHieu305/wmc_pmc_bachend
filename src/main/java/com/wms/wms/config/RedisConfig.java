@@ -11,21 +11,27 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.net.URI;
+
 @Configuration
 public class RedisConfig {
-    @Value("${spring.redis.host}")
-    private String redisHost;
-
-    @Value("${spring.redis.port}")
-    private int redisPort;
-
-    @Value("${spring.redis.password}")
-    private String redisPassword;
+    @Value("${REDIS_URL}")
+    private String redisUrl;
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
-        config.setPassword(redisPassword);
+        URI redisUri = URI.create(redisUrl);
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+
+        config.setHostName(redisUri.getHost());
+        config.setPort(redisUri.getPort());
+        if (redisUri.getUserInfo() != null) {
+            String[] userInfo = redisUri.getUserInfo().split(":");
+            if (userInfo.length > 1) {
+                config.setPassword(userInfo[1]); // Extract password
+            }
+        }
+
         return new LettuceConnectionFactory(config);
     }
 
