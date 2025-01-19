@@ -31,11 +31,16 @@ public class RedisConfig {
         if (redisUri.getUserInfo() != null) {
             String[] userInfo = redisUri.getUserInfo().split(":", 2);
             redisConfig.setPassword(userInfo[1]); // Extract password
+
+            System.out.println("Connecting to Redis:");
+            System.out.println("Host: " + redisUri.getHost());
+            System.out.println("Port: " + redisUri.getPort());
+            System.out.println("Password: " + (redisUri.getUserInfo() != null ? userInfo[1] : "No Password"));
         }
 
         // Enable SSL
         LettuceClientConfigurationBuilder clientConfig = LettuceClientConfiguration.builder();
-        clientConfig.useSsl();
+        clientConfig.useSsl().disablePeerVerification();
 
         return new LettuceConnectionFactory(redisConfig, clientConfig.build());
     }
