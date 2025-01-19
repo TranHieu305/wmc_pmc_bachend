@@ -40,6 +40,7 @@ public class UserServiceImpl implements UserService{
 
         userRepository.save(newUser);
         log.info("Service User - create user successfully");
+        updateCacheUser();
     }
 
     @Override
@@ -51,6 +52,7 @@ public class UserServiceImpl implements UserService{
 
         userRepository.save(newUser);
         log.info("Service User - update user successfully");
+        updateCacheUser();
     }
 
     @Override
@@ -64,12 +66,18 @@ public class UserServiceImpl implements UserService{
     public List<UserGeneral> findAllGeneral() {
         List<UserGeneral> userGeneralList = redisCacheService.getCachedListObject(RedisCacheService.ALL_USERS_KEY, UserGeneral.class);
         if (userGeneralList == null) {
-            List<User> users = userRepository.findAll();
-            userGeneralList = UserGeneralMapper.INSTANCE.toDtoList(users);
-            redisCacheService.setCachedObjectWithDefaultExpired(RedisCacheService.ALL_USERS_KEY, userGeneralList);
+            updateCacheUser();
         }
         return userGeneralList;
     }
+
+    private void updateCacheUser() {
+        List<User> users = userRepository.findAll();
+        List<UserGeneral> userGeneralList = UserGeneralMapper.INSTANCE.toDtoList(users);
+        redisCacheService.setCachedObjectWithDefaultExpired(RedisCacheService.ALL_USERS_KEY, userGeneralList);
+        log.info("Service User - Update cache users successfully");
+    }
+
 
     @Override
     public void deleteById(Long userId) {
@@ -81,6 +89,7 @@ public class UserServiceImpl implements UserService{
 
         userRepository.delete(user);
         log.info("Service User - Delete user by Id: {} successfully", userId);
+        updateCacheUser();
     }
 
     @Override
