@@ -18,5 +18,5 @@ public class WarehouseResponse extends BaseEntityResponse {
     private BigDecimal longitude;
     private BigDecimal latitude;
     private  Long supervisorId;
-    private  boolean isActive;
+    private  Boolean isActive;
 }
