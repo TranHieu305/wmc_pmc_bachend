@@ -23,22 +23,21 @@ public class RedisConfig {
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         URI redisUri = URI.create(redisUrl);
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
 
-        config.setHostName(redisUri.getHost());
-        config.setPort(redisUri.getPort());
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
+        redisConfig.setHostName(redisUri.getHost());
+        redisConfig.setPort(redisUri.getPort());
+
         if (redisUri.getUserInfo() != null) {
-            String[] userInfo = redisUri.getUserInfo().split(":");
-            if (userInfo.length > 1) {
-                config.setPassword(userInfo[1]); // Extract password
-            }
+            String[] userInfo = redisUri.getUserInfo().split(":", 2);
+            redisConfig.setPassword(userInfo[1]); // Extract password
         }
 
         // Enable SSL
         LettuceClientConfigurationBuilder clientConfig = LettuceClientConfiguration.builder();
         clientConfig.useSsl();
 
-        return new LettuceConnectionFactory(config);
+        return new LettuceConnectionFactory(redisConfig, clientConfig.build());
     }
 
     @Bean
